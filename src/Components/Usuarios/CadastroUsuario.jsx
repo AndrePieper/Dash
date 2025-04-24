@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 const CadastroUsuario = () => {
   const [nome, setNome] = useState('');
+  const [cpf, setCPF] = useState('');
+  const [ra, setRA] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [tipo, setTipo] = useState('professor');
+  const [tipo, setTipo] = useState('');
 
   const navigate = useNavigate();
 
@@ -20,19 +22,27 @@ const CadastroUsuario = () => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ nome, email, senha, tipo }),
+      body: JSON.stringify({ nome, cpf, ra, email, senha, tipo: Number(tipo) }),
     })
-      .then(res => res.json())
-      .then(() => {
+    .then(async res => {
+      const data = await res.json();
+  
+      if (!res.ok) {
+        console.log(`${res.status} - ${data.message}`)
+        throw new Error(data.message || 'Erro desconhecido');
+      } else {
         navigate('/usuarios');
+      }
+
       })
-      .catch(err => console.error('Erro ao cadastrar usuário:', err));
-  };
+        .catch(erro => console.error(erro.message));
+    };
 
   return (
     <div className="container-form">
       <h2>Cadastro de Usuário</h2>
       <form onSubmit={handleSubmit}>
+      <label>Nome</label>
         <input
           type="text"
           placeholder="Nome"
@@ -40,6 +50,22 @@ const CadastroUsuario = () => {
           onChange={(e) => setNome(e.target.value)}
           required
         />
+
+        <label>CPF</label>
+        <input
+          type="text"
+          value={cpf}
+          onChange={(e) => setCPF(e.target.value )}
+        />
+
+        <label>RA</label>
+        <input
+          type="text"
+          value={ra}
+          onChange={(e) => setRA(e.target.value )}
+        />
+
+        <label>Email</label>
         <input
           type="email"
           placeholder="E-mail"
@@ -47,6 +73,8 @@ const CadastroUsuario = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+        
+        <label>Passwords</label>
         <input
           type="password"
           placeholder="Senha"
@@ -54,9 +82,13 @@ const CadastroUsuario = () => {
           onChange={(e) => setSenha(e.target.value)}
           required
         />
+
+        <label>Tipo</label>
         <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-          <option value="professor">Professor</option>
-          <option value="secretaria">Secretaria</option>
+        <option value="">Selecione o tipo</option>
+        <option value={0}>Aluno</option>
+        <option value={1}>Professor</option>
+        <option value={2}>Admin</option>
         </select>
         <button type="submit">Cadastrar</button>
       </form>

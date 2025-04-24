@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import './CadastroUsuario.css';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import Toast from "../PopUp/Toast" 
+
 const EditarUsuario = () => {
+  const [toast, setToast] = useState({ show: false, message: "", type: "" })
+
   const [usuario, setUsuario] = useState({
     id: '',
     nome: '',
@@ -24,9 +28,16 @@ const EditarUsuario = () => {
         Authorization: `Bearer ${token}`,
       }
     })
-      .then(res => {
-        if (!res.ok) throw new Error('Erro ao buscar usuário');
-        return res.json();
+      .then( async res => {
+        const data = await res.json();
+
+        if (!res.ok){
+          console.log(`${res.status} - ${data.message}`)
+          throw new Error('Erro ao buscar usuário');
+        } else {
+          navigate('/usuarios');
+        }
+
       })
       .then(data => {
         if (data && data.nome && data.email && data.tipo !== undefined) {
@@ -43,33 +54,46 @@ const EditarUsuario = () => {
           throw new Error('Dados incompletos do usuário');
         }
       })
-      .catch(err => console.error('Erro ao buscar usuário:', err));
+      .catch(erro => console.error(erro.message));
   }, [id]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-
-    const usuarioAtualizado = {
-      ...usuario,
-      tipo: parseInt(usuario.tipo, 10)
-    };
-
-    fetch(`https://projeto-iii-4.vercel.app/usuarios`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(usuarioAtualizado),
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Erro ao atualizar');
-        return res.json();
-      })
-      .then(() => navigate('/usuarios'))
-      .catch(err => console.error('Erro ao editar usuário:', err));
+  const usuarioAtualizado = {
+    ...usuario,
+    tipo: parseInt(usuario.tipo, 10)
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const res = await fetch(`https://projeto-iii-4.vercel.app/usuarios`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usuarioAtualizado),
+      })
+  
+      const data = await res.json()
+  
+      if (!res.ok) {
+        console.log(`${data.status} - ${data.message}`);
+        throw new Error(data.message || "Erro ao alterar usuário")
+      }
+  
+      setToast({
+        show: true,
+        message: data.message || "Usuário alterado com sucesso!",
+        type: "success",
+      })
+  
+      setTimeout(() => navigate("/usuarios"), 1500)
+  
+    } catch (error) {
+      setToast({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      })
+    }
+  }
 
   return (
     <div className="container-form">
@@ -88,7 +112,6 @@ const EditarUsuario = () => {
           type="text"
           value={usuario.cpf}
           onChange={(e) => setUsuario({ ...usuario, cpf: e.target.value })}
-          required
         />
 
         <label>RA</label>
@@ -96,7 +119,6 @@ const EditarUsuario = () => {
           type="text"
           value={usuario.ra}
           onChange={(e) => setUsuario({ ...usuario, ra: e.target.value })}
-          required
         />
 
         <label>IMEI</label>
@@ -104,7 +126,6 @@ const EditarUsuario = () => {
           type="text"
           value={usuario.imei}
           onChange={(e) => setUsuario({ ...usuario, imei: e.target.value })}
-          required
         />
 
         <label>Email</label>
@@ -130,6 +151,7 @@ const EditarUsuario = () => {
         <button type="submit">Salvar Alterações</button>
       </form>
     </div>
+    
   );
 };
 
