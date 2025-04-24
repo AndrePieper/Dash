@@ -11,7 +11,7 @@ const Turmas = () => {
   const [statusUnicos, setStatusUnicos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [turmaIdExcluir, setTurmaIdExcluir] = useState(null);
-  const navigate = useNavigate();  // Navegação
+  const navigate = useNavigate();  // Navegaçãoa
 
   useEffect(() => {
     const token = localStorage.getItem("token");
