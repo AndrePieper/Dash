@@ -11,7 +11,10 @@ import CadastroUsuario from './Components/Usuarios/CadastroUsuario'
 import EditarUsuario from './Components/Usuarios/EditarUsuario'
 
 import Disciplinas from './Components/Disciplinas/Disciplinas';
+
 import Cursos from './Components/Cursos/Cursos';
+import CadastroCurso from './Components/Cursos/CadastroCurso';
+import EditarCurso from './Components/Cursos/EditarCurso';
 
 import Turmas from './Components/Turmas/Turmas';
 import CadastroTurma from './Components/Turmas/CadastroTurma'; 
@@ -41,6 +44,8 @@ const App = () => {
           <Route path="/disciplinas" element={<Disciplinas />} />
 
           <Route path="/cursos" element={<Cursos />} />
+          <Route path="/cursos/cadastrocurso" element={<CadastroCurso />} />
+          <Route path="/cursos/editarcurso/:id" element={<EditarCurso />} />
 
           <Route path="/turmas" element={<Turmas />} />
           <Route path="/turmas/cadastroturma" element={<CadastroTurma />} />
