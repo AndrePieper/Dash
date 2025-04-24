@@ -1,0 +1,33 @@
+.container-form {
+    max-width: 500px;
+    margin: 50px auto;
+    background-color: #f4f4f4;
+    padding: 30px;
+    border-radius: 10px;
+  }
+  
+  .container-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .container-form form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .container-form input,
+  .container-form select,
+  .container-form button {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .container-form button {
+    background-color: #009232;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }

@@ -5,7 +5,11 @@ import Layout from './Components/MenuLateral/Layout';
 import Home from './Components/Home/Home';
 import Chamadas from './Components/Chamada/Chamada';
 import Materias from './Components/Materias/Materias';
-import Entidades from './Components/Entidades/Entidades';
+
+import Usuarios from './Components/Usuarios/Usuarios';
+import CadastroUsuario from './Components/Usuarios/CadastroUsuario'
+import EditarUsuario from './Components/Usuarios/EditarUsuario'
+
 import Disciplinas from './Components/Disciplinas/Disciplinas';
 import Cursos from './Components/Cursos/Cursos';
 
@@ -30,7 +34,9 @@ const App = () => {
 
           <Route path="/materias" element={<Materias />} />
 
-          <Route path="/entidades" element={<Entidades />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/usuarios/cadastrousuario" element={<CadastroUsuario />} />
+          <Route path="/usuarios/editarusuario/:id" element={<EditarUsuario />} />
 
           <Route path="/disciplinas" element={<Disciplinas />} />
 

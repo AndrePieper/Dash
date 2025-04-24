@@ -23,7 +23,7 @@ import logo from "/src/assets/grupo-fasipe.png";
 const menuItems = [
   { text: "Chamadas", icon: <HistoryIcon />, route: "/chamadas" },
   { text: "Matérias", icon: <MenuBookIcon />, route: "/materias" },
-  { text: "Entidades", icon: <GroupIcon />, route: "/entidades" },
+  { text: "Entidades", icon: <GroupIcon />, route: "/usuarios" },
   { text: "Disciplinas", icon: <CourseIcon />, route: "/disciplinas" },
   { text: "Cursos", icon: <SchoolIcon />, route: "/cursos" },
   { text: "Turmas", icon: <ClassIcon />, route: "/turmas" },
