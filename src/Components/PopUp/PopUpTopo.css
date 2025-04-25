@@ -1,0 +1,30 @@
+.popup-topo {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    z-index: 1000;
+    color: white;
+    animation: slideDown 0.3s ease-in-out;
+  }
+  
+  .popup-topo.success {
+    background-color: #4caf50; /* Verde */
+  }
+  
+  .popup-topo.error {
+    background-color: #f44336; /* Vermelho */
+  }
+  
+  @keyframes slideDown {
+    from {
+      top: -60px;
+      opacity: 0;
+    }
+    to {
+      top: 0;
+      opacity: 1;
+    }
+  }

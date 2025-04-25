@@ -3,9 +3,9 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   Drawer,
   List,
-  ListItem,
   ListItemIcon,
   ListItemText,
+  ListItemButton,
 } from "@mui/material";
 import {
   History as HistoryIcon,
@@ -23,7 +23,7 @@ import logo from "/src/assets/grupo-fasipe.png";
 const menuItems = [
   { text: "Chamadas", icon: <HistoryIcon />, route: "/chamadas" },
   { text: "Matérias", icon: <MenuBookIcon />, route: "/materias" },
-  { text: "Entidades", icon: <GroupIcon />, route: "/usuarios" },
+  { text: "Entidades", icon: <GroupIcon />, route: "/Usuarios" },
   { text: "Disciplinas", icon: <CourseIcon />, route: "/disciplinas" },
   { text: "Cursos", icon: <SchoolIcon />, route: "/cursos" },
   { text: "Turmas", icon: <ClassIcon />, route: "/turmas" },
@@ -52,8 +52,7 @@ const Layout = () => {
         </div>
 
         <List>
-          <ListItem
-            button
+          <ListItemButton
             onClick={() => navigate("/home")}
             className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
           >
@@ -61,21 +60,20 @@ const Layout = () => {
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Início" />
-          </ListItem>
+          </ListItemButton>
 
           {menuItems.map((item) => {
             const isSelected = pathname === item.route;
 
             return (
-              <ListItem
-                button
+              <ListItemButton
                 key={item.text}
                 onClick={() => navigate(item.route)}
                 className={`menu-item ${isSelected ? "selected" : ""}`}
               >
                 <ListItemIcon className="menu-icon">{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
-              </ListItem>
+              </ListItemButton>
             );
           })}
         </List>

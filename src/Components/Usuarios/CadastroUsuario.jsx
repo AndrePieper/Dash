@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './CadastroUsuario.css';
 import { useNavigate } from 'react-router-dom';
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const CadastroUsuario = () => {
   const [nome, setNome] = useState('');
   const [cpf, setCPF] = useState('');
@@ -9,6 +11,8 @@ const CadastroUsuario = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [tipo, setTipo] = useState('');
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
   const navigate = useNavigate();
 
@@ -28,15 +32,28 @@ const CadastroUsuario = () => {
       const data = await res.json();
   
       if (!res.ok) {
-        console.log(`${res.status} - ${data.message}`)
+        setPopup({ 
+          show: true, 
+          mensage: data.message || 'Erro desconhecido', 
+          type: 'error' });
         throw new Error(data.message || 'Erro desconhecido');
       } else {
-        navigate('/usuarios');
+        setPopup({
+          show: true,
+          message: data.message || "Usuário cadastrado com sucesso!",
+          type: "success",
+        });
+        setTimeout(() => {
+          navigate('/usuarios');
+        }, 1500);
       }
 
-      })
-        .catch(erro => console.error(erro.message));
-    };
+    })
+    .catch(erro => {
+      console.error(erro.message);
+      setPopup({ mostrar: true, mensagem: erro.message, tipo: 'error' });
+    });
+  };
 
   return (
     <div className="container-form">

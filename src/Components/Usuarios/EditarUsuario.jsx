@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import './CadastroUsuario.css';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import Toast from "../PopUp/Toast" 
+import PopUpTopo from '../PopUp/PopUpTopo';
 
 const EditarUsuario = () => {
-  const [toast, setToast] = useState({ show: false, message: "", type: "" })
-
   const [usuario, setUsuario] = useState({
     id: '',
     nome: '',
@@ -16,6 +14,8 @@ const EditarUsuario = () => {
     email: '',
     tipo: ''
   });
+  
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,15 +32,13 @@ const EditarUsuario = () => {
         const data = await res.json();
 
         if (!res.ok){
-          console.log(`${res.status} - ${data.message}`)
+          console.log(data.message)
           throw new Error('Erro ao buscar usuário');
-        } else {
-          navigate('/usuarios');
         }
 
+        return data; 
       })
       .then(data => {
-        if (data && data.nome && data.email && data.tipo !== undefined) {
           setUsuario({
             id,
             nome: data.nome || '',
@@ -50,53 +48,67 @@ const EditarUsuario = () => {
             email: data.email || '',
             tipo: parseInt(data.tipo, 10)
           });
-        } else {
-          throw new Error('Dados incompletos do usuário');
-        }
-      })
-      .catch(erro => console.error(erro.message));
+    })
+    .catch(erro => {
+      console.error('Erro ao buscar usuário:', erro.message);
+      navigate('/usuarios');
+    });
   }, [id]);
 
   const usuarioAtualizado = {
     ...usuario,
+    id: parseInt(usuario.id),
     tipo: parseInt(usuario.tipo, 10)
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const token = localStorage.getItem("token");
+
     try {
       const res = await fetch(`https://projeto-iii-4.vercel.app/usuarios`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",  
+          Authorization: `Bearer ${token}` 
+        },
         body: JSON.stringify(usuarioAtualizado),
       })
   
       const data = await res.json()
   
       if (!res.ok) {
-        console.log(`${data.status} - ${data.message}`);
+        console.log(data.message)
         throw new Error(data.message || "Erro ao alterar usuário")
       }
   
-      setToast({
+      setPopup({
         show: true,
         message: data.message || "Usuário alterado com sucesso!",
         type: "success",
-      })
+      });
   
       setTimeout(() => navigate("/usuarios"), 1500)
   
     } catch (error) {
-      setToast({
+      setPopup({
         show: true,
         message: error.message || "Erro inesperado!",
         type: "error",
-      })
+      });
+
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
     }
   }
 
   return (
     <div className="container-form">
+
+      {popup.show && (
+        <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+
       <h2>Editar Usuário</h2>
       <form onSubmit={handleSubmit}>
         <label>Nome</label>
