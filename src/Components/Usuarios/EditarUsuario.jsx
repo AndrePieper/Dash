@@ -104,84 +104,86 @@ const EditarUsuario = () => {
       setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
     }
   }
+ 
+  // <div className="header-turmas"> - cabeçalho verde - remover
 
   return (
-    <div className="container-form">
+    <div className="tela-turmas">
       <div className="header-turmas">
-        <h2>Editar de Entidades</h2>
+        <h2>Editar Entidade</h2>
       </div>
 
-      {popup.show && (
-        <PopUpTopo message={popup.message} type={popup.type} />
-      )}
+      <div className="container-form">
+        {popup.show && (
+          <PopUpTopo message={popup.message} type={popup.type} />
+        )}
 
-      <h2>Editar Usuário</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Nome</label>
-        <input
-          type="text"
-          value={usuario.nome}
-          onChange={(e) => setUsuario({ ...usuario, nome: e.target.value })}
-          required
-        />
+        <form onSubmit={handleSubmit}>
+          <label>Nome</label>
+          <input
+            type="text"
+            value={usuario.nome}
+            onChange={(e) => setUsuario({ ...usuario, nome: e.target.value })}
+            required
+          />
 
-        <label>Status</label>
-        <select
-          value={usuario.status}
-          onChange={(e) => setUsuario({ ...usuario, status: parseInt(e.target.value, 10) })}
-          required
-        >
-          <option value="">Selecione o status</option>
-          <option value={0}>Cadastrado</option>
-          <option value={1}>Ativo</option>
-          <option value={2}>Inativo</option>
-        </select>
+          <label>Status</label>
+          <select
+            value={usuario.status}
+            onChange={(e) => setUsuario({ ...usuario, status: parseInt(e.target.value, 10) })}
+            required
+          >
+            <option value="">Selecione o status</option>
+            <option value={0}>Cadastrado</option>
+            <option value={1}>Ativo</option>
+            <option value={2}>Inativo</option>
+          </select>
 
-        <label>CPF</label>
-        <input
-          type="text"
-          value={usuario.cpf}
-          onChange={(e) => setUsuario({ ...usuario, cpf: e.target.value })}
-        />
+          <label>CPF</label>
+          <input
+            type="text"
+            value={usuario.cpf}
+            onChange={(e) => setUsuario({ ...usuario, cpf: e.target.value })}
+          />
 
-        <label>RA</label>
-        <input
-          type="text"
-          value={usuario.ra}
-          onChange={(e) => setUsuario({ ...usuario, ra: e.target.value })}
-        />
+          <label>RA</label>
+          <input
+            type="text"
+            value={usuario.ra}
+            onChange={(e) => setUsuario({ ...usuario, ra: e.target.value })}
+          />
 
-        <label>IMEI</label>
-        <input
-          type="text"
-          value={usuario.imei}
-          onChange={(e) => setUsuario({ ...usuario, imei: e.target.value })}
-        />
+          <label>IMEI</label>
+          <input
+            type="text"
+            value={usuario.imei}
+            onChange={(e) => setUsuario({ ...usuario, imei: e.target.value })}
+          />
 
-        <label>Email</label>
-        <input
-          type="email"
-          value={usuario.email}
-          onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
-          required
-        />
+          <label>Email</label>
+          <input
+            type="email"
+            value={usuario.email}
+            onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
+            required
+          />
 
-        <label>Tipo de Usuário</label>
-        <select
-          value={usuario.tipo}
-          onChange={(e) => setUsuario({ ...usuario, tipo: parseInt(e.target.value, 10) })}
-          required
-        >
-          <option value="">Selecione o tipo</option>
-          <option value={0}>Aluno</option>
-          <option value={1}>Professor</option>
-          <option value={2}>Administrador</option>
-        </select>
+          <label>Tipo de Usuário</label>
+          <select
+            value={usuario.tipo}
+            onChange={(e) => setUsuario({ ...usuario, tipo: parseInt(e.target.value, 10) })}
+            required
+          >
+            <option value="">Selecione o tipo</option>
+            <option value={0}>Aluno</option>
+            <option value={1}>Professor</option>
+            <option value={2}>Administrador</option>
+          </select>
 
-        <button type="submit">Salvar Alterações</button>
-      </form>
+          <button type="submit">Salvar Alterações</button>
+        </form>
+      </div>
     </div>
-    
   );
 };
 
