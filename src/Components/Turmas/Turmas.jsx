@@ -84,7 +84,7 @@ const Turmas = () => {
   };
 
   const cancelExcluirTurma = () => {
-    setShowModal(false); // Fechar o modal sem excluir
+    setShowModal(false);
   };
 
   return (

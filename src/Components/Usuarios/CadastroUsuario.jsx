@@ -35,7 +35,7 @@ const CadastroUsuario = () => {
         setPopup({ 
           show: true, 
           mensage: data.message || 'Erro desconhecido', 
-          type: 'error' });
+          type: "error" });
         throw new Error(data.message || 'Erro desconhecido');
       } else {
         setPopup({

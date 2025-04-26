@@ -1,21 +1,21 @@
-.tela-turmas {
+.tela-usuarios {
     padding: 20px;
   }
   
-  .header-turmas {
+  .header-usuarios {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   
-  .tabela-turmas {
+  .tabela-usuarios {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
   }
   
-  .tabela-turmas th,
-  .tabela-turmas td {
+  .tabela-usuarios th,
+  .tabela-usuarios td {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: left;

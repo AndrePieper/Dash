@@ -7,6 +7,7 @@ import PopUpTopo from '../PopUp/PopUpTopo';
 const EditarUsuario = () => {
   const [usuario, setUsuario] = useState({
     id: '',
+    status: '',
     nome: '',
     cpf: '',
     ra: '',
@@ -41,6 +42,7 @@ const EditarUsuario = () => {
       .then(data => {
           setUsuario({
             id,
+            status: parseInt(data.status, 10) || '',
             nome: data.nome || '',
             cpf: data.cpf || '',
             ra: data.ra || '',
@@ -57,6 +59,7 @@ const EditarUsuario = () => {
 
   const usuarioAtualizado = {
     ...usuario,
+    status: parseInt(usuario.status, 10),
     id: parseInt(usuario.id),
     tipo: parseInt(usuario.tipo, 10)
   };
@@ -104,6 +107,9 @@ const EditarUsuario = () => {
 
   return (
     <div className="container-form">
+      <div className="header-turmas">
+        <h2>Editar de Entidades</h2>
+      </div>
 
       {popup.show && (
         <PopUpTopo message={popup.message} type={popup.type} />
@@ -118,6 +124,18 @@ const EditarUsuario = () => {
           onChange={(e) => setUsuario({ ...usuario, nome: e.target.value })}
           required
         />
+
+        <label>Status</label>
+        <select
+          value={usuario.status}
+          onChange={(e) => setUsuario({ ...usuario, status: parseInt(e.target.value, 10) })}
+          required
+        >
+          <option value="">Selecione o status</option>
+          <option value={0}>Cadastrado</option>
+          <option value={1}>Ativo</option>
+          <option value={2}>Inativo</option>
+        </select>
 
         <label>CPF</label>
         <input

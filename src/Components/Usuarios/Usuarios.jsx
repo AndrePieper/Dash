@@ -56,6 +56,15 @@ const Usuarios = () => {
     setConfirmarExclusao(null);
   };
 
+  const tipoUsuarioTexto = (tipo) => {
+    switch (tipo) {
+      case 0: return 'Aluno';
+      case 1: return 'Professor';
+      case 2: return 'Administrador';
+      default: return 'Desconhecido';
+    }
+  };
+
   return (
     <div className="tela-turmas">
       <div className="header-turmas">
@@ -78,7 +87,7 @@ const Usuarios = () => {
               <td>{user.id}</td>
               <td>{user.nome}</td>
               <td>{user.email}</td>
-              <td>{user.tipo}</td>
+              <td>{tipoUsuarioTexto(user.tipo)}</td>
               <td>
                 <button
                   className="botao-editar"
