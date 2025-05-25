@@ -1,22 +1,17 @@
+/* Chamada.css */
+
 .tela-chamadas {
-  padding: 20px;
-  margin-left: 250px; /* largura do menu lateral */
-  min-height: 100vh;
+  padding: 2rem;
   background-color: #e9e9e9;
+  margin-left: 250px; /* Largura do menu lateral */
+  min-height: 100vh;
 }
 
-/* Header igual do exemplo */
-.header-chamadas {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.header-chamadas h2 {
-  font-weight: 700;
-  font-size: 1.8rem;
+/* Título */
+.titulo {
+  margin-bottom: 1.5rem;
   color: #333;
+  font-weight: bold;
 }
 
 /* Mensagem de erro */
@@ -24,10 +19,10 @@
   margin-bottom: 1rem;
 }
 
-/* Lista de cards (vertical, sem grid) */
-.lista-cards {
-  display: flex;
-  flex-direction: column;
+/* Grid dos cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -52,25 +47,31 @@
   color: #2e7d32;
 }
 
-/* Botão padrão no canto inferior direito, estilo igual ao exemplo */
-.botao-adicionar {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #009232;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  font-size: 36px;
-  line-height: 56px;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  transition: background-color 0.3s ease;
+/* Botão editar dentro do card */
+.botao-editar {
+  margin-top: 1rem;
+  border: 1px solid #4caf50;
+  color: #4caf50;
+  transition: 0.3s;
 }
 
-.botao-adicionar:hover {
-  background-color: #00701a;
+.botao-editar:hover {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* Botão padrão no final da tela */
+.botaoPadrao {
+  display: block;
+  margin: 0 auto;
+  background-color: #2e7d32;
+  color: white;
+  padding: 0.75rem 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: 0.3s;
+}
+
+.botaoPadrao:hover {
+  background-color: #1b5e20;
 }

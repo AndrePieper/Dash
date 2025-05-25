@@ -1,5 +1,7 @@
+
+/*
 .pagina-com-menu {
-  margin-left: 250px; /* largura do menu lateral fixo */
+  margin-left: 250px; 
   padding: 20px;
   min-height: 100vh;
   background-color: #f4f4f4;
@@ -23,7 +25,7 @@
   box-sizing: border-box;
 }
 
-/* Reutilize a classe ModalContainer que já tem no seu css atual */
+
 .ModalContainer {
   position: absolute;
   top: 50%;
@@ -37,3 +39,4 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
+*/
