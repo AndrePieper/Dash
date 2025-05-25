@@ -94,7 +94,7 @@ const CadastroUsuario = () => {
             required
           />
           
-          <label>Passwords</label>
+          <label>Senha</label>
           <input
             type="password"
             placeholder="Senha"
