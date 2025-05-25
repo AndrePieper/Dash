@@ -16,51 +16,56 @@ const CadastroUsuario = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
 
-    fetch('https://projeto-iii-4.vercel.app/usuarios', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ nome, cpf, ra, email, senha, tipo: Number(tipo) }),
-    })
-    .then(async res => {
-      const data = await res.json();
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch('https://projeto-iii-4.vercel.app/usuarios', {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",  
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ nome, cpf, ra, email, senha, tipo: Number(tipo) }),
+      })
+  
+      const data = await res.json()
   
       if (!res.ok) {
-        setPopup({ 
-          show: true, 
-          mensage: data.message || 'Erro desconhecido', 
-          type: "error" });
-        throw new Error(data.message || 'Erro desconhecido');
-      } else {
-        setPopup({
-          show: true,
-          message: data.message || "Usuário cadastrado com sucesso!",
-          type: "success",
-        });
-        setTimeout(() => {
-          navigate('/usuarios');
-        }, 1500);
+        console.log(data.message)
+        throw new Error(data.message || "Erro ao alterar usuário")
       }
-
-    })
-    .catch(erro => {
-      console.error(erro.message);
-      setPopup({ mostrar: true, mensagem: erro.message, tipo: 'error' });
-    });
-  };
+  
+      setPopup({
+        show: true,
+        message: data.message || "Usuário cadastrado com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => navigate("/usuarios"), 1500)
+  
+    } catch (error) {
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
+  }
 
   return (
     <div className="tela-turmas">
       <div className="header-turmas">
         <h2>Cadastro de Entidades</h2>
       </div>
+
       <div className="container-form">
+
+      {popup.show && (
+          <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+
         <form onSubmit={handleSubmit}>
         <label>Nome</label>
           <input
