@@ -11,14 +11,14 @@ const CadastroUsuario = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [tipo, setTipo] = useState('');
-
+  
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
-
+  
   const navigate = useNavigate();
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     const token = localStorage.getItem("token");
     try {
       const res = await fetch('https://projeto-iii-4.vercel.app/usuarios', {
@@ -72,7 +72,7 @@ const CadastroUsuario = () => {
             type="text"
             placeholder="Nome"
             value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            onChange={(e) => setNome(e.target.value )}
             required
           />
 
@@ -95,8 +95,7 @@ const CadastroUsuario = () => {
             type="email"
             placeholder="E-mail"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            onChange={(e) => setEmail(e.target.value )}
           />
           
           <label>Senha</label>
@@ -105,11 +104,10 @@ const CadastroUsuario = () => {
             placeholder="Senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-            required
           />
 
           <label>Tipo</label>
-          <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+          <select value={tipo} onChange={(e) => setTipo(e.target.value )}>
           <option value="">Selecione o tipo</option>
           <option value={0}>Aluno</option>
           <option value={1}>Professor</option>
