@@ -1,53 +1,162 @@
+/* Container principal da área de usuários com espaço para menu lateral */
 .tela-usuarios {
-    padding: 20px;
-  }
-  
-  .header-usuarios {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .tabela-usuarios {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .tabela-usuarios th,
-  .tabela-usuarios td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-  }
-  
-  .botao-adicionar {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background-color: #009232;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    padding: 15px;
-    cursor: pointer;
-  }
-  
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-conteudo {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-  }
+  margin-left: 250px;
+  padding: 25px;
+  height: auto;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+/* Cabeçalho com título e filtros, estilo com gradiente e espaçamento */
+.header-usuarios {
+  margin-top: 20px;
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to right, #009c3b, #00c853);
+  color: white;
+  padding: 15px 20px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Container para os filtros, alinhados à direita com espaçamento */
+.filtros-usuarios {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  max-width: 500px;
+  justify-content: flex-end;
+}
+
+/* Estilos básicos para inputs e selects de filtro */
+.input-filtro,
+.select-filtro {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  min-width: 180px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+/* Input de filtro ocupa mais espaço possível */
+.input-filtro {
+  flex-grow: 1;
+  max-width: 280px;
+}
+
+/* Select de filtro com largura fixa */
+.select-filtro {
+  max-width: 180px;
+}
+
+/* Tabela com largura total, sem espaçamento entre células */
+.tabela-usuarios {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: fixed;
+}
+
+/* Estilos para células da tabela com borda, padding e texto truncado */
+.tabela-usuarios th,
+.tabela-usuarios td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Cabeçalhos com cursor pointer e fundo cinza */
+.tabela-usuarios th {
+  cursor: pointer;
+  user-select: none;
+  background-color: #e0e0e0;
+}
+
+/* Efeito hover para cabeçalhos */
+.tabela-usuarios th:hover {
+  background-color: #d0d0d0;
+}
+
+/* Botões editar e excluir com estilo, cor e transição */
+.botao-editar,
+.botao-excluir {
+  padding: 5px 10px;
+  font-size: 14px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Botão editar verde */
+.botao-editar {
+  background-color: green;
+}
+
+/* Hover no botão editar mais escuro */
+.botao-editar:hover {
+  background-color: #006400;
+}
+
+/* Botão excluir vermelho com margem esquerda */
+.botao-excluir {
+  background-color: red;
+  margin-left: 5px;
+}
+
+/* Hover no botão excluir mais escuro */
+.botao-excluir:hover {
+  background-color: #8b0000;
+}
+
+/* Botão de adicionar fixo no canto inferior direito, círculo verde */
+.botao-adicionar {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #009232;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover no botão adicionar mais escuro */
+.botao-adicionar:hover {
+  background-color: #006c24;
+}
+
+/* Modal com fundo semitransparente centralizado */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Conteúdo do modal com fundo branco, padding e borda arredondada */
+.modal-conteudo {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}

@@ -4,13 +4,18 @@ import Login from './Components/Login/Login';
 import Layout from './Components/MenuLateral/Layout';
 import Home from './Components/Home/Home';
 import Chamadas from './Components/Chamada/Chamada';
+
 import Materias from './Components/Materias/Materias';
+import CadastroMateria from './Components/Materias/CadastroMateria'
+import EditarMateria from './Components/Materias/EditarMateria'
 
 import Usuarios from './Components/Usuarios/Usuarios';
 import CadastroUsuario from './Components/Usuarios/CadastroUsuario'
 import EditarUsuario from './Components/Usuarios/EditarUsuario'
 
 import Disciplinas from './Components/Disciplinas/Disciplinas';
+import CadastroDisciplina from './Components/Disciplinas/CadastroDisciplina'
+import EditarDisciplina from './Components/Disciplinas/EditarDisciplina'
 
 import Cursos from './Components/Cursos/Cursos';
 import CadastroCurso from './Components/Cursos/CadastroCurso';
@@ -36,12 +41,16 @@ const App = () => {
           <Route path="/chamadas" element={<Chamadas />} />
 
           <Route path="/materias" element={<Materias />} />
+          <Route path="/materias/cadastromateria" element={<CadastroMateria />} />
+          <Route path="/materias/editarmateria/:id" element={<EditarMateria />} />
 
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/usuarios/cadastrousuario" element={<CadastroUsuario />} />
           <Route path="/usuarios/editarusuario/:id" element={<EditarUsuario />} />
 
           <Route path="/disciplinas" element={<Disciplinas />} />
+          <Route path="/disciplinas/cadastrodisciplina" element={<CadastroDisciplina />} />
+          <Route path="/disciplinas/editardisciplina/:id" element={<EditarDisciplina />} />
 
           <Route path="/cursos" element={<Cursos />} />
           <Route path="/cursos/cadastrocurso" element={<CadastroCurso />} />

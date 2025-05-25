@@ -1,5 +1,7 @@
 .dashboard-container {
   display: flex;
+   height: 100vh;
+  background-color: #f4f4f4;
 }
 
 .drawer-custom {
@@ -51,7 +53,8 @@
 
 .conteudo-principal {
   flex-grow: 1;
-  padding: 24px;
-  background-color: #f4f4f4;
-  min-height: 100vh;
+  background-color: #ffffff;
+  height: 100vh;
+  overflow-y: hidden; /* esconde qualquer rolagem */
+  box-sizing: border-box;
 }

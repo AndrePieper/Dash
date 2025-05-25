@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Semestres = () => {
   const [semestres, setSemestres] = useState([]);
-  const [confirmarExclusao, setConfirmarExclusao] = useState(null); // Estado para controle de exclusão
+  const [confirmarExclusao, setConfirmarExclusao] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,11 +36,11 @@ const Semestres = () => {
   };
 
   const handleEditarSemestre = (id) => {
-    navigate(`/semestres/editarsemestre/${id}`); // Navegar para a página de edição
+    navigate(`/semestres/editarsemestre/${id}`);
   };
 
   const handleExcluirSemestre = (id) => {
-    setConfirmarExclusao(id); // Armazenar o id do semestre a ser excluído
+    setConfirmarExclusao(id);
   };
 
   const confirmarExclusaoSemestre = (id) => {
@@ -53,15 +53,15 @@ const Semestres = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => {
-        setSemestres(semestres.filter(sem => sem.id !== id)); // Atualiza a lista de semestres
-        setConfirmarExclusao(null); // Fecha a confirmação
+      .then(() => {
+        setSemestres(semestres.filter(sem => sem.id !== id));
+        setConfirmarExclusao(null);
       })
       .catch((err) => console.error('Erro ao excluir semestre:', err));
   };
 
   const cancelarExclusao = () => {
-    setConfirmarExclusao(null); // Cancela a exclusão
+    setConfirmarExclusao(null);
   };
 
   return (
@@ -77,7 +77,7 @@ const Semestres = () => {
             <th>Descrição</th>
             <th>Data Inicial</th>
             <th>Data Final</th>
-            <th>Ações</th> {/* Coluna de ações para editar e excluir */}
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -88,18 +88,10 @@ const Semestres = () => {
               <td>{formatarData(sem.data_inicio)}</td>
               <td>{formatarData(sem.data_final)}</td>
               <td>
-                <button 
-                  className="botao-editar" 
-                  onClick={() => handleEditarSemestre(sem.id)} 
-                  style={{ backgroundColor: 'green', color: 'white', padding: '5px 10px', fontSize: '14px' }}
-                >
+                <button className="botao-editar" onClick={() => handleEditarSemestre(sem.id)}>
                   <FaPen size={16} />
                 </button>
-                <button 
-                  className="botao-excluir" 
-                  onClick={() => handleExcluirSemestre(sem.id)} 
-                  style={{ backgroundColor: 'red', color: 'white', padding: '5px 10px', fontSize: '14px', marginLeft: '5px' }}
-                >
+                <button className="botao-excluir" onClick={() => handleExcluirSemestre(sem.id)}>
                   <FaTrash size={16} />
                 </button>
               </td>
@@ -112,7 +104,6 @@ const Semestres = () => {
         <FaPlus size={28} />
       </button>
 
-      {/* Modal de confirmação de exclusão */}
       {confirmarExclusao && (
         <div className="modal">
           <div className="modal-conteudo">
