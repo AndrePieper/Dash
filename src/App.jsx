@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login/Login';
 import Layout from './Components/MenuLateral/Layout';
 import Home from './Components/Home/Home';
-import Chamadas from './Components/Chamada/Chamada';
+
+import Chamada from './Components/Chamada/Chamada';
+import NovaChamada from './Components/Chamada/NovaChamada';
 
 import Materias from './Components/Materias/Materias';
 import CadastroMateria from './Components/Materias/CadastroMateria'
@@ -38,7 +40,8 @@ const App = () => {
   
           <Route path="/home" element={<Home />} />
 
-          <Route path="/chamadas" element={<Chamadas />} />
+          <Route path="/chamada" element={<Chamada />} />
+          <Route path="/novachamada" element={<NovaChamada />} />
 
           <Route path="/materias" element={<Materias />} />
           <Route path="/materias/cadastromateria" element={<CadastroMateria />} />

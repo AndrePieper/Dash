@@ -31,7 +31,7 @@ const Layout = () => {
 
   // Menus por tipo de usuário
   const menuItemsProfessor = [
-    { text: "Chamadas", icon: <HistoryIcon />, route: "/chamadas" },
+    { text: "Chamadas", icon: <HistoryIcon />, route: "/chamada" },
     { text: "Matérias", icon: <MenuBookIcon />, route: "/materias" },
   ];
 

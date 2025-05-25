@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { decodeJwt } from "jose";
 import { useNavigate } from "react-router-dom";
 import { Button, Typography, Alert, Card, CardContent } from "@mui/material";
-import { FaEdit } from "react-icons/fa";
 import "./Chamada.css";
 
 const Chamada = () => {
@@ -12,11 +11,7 @@ const Chamada = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      setMensagemErro("Token não encontrado. Faça login novamente.");
-      return;
-    }
-
+    
     let idProfessor = null;
     try {
       const decoded = decodeJwt(token);
@@ -27,11 +22,12 @@ const Chamada = () => {
       return;
     }
 
-    fetch(`https://projeto-iii-4.vercel.app/chamadas/professor/${idProfessor}`, {
-      headers: {
-        Authorization: token,
-      },
-    })
+    const url = `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${idProfessor}`;
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    fetch(url, { headers })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Erro ao buscar as chamadas.");
@@ -43,23 +39,19 @@ const Chamada = () => {
       })
       .catch((error) => {
         setMensagemErro(error.message);
-        console.error(error.message);
+        console.error("❌ Erro na requisição:", error.message);
       });
   }, []);
 
-  const handleEditarChamada = (id) => {
-    navigate(`/editar-chamada/${id}`);
-  };
-
   const handleNovaChamada = () => {
-    navigate("/gerar-chamada");
+    navigate("/novachamada");
   };
 
   return (
     <div className="tela-chamadas">
-      <Typography className="titulo" variant="h4" gutterBottom>
-        Chamadas Antigas
-      </Typography>
+      <div className="header-chamadas">
+        <h2>Chamadas Antigas</h2>
+      </div>
 
       {mensagemErro && (
         <Alert className="mensagem-erro" severity="error">
@@ -72,7 +64,7 @@ const Chamada = () => {
       )}
 
       {chamadas.length > 0 && (
-        <div className="grid">
+        <div className="lista-cards">
           {chamadas.map((chamada) => (
             <Card key={chamada.id} className="card">
               <CardContent>
@@ -94,27 +86,15 @@ const Chamada = () => {
                   <strong>Hora de Fechamento:</strong>{" "}
                   {new Date(chamada.data_hora_final).toLocaleTimeString()}
                 </Typography>
-                <Button
-                  className="botao-editar"
-                  variant="outlined"
-                  startIcon={<FaEdit />}
-                  onClick={() => handleEditarChamada(chamada.id)}
-                >
-                  Editar
-                </Button>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
 
-      <Button
-        className="botaoPadrao"
-        variant="contained"
-        onClick={handleNovaChamada}
-      >
-        Nova Chamada
-      </Button>
+      <button className="botao-adicionar" onClick={handleNovaChamada} title="Nova Chamada">
+        +
+      </button>
     </div>
   );
 };
