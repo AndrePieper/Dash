@@ -20,23 +20,32 @@ import {
 import "./Layout.css";
 import logo from "/src/assets/grupo-fasipe.png";
 
-const menuItems = [
-  { text: "Chamadas", icon: <HistoryIcon />, route: "/chamadas" },
-  { text: "Matérias", icon: <MenuBookIcon />, route: "/materias" },
-  { text: "Entidades", icon: <GroupIcon />, route: "/Usuarios" },
-  { text: "Disciplinas", icon: <CourseIcon />, route: "/disciplinas" },
-  { text: "Cursos", icon: <SchoolIcon />, route: "/cursos" },
-  { text: "Turmas", icon: <ClassIcon />, route: "/turmas" },
-  { text: "Semestres", icon: <CalendarIcon />, route: "/semestres" },
-];
-
 const Layout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const tipoUsuario = localStorage.getItem("tipo"); // "1" = professor, "2" = admin
 
   if (pathname === "/" || pathname === "/login") {
     return <Outlet />;
   }
+
+  // Menus por tipo de usuário
+  const menuItemsProfessor = [
+    { text: "Chamadas", icon: <HistoryIcon />, route: "/chamadas" },
+    { text: "Matérias", icon: <MenuBookIcon />, route: "/materias" },
+  ];
+
+  const menuItemsAdm = [
+    { text: "Entidades", icon: <GroupIcon />, route: "/Usuarios" },
+    { text: "Disciplinas", icon: <CourseIcon />, route: "/disciplinas" },
+    { text: "Cursos", icon: <SchoolIcon />, route: "/cursos" },
+    { text: "Turmas", icon: <ClassIcon />, route: "/turmas" },
+    { text: "Semestres", icon: <CalendarIcon />, route: "/semestres" },
+  ];
+
+  const menuItems =
+    tipoUsuario === "1" ? menuItemsProfessor :
+    tipoUsuario === "2" ? menuItemsAdm : [];
 
   return (
     <div className="dashboard-container">
@@ -52,19 +61,20 @@ const Layout = () => {
         </div>
 
         <List>
-          <ListItemButton
-            onClick={() => navigate("/home")}
-            className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
-          >
-            <ListItemIcon className="menu-icon">
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Início" />
-          </ListItemButton>
+          {tipoUsuario === "1" && (
+            <ListItemButton
+              onClick={() => navigate("/home")}
+              className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
+            >
+              <ListItemIcon className="menu-icon">
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Início" />
+            </ListItemButton>
+          )}
 
           {menuItems.map((item) => {
             const isSelected = pathname === item.route;
-
             return (
               <ListItemButton
                 key={item.text}

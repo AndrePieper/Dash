@@ -1,106 +1,120 @@
-import React, { useEffect, useState } from 'react';
-import './Chamada.css';
-import { FaEdit } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { decodeJwt } from "jose";
+import { useNavigate } from "react-router-dom";
+import { Button, Typography, Alert, Card, CardContent } from "@mui/material";
+import { FaEdit } from "react-icons/fa";
+import "./Chamada.css";
 
 const Chamada = () => {
   const [chamadas, setChamadas] = useState([]);
-  const [mensagemErro, setMensagemErro] = useState('');
+  const [mensagemErro, setMensagemErro] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    let tipoUsuario = localStorage.getItem("tipo");
-    const idProfessor = localStorage.getItem("idProfessor");
-  
-    // Garantir que tipoUsuario seja um número inteiro
-    tipoUsuario = Number(tipoUsuario);  // Ou pode usar parseInt(tipoUsuario, 10)
-  
-    console.log("tipoUsuario:", tipoUsuario, "idProfessor:", idProfessor, token);
-  
-    let url;
-  
-    // Se o tipo do usuário for 1 e houver o idProfessor salvo, ajusta o parâmetro para 'id_professor' na URL
-    if (tipoUsuario === 1 && idProfessor) {
-      // Revertendo para 'id_professor' na URL para corresponder à API
-      url = `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${idProfessor}`;
-    } else {
-      url = "https://projeto-iii-4.vercel.app/chamadas";
+    if (!token) {
+      setMensagemErro("Token não encontrado. Faça login novamente.");
+      return;
     }
-  
-    // Adicionando o log da URL que será enviada no GET
-    console.log("URL enviada no GET:", url);
-    console.log("Headers:", {
-      Authorization: token,
-    });
-  
-    fetch(url, {
+
+    let idProfessor = null;
+    try {
+      const decoded = decodeJwt(token);
+      idProfessor = decoded.id;
+    } catch (error) {
+      setMensagemErro("Erro ao decodificar o token.");
+      console.error(error.message);
+      return;
+    }
+
+    fetch(`https://projeto-iii-4.vercel.app/chamadas/professor/${idProfessor}`, {
       headers: {
         Authorization: token,
       },
     })
-    .then( async res => {
-      const data = await res.json();
-
-      if (!res.ok){
-
-        console.log(data.message)
-        throw new Error('Erro ao buscar usuário');
-
-      }
-      return res.json;
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro ao buscar as chamadas.");
+        }
+        return response.json();
       })
-      .then((dados) => {
-        // Adicionando o log para exibir a resposta (dados) recebida da API
-        console.log("Dados recebidos da API:", dados);
-  
-        setChamadas(dados);
+      .then((data) => {
+        setChamadas(data.reverse().slice(0, 9));
       })
-      .then(data => {
-
-        console.log('Resposta da API inesperada:', data);
-        
-        })
       .catch((error) => {
         setMensagemErro(error.message);
-        console.error("Erro no fetch:", error.message);
+        console.error(error.message);
       });
   }, []);
-  
+
+  const handleEditarChamada = (id) => {
+    navigate(`/editar-chamada/${id}`);
+  };
+
+  const handleNovaChamada = () => {
+    navigate("/gerar-chamada");
+  };
+
   return (
     <div className="tela-chamadas">
-      <div className="header-chamadas">
-        <h2>Chamadas Antigas</h2>
-      </div>
+      <Typography className="titulo" variant="h4" gutterBottom>
+        Chamadas Antigas
+      </Typography>
 
-      {mensagemErro && <p className="mensagem-erro">{mensagemErro}</p>}
+      {mensagemErro && (
+        <Alert className="mensagem-erro" severity="error">
+          {mensagemErro}
+        </Alert>
+      )}
 
-      <table className="tabela-chamadas">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Data</th>
-            <th>Turma</th>
-            <th>Disciplina</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {chamadas.map((c) => (
-            <tr key={c.id}>
-              <td>{c.id}</td>
-              <td>{new Date(c.data).toLocaleDateString()}</td>
-              <td>{c.Turma?.Curso?.descricao} - {c.Turma?.semestre_curso}</td>
-              <td>{c.Disciplina?.descricao}</td>
-              <td>
-                <button className="btn-editar" onClick={() => handleEditarChamada(c.id)}>
-                  <FaEdit size={20} color="#4caf50" />
-                </button>
-              </td>
-            </tr>
+      {chamadas.length === 0 && !mensagemErro && (
+        <Typography variant="body1">Nenhuma chamada encontrada.</Typography>
+      )}
+
+      {chamadas.length > 0 && (
+        <div className="grid">
+          {chamadas.map((chamada) => (
+            <Card key={chamada.id} className="card">
+              <CardContent>
+                <Typography className="cardTexto">
+                  <strong>{chamada.descricao}</strong>
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Número:</strong> {chamada.id}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Data:</strong>{" "}
+                  {new Date(chamada.data_hora_inicio).toLocaleDateString()}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Hora de Início:</strong>{" "}
+                  {new Date(chamada.data_hora_inicio).toLocaleTimeString()}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Hora de Fechamento:</strong>{" "}
+                  {new Date(chamada.data_hora_final).toLocaleTimeString()}
+                </Typography>
+                <Button
+                  className="botao-editar"
+                  variant="outlined"
+                  startIcon={<FaEdit />}
+                  onClick={() => handleEditarChamada(chamada.id)}
+                >
+                  Editar
+                </Button>
+              </CardContent>
+            </Card>
           ))}
-        </tbody>
-      </table>
+        </div>
+      )}
+
+      <Button
+        className="botaoPadrao"
+        variant="contained"
+        onClick={handleNovaChamada}
+      >
+        Nova Chamada
+      </Button>
     </div>
   );
 };
