@@ -50,7 +50,7 @@ const EditarUsuario = () => {
             email: data.email || '',
             tipo: parseInt(data.tipo, 10)
           });
-    })
+      })
     .catch(erro => {
       console.error('Erro ao buscar usuário:', erro.message);
       navigate('/usuarios');
@@ -95,6 +95,7 @@ const EditarUsuario = () => {
       setTimeout(() => navigate("/usuarios"), 1500)
   
     } catch (error) {
+      console.log(error.message)
       setPopup({
         show: true,
         message: error.message || "Erro inesperado!",
