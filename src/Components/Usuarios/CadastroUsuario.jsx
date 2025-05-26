@@ -45,6 +45,7 @@ const CadastroUsuario = () => {
       setTimeout(() => navigate("/usuarios"), 1500)
   
     } catch (error) {
+      console.log(error.message)
       setPopup({
         show: true,
         message: error.message || "Erro inesperado!",

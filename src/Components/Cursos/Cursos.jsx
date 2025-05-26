@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import './Cursos.css';
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -64,45 +64,45 @@ const Cursos = () => {
 
   //FILTROS
     // Aplica filtros de nome e tipo sobre os cursos
-    // const cursosFiltrados = useMemo(() => {
-    //   return cursos.filter(user => {
-    //     const nomeLower = user.nome.toLowerCase();
-    //     const filtroNomeLower = filtroNome.toLowerCase();
-    //     const nomeOK = nomeLower.includes(filtroNomeLower);
-    //     const statusOK = filtroStatus == '' || user.status.toString() === filtroStatus;
-    //     return nomeOK && statusOK;
-    //   });
-    // }, [cursos, filtroNome, filtroStatus]);
+    const cursosFiltrados = useMemo(() => {
+      return cursos.filter(curso => {
+        const nomeLower = curso.descricao.toLowerCase();
+        const filtroNomeLower = filtroNome.toLowerCase();
+        const nomeOK = nomeLower.includes(filtroNomeLower);
+        const statusOK = filtroStatus == '' || curso.status.toString() === filtroStatus;
+        return nomeOK && statusOK;
+      });
+    }, [cursos, filtroNome, filtroStatus]);
 
     // Ordena os cursos filtrados conforme campo e direção
-    // const cursosOrdenados = useMemo(() => {
-    //   if (!ordenarPor) return cursosFiltrados;
+    const cursosOrdenados = useMemo(() => {
+      if (!ordenarPor) return cursosFiltrados;
 
-    //   return [...cursosFiltrados].sort((a, b) => {
-    //     let valA = a[ordenarPor];
-    //     let valB = b[ordenarPor];
+      return [...cursosFiltrados].sort((a, b) => {
+        let valA = a[ordenarPor];
+        let valB = b[ordenarPor];
 
-    //     if (typeof valA === 'string') valA = valA.toLowerCase();
-    //     if (typeof valB === 'string') valB = valB.toLowerCase();
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
 
-    //     if (valA > valB) return ordemAscendente ? 1 : -1;
-    //     if (valA < valB) return ordemAscendente ? -1 : 1;
-    //     return 0;
-    //   });
-    // }, [cursosFiltrados, ordenarPor, ordemAscendente]);
+        if (valA > valB) return ordemAscendente ? 1 : -1;
+        if (valA < valB) return ordemAscendente ? -1 : 1;
+        return 0;
+      });
+    }, [cursosFiltrados, ordenarPor, ordemAscendente]);
 
     // Limita os cursos que cabem na tela (sem paginação)
-    // const cursosVisiveis = cursosOrdenados.slice(0, 15);
+    const cursosVisiveis = cursosOrdenados.slice(0, 15);
 
     // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
-    // const handleOrdenar = (campo) => {
-    //   if (ordenarPor === campo) {
-    //     setOrdemAscendente(!ordemAscendente);
-    //   } else {
-    //     setOrdenarPor(campo);
-    //     setOrdemAscendente(true);
-    //   }
-    // };
+    const handleOrdenar = (campo) => {
+      if (ordenarPor === campo) {
+        setOrdemAscendente(!ordemAscendente);
+      } else {
+        setOrdenarPor(campo);
+        setOrdemAscendente(true);
+      }
+    };
 
   return (
     <div className="tela-turmas">
@@ -123,9 +123,8 @@ const Cursos = () => {
             className="select-filtro"
           >
             <option value="">Todos Status</option>
-            <option value="0">Cadastrado</option>
-            <option value="1">Válido</option>
-            <option value="2">Inativo</option>
+            <option value="0">Ativo</option>
+            <option value="1">Inativo</option>
           </select>
         </div>
 
@@ -142,7 +141,7 @@ const Cursos = () => {
           </tr>
         </thead>
         <tbody>
-          {cursos.map((curso) => (
+          {cursosVisiveis.map((curso) => (
             <tr key={curso.id}>
               <td>{curso.id}</td>
               <td>{curso.descricao}</td>

@@ -33,20 +33,23 @@ const CadastroCurso = () => {
         },
         body: JSON.stringify(novoCurso),
       })
+
+      const data = await res.json()
         
-        if (!res.ok) {
-          console.log(data.message)
-          throw new Error(data.message || "Erro ao cadastrar curso")
-        }
-    
-        setPopup({
-          show: true,
-          message: data.message || "Curso cadastrado com sucesso!",
-          type: "success",
-        });
-        setTimeout(() => navigate("/cursos"), 1500)
+      if (!res.ok) {
+        console.log(data.message)
+        throw new Error(data.message || "Erro ao cadastrar curso")
+      }
+  
+      setPopup({
+        show: true,
+        message: data.message || "Curso cadastrado com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => navigate("/cursos"), 1500)
 
     } catch (error) {
+      console.log(error.message)
       setPopup({
         show: true,
         message: error.message || "Erro inesperado!",
