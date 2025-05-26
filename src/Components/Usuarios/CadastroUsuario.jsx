@@ -34,7 +34,7 @@ const CadastroUsuario = () => {
   
       if (!res.ok) {
         console.log(data.message)
-        throw new Error(data.message || "Erro ao alterar usuário")
+        throw new Error(data.message || "Erro ao cadastrar usuário")
       }
   
       setPopup({

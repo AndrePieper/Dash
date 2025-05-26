@@ -11,6 +11,7 @@ const Usuarios = () => {
   // Estados para filtros de nome e tipo
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('');
+  const [filtroStatus, setFiltroStatus] = useState('');
   // Estado para campo de ordenação e direção da ordenação
   const [ordenarPor, setOrdenarPor] = useState(null);
   const [ordemAscendente, setOrdemAscendente] = useState(true);
@@ -79,9 +80,10 @@ const Usuarios = () => {
       const filtroNomeLower = filtroNome.toLowerCase();
       const nomeOK = nomeLower.includes(filtroNomeLower);
       const tipoOK = filtroTipo === '' || user.tipo.toString() === filtroTipo;
-      return nomeOK && tipoOK;
+      const statusOK = filtroStatus == '' || user.status.toString() === filtroStatus;
+      return nomeOK && tipoOK && statusOK;
     });
-  }, [usuarios, filtroNome, filtroTipo]);
+  }, [usuarios, filtroNome, filtroTipo, filtroStatus]);
 
   // Ordena os usuários filtrados conforme campo e direção
   const usuariosOrdenados = useMemo(() => {
@@ -136,6 +138,16 @@ const Usuarios = () => {
             <option value="0">Aluno</option>
             <option value="1">Professor</option>
             <option value="2">Administrador</option>
+          </select>
+          <select
+            value={filtroStatus}
+            onChange={e => setFiltroStatus(e.target.value)}
+            className="select-filtro"
+          >
+            <option value="">Todos Status</option>
+            <option value="0">Cadastrado</option>
+            <option value="1">Válido</option>
+            <option value="2">Inativo</option>
           </select>
         </div>
       </div>

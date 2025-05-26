@@ -6,6 +6,15 @@ import { useNavigate } from 'react-router-dom';
 const Cursos = () => {
   const [cursos, setCursos] = useState([]);
   const [confirmarExclusao, setConfirmarExclusao] = useState(null);
+
+  // Estados para filtros de nome e tipo
+    const [filtroNome, setFiltroNome] = useState('');
+    const [filtroStatus, setFiltroStatus] = useState('');
+
+  // Estado para campo de ordenação e direção da ordenação
+    const [ordenarPor, setOrdenarPor] = useState(null);
+    const [ordemAscendente, setOrdemAscendente] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,10 +62,73 @@ const Cursos = () => {
       .catch((err) => console.error('Erro ao excluir curso:', err));
   };
 
+  //FILTROS
+    // Aplica filtros de nome e tipo sobre os cursos
+    // const cursosFiltrados = useMemo(() => {
+    //   return cursos.filter(user => {
+    //     const nomeLower = user.nome.toLowerCase();
+    //     const filtroNomeLower = filtroNome.toLowerCase();
+    //     const nomeOK = nomeLower.includes(filtroNomeLower);
+    //     const statusOK = filtroStatus == '' || user.status.toString() === filtroStatus;
+    //     return nomeOK && statusOK;
+    //   });
+    // }, [cursos, filtroNome, filtroStatus]);
+
+    // Ordena os cursos filtrados conforme campo e direção
+    // const cursosOrdenados = useMemo(() => {
+    //   if (!ordenarPor) return cursosFiltrados;
+
+    //   return [...cursosFiltrados].sort((a, b) => {
+    //     let valA = a[ordenarPor];
+    //     let valB = b[ordenarPor];
+
+    //     if (typeof valA === 'string') valA = valA.toLowerCase();
+    //     if (typeof valB === 'string') valB = valB.toLowerCase();
+
+    //     if (valA > valB) return ordemAscendente ? 1 : -1;
+    //     if (valA < valB) return ordemAscendente ? -1 : 1;
+    //     return 0;
+    //   });
+    // }, [cursosFiltrados, ordenarPor, ordemAscendente]);
+
+    // Limita os cursos que cabem na tela (sem paginação)
+    // const cursosVisiveis = cursosOrdenados.slice(0, 15);
+
+    // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
+    // const handleOrdenar = (campo) => {
+    //   if (ordenarPor === campo) {
+    //     setOrdemAscendente(!ordemAscendente);
+    //   } else {
+    //     setOrdenarPor(campo);
+    //     setOrdemAscendente(true);
+    //   }
+    // };
+
   return (
     <div className="tela-turmas">
       <div className="header-turmas">
         <h2>Cadastro de Cursos</h2>
+
+        <div className="filtros-cursos">
+          <input
+            type="text"
+            placeholder="Filtrar por nome"
+            value={filtroNome}
+            onChange={e => setFiltroNome(e.target.value)}
+            className="input-filtro"
+          />
+          <select
+            value={filtroStatus}
+            onChange={e => setFiltroStatus(e.target.value)}
+            className="select-filtro"
+          >
+            <option value="">Todos Status</option>
+            <option value="0">Cadastrado</option>
+            <option value="1">Válido</option>
+            <option value="2">Inativo</option>
+          </select>
+        </div>
+
       </div>
 
       <table className="tabela-turmas">

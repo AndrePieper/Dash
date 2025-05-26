@@ -39,4 +39,27 @@
   .modal button:hover {
     opacity: 0.8;
   }
+
+/* Estilos básicos para inputs e selects de filtro */
+.input-filtro,
+.select-filtro {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  min-width: 180px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+/* Input de filtro ocupa mais espaço possível */
+.input-filtro {
+  flex-grow: 1;
+  max-width: 280px;
+}
+
+/* Select de filtro com largura fixa */
+.select-filtro {
+  max-width: 180px;
+}
   
