@@ -51,10 +51,16 @@ const EditarUsuario = () => {
             tipo: parseInt(data.tipo, 10)
           });
       })
-    .catch(erro => {
-      console.error('Erro ao buscar usuário:', erro.message);
-      navigate('/usuarios');
-    });
+      .catch((err) => {
+        console.error('Erro ao buscar usuário: ', err)
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/usuarios"), 2000);
+      });
   }, [id]);
 
   const usuarioAtualizado = {

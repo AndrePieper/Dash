@@ -166,7 +166,7 @@ const Cursos = () => {
         <thead>
           <tr>
           <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
-                ID {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+                Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
               </th>
               <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
                 Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}

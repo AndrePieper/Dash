@@ -191,7 +191,7 @@ const Usuarios = () => {
           <thead>
             <tr>
               <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
-                ID {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+                Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
               </th>
               <th onClick={() => handleOrdenar('nome')} style={{ cursor: 'pointer' }}>
                 Nome {ordenarPor === 'nome' ? (ordemAscendente ? '▲' : '▼') : ''}

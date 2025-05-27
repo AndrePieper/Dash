@@ -36,9 +36,15 @@ const EditarCurso = () => {
         setQtdSemestres(data.qtd_semestres);
         setStatus(data.status);
       })
-      .catch(erro => {
-        console.error('Erro ao buscar curso:', erro.message);
-        navigate('/curso');
+      .catch((err) => {
+        console.error('Erro ao buscar curso: ', err)
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/cursos"), 2000);
       });
   }, [id]);
 

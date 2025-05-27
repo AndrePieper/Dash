@@ -24,7 +24,6 @@ const CadastroCurso = () => {
     };
 
     try {
-
       const res = await fetch('https://projeto-iii-4.vercel.app/cursos', {
         method: 'POST',
         headers: {
@@ -60,7 +59,7 @@ const CadastroCurso = () => {
   };
 
   return (
-    <div className="tela-semestre_disciplina">
+    <div className="tela-turmas">
       <div className="header-turmas">
         <h2>Cadastrar Curso</h2>
       </div>
