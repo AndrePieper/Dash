@@ -5,7 +5,6 @@ import Layout from './Components/MenuLateral/Layout';
 import Home from './Components/Home/Home';
 
 import Chamada from './Components/Chamada/Chamada';
-import NovaChamada from './Components/Chamada/NovaChamada';
 
 import Materias from './Components/Materias/Materias';
 import CadastroMateria from './Components/Materias/CadastroMateria'
@@ -41,7 +40,6 @@ const App = () => {
           <Route path="/home" element={<Home />} />
 
           <Route path="/chamada" element={<Chamada />} />
-          <Route path="/novachamada" element={<NovaChamada />} />
 
           <Route path="/materias" element={<Materias />} />
           <Route path="/materias/cadastromateria" element={<CadastroMateria />} />
