@@ -3,9 +3,11 @@ import './Cursos.css';
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const Cursos = () => {
   const [cursos, setCursos] = useState([]);
-  const [confirmarExclusao, setConfirmarExclusao] = useState(null);
+  const [confirmarExclusao, setConfirmarExclusao] = useState(null); 
 
   // Estados para filtros de nome e tipo
     const [filtroNome, setFiltroNome] = useState('');
@@ -14,6 +16,8 @@ const Cursos = () => {
   // Estado para campo de ordenação e direção da ordenação
     const [ordenarPor, setOrdenarPor] = useState(null);
     const [ordemAscendente, setOrdemAscendente] = useState(true);
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
   const navigate = useNavigate();
 
@@ -27,7 +31,6 @@ const Cursos = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Cursos:", data);
         setCursos(data);
       })
       .catch((err) => console.error('Erro ao buscar cursos:', err));
@@ -45,21 +48,45 @@ const Cursos = () => {
     setConfirmarExclusao(id);
   };
 
-  const confirmarExclusaoCurso = (id) => {
+  const confirmarExclusaoCurso = async (id) => {
     const token = localStorage.getItem("token");
 
-    fetch(`https://projeto-iii-4.vercel.app/cursos/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setCursos(cursos.filter(curso => curso.id !== id));
-        setConfirmarExclusao(null);
+    try {
+      const resDel = await fetch(`https://projeto-iii-4.vercel.app/cursos/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .catch((err) => console.error('Erro ao excluir curso:', err));
+
+      const data = await resDel.json()
+      
+          
+      if (!resDel.ok) {
+        console.log(data.message)
+        throw new Error(data.message || "Erro ao deletar curso")
+      }
+
+      setPopup({
+        show: true,
+        message: data.message || "Curso deletado com sucesso!",
+        type: "success",
+      });
+
+      setCursos(cursos.filter(curso => curso.id !== id));
+      setConfirmarExclusao(null);
+
+      setTimeout(() => navigate("/cursos"), 1500)
+
+    } catch (error) {
+      console.log(error.message)
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
   };
 
   //FILTROS
@@ -116,12 +143,12 @@ const Cursos = () => {
             value={filtroNome}
             onChange={e => setFiltroNome(e.target.value)}
             className="input-filtro"
-          />
+            />
           <select
             value={filtroStatus}
             onChange={e => setFiltroStatus(e.target.value)}
             className="select-filtro"
-          >
+            >
             <option value="">Todos Status</option>
             <option value="0">Ativo</option>
             <option value="1">Inativo</option>
@@ -129,34 +156,52 @@ const Cursos = () => {
         </div>
 
       </div>
+      
+      {popup.show && (
+        <PopUpTopo message={popup.message} type={popup.type} />
+      )}
 
-      <table className="tabela-turmas">
+      <table className="tabela-usuarios">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Nome</th>
+            <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
+              Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+            </th>
+            <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
+              Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
+            </th>
             <th>Semestres</th>
             <th>Status</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          {cursosVisiveis.map((curso) => (
-            <tr key={curso.id}>
-              <td>{curso.id}</td>
-              <td>{curso.descricao}</td>
-              <td>{curso.qtd_semestres}</td>
-              <td>{curso.status === 0 ? "Ativo" : "Inativo"}</td>
-              <td>
-                <button onClick={() => handleEditarCurso(curso.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }}>
-                  <FaPen size={16} />
-                </button>
-                <button onClick={() => handleExcluirCurso(curso.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}>
-                  <FaTrash size={16} />
-                </button>
-              </td>
+          {cursosVisiveis.length > 0 ? (
+            cursosVisiveis.map((curso) => (
+              <tr key={curso.id}>
+                <td>{curso.id}</td>
+                <td>{curso.descricao}</td>
+                <td>{curso.qtd_semestres}</td>
+                <td>{curso.status === 0 ? "Ativo" : "Inativo"}</td>
+                <td>
+                  <button
+                   onClick={() => handleEditarCurso(curso.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }}
+                  >
+                    <FaPen size={16} />
+                  </button>
+                  <button
+                   onClick={() => handleExcluirCurso(curso.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                  >
+                    <FaTrash size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" style={{ textAlign: 'center' }}>Nenhum curso encontrado.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 

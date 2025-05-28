@@ -7,8 +7,8 @@ import PopUpTopo from '../PopUp/PopUpTopo';
 const EditarUsuario = () => {
   const [usuario, setUsuario] = useState({
     id: '',
-    status: '',
     nome: '',
+    status: '',
     cpf: '',
     ra: '',
     imei: '',
@@ -42,19 +42,25 @@ const EditarUsuario = () => {
       .then(data => {
           setUsuario({
             id,
-            status: parseInt(data.status, 10) || '',
             nome: data.nome || '',
+            status: parseInt(data.status, 10),
             cpf: data.cpf || '',
             ra: data.ra || '',
             imei: data.imei || '',
             email: data.email || '',
             tipo: parseInt(data.tipo, 10)
           });
-    })
-    .catch(erro => {
-      console.error('Erro ao buscar usuário:', erro.message);
-      navigate('/usuarios');
-    });
+      })
+      .catch((err) => {
+        console.error('Erro ao buscar usuário: ', err)
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/usuarios"), 2000);
+      });
   }, [id]);
 
   const usuarioAtualizado = {
@@ -95,6 +101,7 @@ const EditarUsuario = () => {
       setTimeout(() => navigate("/usuarios"), 1500)
   
     } catch (error) {
+      console.log(error.message)
       setPopup({
         show: true,
         message: error.message || "Erro inesperado!",

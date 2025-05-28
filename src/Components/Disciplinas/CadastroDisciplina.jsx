@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CadastroDisciplina.css';
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+ 
 const CadastroDisciplina = () => {
   const [descricao, setDescricao] = useState('');
   const [curso, setCurso] = useState('');
@@ -10,6 +12,9 @@ const CadastroDisciplina = () => {
   const [cargaHorario, setCargaHorario] = useState(''); // novo estado para carga_horario
   const [cursos, setCursos] = useState([]);
   const [semestres, setSemestres] = useState([]);
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,7 +35,7 @@ const CadastroDisciplina = () => {
       .catch(err => console.error('Erro ao buscar semestres:', err));
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
 
@@ -42,22 +47,49 @@ const CadastroDisciplina = () => {
       carga_horario: parseInt(cargaHorario),  // enviar carga_horario como número
     };
 
-    fetch('https://projeto-iii-4.vercel.app/disciplinas', {
+    try{
+
+      const res = await fetch('https://projeto-iii-4.vercel.app/disciplinas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(novaDisciplina),
     })
-      .then(res => res.json())
-      .then(data => {
-        console.log('Disciplina cadastrada:', data);
-        navigate('/disciplinas');
-      })
-      .catch(err => console.error('Erro ao cadastrar disciplina:', err));
+
+    const data = await res.json()
+        
+      if (!res.ok) {
+        console.log(data.message)
+        throw new Error(data.message || "Erro ao cadastrar disciplina")
+      }
+  
+      setPopup({
+        show: true,
+        message: data.message || "Disciplina cadastrado com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => navigate("/disciplinas"), 1500)
+
+    } catch (error) {
+      console.log(error.message)
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
   };
 
   return (
-    <div className="tela-cadastro-disciplina">
-      <h2>Cadastrar Disciplina</h2>
+    <div className="tela-turmas">
+      <div className="header-turmas">
+        <h2>Cadastrar Disciplina</h2>
+      </div>
+
+      {popup.show && (
+          <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+      
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="descricao">Descrição:</label>
@@ -107,7 +139,7 @@ const CadastroDisciplina = () => {
             onChange={e => setCargaHorario(e.target.value)}
             required
             placeholder="Digite a carga horária"
-            min="1"
+            min="30"
           />
         </div>
         <div>
@@ -118,9 +150,8 @@ const CadastroDisciplina = () => {
             onChange={e => setStatus(e.target.value)}
             required
           >
-            <option value="">Selecione o Status</option>
-            <option value="1">Ativa</option>
-            <option value="0">Inativa</option>
+            <option value={0}>Ativo</option>
+            <option value={1}>Inativo</option>
           </select>
         </div>
         <button type="submit">Cadastrar</button>

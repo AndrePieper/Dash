@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './CadastroSemestre.css';
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const EditarSemestre = () => {
   const { id } = useParams(); // Obtém o id da URL
   const navigate = useNavigate();
@@ -10,6 +12,8 @@ const EditarSemestre = () => {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [padrao, setPadrao] = useState(0);
+
+   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -26,10 +30,19 @@ const EditarSemestre = () => {
         setDataFim(data.data_final.split('T')[0]);
         setPadrao(data.padrao);
       })
-      .catch((err) => console.error('Erro ao buscar semestre:', err));
+      .catch((err) => {
+        console.error('Erro ao buscar semestre: ', err)
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/semestres"), 2000);
+      });
   }, [id]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
 
@@ -41,73 +54,104 @@ const EditarSemestre = () => {
       padrao,
     };
 
-    fetch('https://projeto-iii-4.vercel.app/semestres', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(semestreAtualizado),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('Semestre atualizado:', data);
-        navigate('/semestres');
+    try {
+
+      const res = await fetch('https://projeto-iii-4.vercel.app/semestres', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(semestreAtualizado),
       })
-      .catch((err) => console.error('Erro ao atualizar semestre:', err));
+
+      const data = await res.json()
+  
+      if (!res.ok) {
+        console.log(data.message)
+        throw new Error(data.message || "Erro ao alterar semestre")
+      }
+  
+      setPopup({
+        show: true,
+        message: data.message || "Semestre alterado com sucesso!",
+        type: "success",
+      });
+  
+      setTimeout(() => navigate("/semestres"), 1500)
+
+    } catch (error) {
+      console.log(error.message)
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
   };
 
   return (
-    <div className="tela-cadastro-semestre">
-      <h2>Editar Semestre</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="descricao">Descrição:</label>
-          <input
-            type="text"
-            id="descricao"
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-            required
-          />
-        </div>
+    <div className="tela-turmas">
+      <div className="header-turmas">
+       <h2>Editar Semestre</h2>
+      </div>
 
-        <div>
-          <label htmlFor="dataInicio">Data de Início:</label>
-          <input
-            type="date"
-            id="dataInicio"
-            value={dataInicio}
-            onChange={(e) => setDataInicio(e.target.value)}
-            required
-          />
-        </div>
+      <div className="container-form">
+        {popup.show && (
+            <PopUpTopo message={popup.message} type={popup.type} />
+        )}
 
-        <div>
-          <label htmlFor="dataFim">Data de Fim:</label>
-          <input
-            type="date"
-            id="dataFim"
-            value={dataFim}
-            onChange={(e) => setDataFim(e.target.value)}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="descricao">Descrição:</label>
+            <input
+              type="text"
+              id="descricao"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="padrao">Padrão:</label>
-          <select
-            id="padrao"
-            value={padrao}
-            onChange={(e) => setPadrao(Number(e.target.value))}
-          >
-            <option value={0}>Sim</option>
-            <option value={1}>Não</option>
-          </select>
-        </div>
+          <div>
+            <label htmlFor="dataInicio">Data de Início:</label>
+            <input
+              type="date"
+              id="dataInicio"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+              required
+            />
+          </div>
 
-        <button type="submit">Salvar Alterações</button>
-      </form>
+          <div>
+            <label htmlFor="dataFim">Data de Fim:</label>
+            <input
+              type="date"
+              id="dataFim"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="padrao">Padrão:</label>
+            <select
+              id="padrao"
+              value={padrao}
+              onChange={(e) => setPadrao(Number(e.target.value))}
+            >
+              <option value={0}>Sim</option>
+              <option value={1}>Não</option>
+            </select>
+          </div>
+
+          <button type="submit">Salvar Alterações</button>
+        </form>
+      </div>
     </div>
   );
 };

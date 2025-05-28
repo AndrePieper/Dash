@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CadastroSemestre.css';
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const CadastroSemestre = () => {
   const [descricao, setDescricao] = useState('');
   const [dataInicio, setDataInicio] = useState('');
@@ -9,7 +11,9 @@ const CadastroSemestre = () => {
   const [padrao, setPadrao] = useState(0); // Novo estado para o campo "padrão"
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+    const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
 
@@ -24,25 +28,53 @@ const CadastroSemestre = () => {
       padrao: padrao,               // Incluindo o valor do campo "padrão"
     };
 
-    fetch('https://projeto-iii-4.vercel.app/semestres', {
+    try {
+
+      const res = await fetch('https://projeto-iii-4.vercel.app/semestres', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(novoSemestre),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('Semestre cadastrado:', data);
-        navigate('/semestres'); // Volta para a listagem de semestres
       })
-      .catch((err) => console.error('Erro ao cadastrar semestre:', err));
+
+      const data = await res.json()
+          
+      if (!res.ok) {
+        console.log(data.message)
+        throw new Error(data.message || "Erro ao cadastrar semestre")
+      }
+
+      setPopup({
+        show: true,
+        message: data.message || "Semestre cadastrado com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => navigate("/semestres"), 1500)
+
+
+    } catch (error) {
+      console.log(error.message)
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
   };
 
   return (
-    <div className="tela-cadastro-semestre">
-      <h2>Cadastrar Semestre</h2>
+    <div className="tela-turmas">
+      <div className="header-turmas">
+        <h2>Cadastrar Semestre</h2>
+      </div>
+
+      {popup.show && (
+          <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+      
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="descricao">Descrição:</label>

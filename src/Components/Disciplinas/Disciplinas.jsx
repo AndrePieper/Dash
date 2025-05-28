@@ -1,14 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import './Disciplinas.css';
-import { FaPlus, FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+
+import PopUpTopo from '../PopUp/PopUpTopo';
 
 const Disciplinas = () => {
   const [disciplinas, setDisciplinas] = useState([]);
-  const [statusFiltro, setStatusFiltro] = useState('');
-  const [statusUnicos, setStatusUnicos] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [disciplinaIdExcluir, setDisciplinaIdExcluir] = useState(null);
+  const [cursos, setCursos] = useState([]);
+  const [confirmarExclusao, setConfirmarExclusao] = useState(null);
+
+  // Estados para filtros de nome e tipo
+    const [filtroNome, setFiltroNome] = useState('');
+    const [filtroCurso, setFiltroCurso] = useState('');
+    const [filtroStatus, setFiltroStatus] = useState('');
+
+  // Estado para campo de ordenação e direção da ordenação
+    const [ordenarPor, setOrdenarPor] = useState(null);
+    const [ordemAscendente, setOrdemAscendente] = useState(true);
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,15 +34,20 @@ const Disciplinas = () => {
       .then((res) => res.json())
       .then((data) => {
         setDisciplinas(data);
-        const status = [...new Set(data.map(t => t.status))];
-        setStatusUnicos(status);
       })
       .catch((err) => console.error('Erro ao buscar disciplinas:', err));
-  }, []);
 
-  const disciplinasFiltradas = disciplinas.filter((d) => {
-    return statusFiltro ? d.status === parseInt(statusFiltro) : true;
-  });
+    fetch('https://projeto-iii-4.vercel.app/cursos', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCursos(data);
+      })
+      .catch((err) => console.error('Erro ao buscar cursos:', err));
+  }, []);
 
   const handleAdicionarDisciplina = () => {
     navigate('/disciplinas/cadastrodisciplina');
@@ -41,66 +58,165 @@ const Disciplinas = () => {
   };
 
   const handleExcluirDisciplina = (id) => {
-    setDisciplinaIdExcluir(id);
-    setShowModal(true);
+    setConfirmarExclusao(id);
   };
 
-  const confirmExcluirDisciplina = () => {
+  const confirmarExclusaoDisciplina = async (id) => {
     const token = localStorage.getItem("token");
-    fetch(`https://projeto-iii-4.vercel.app/disciplinas/${disciplinaIdExcluir}`, {
+
+    try {
+
+      const resDel = await fetch(`https://projeto-iii-4.vercel.app/disciplinas/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => {
-        if (res.ok) {
-          alert('Disciplina excluída com sucesso!');
-          setDisciplinas(disciplinas.filter((d) => d.id !== disciplinaIdExcluir));
-          setShowModal(false);
-        } else {
-          alert('Erro ao excluir disciplina');
-        }
-      })
-      .catch((err) => console.error('Erro ao excluir disciplina:', err));
+
+    const data = await resDel.json()
+      
+          
+    if (!resDel.ok) {
+      console.log(data.message)
+      throw new Error(data.message || "Erro ao deletar disciplina")
+    }
+
+    setPopup({
+      show: true,
+      message: data.message || "Disciplina deletada com sucesso!",
+      type: "success",
+    });
+
+    setDisciplinas(disciplinas.filter((d) => d.id !== id));
+    setConfirmarExclusao(null);
+
+    setTimeout(() => navigate("/disciplinas"), 1500)
+
+    } catch (error) {
+      console.log(error.message)
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
   };
 
-  const cancelExcluirDisciplina = () => {
-    setShowModal(false);
-  };
+  //FILTROS
+      // Aplica filtros de nome e tipo sobre os disciplinas
+      const disciplinasFiltrados = useMemo(() => {
+        return disciplinas.filter(disciplina => {
+          const nomeLower = disciplina.descricao.toLowerCase();
+          const filtroNomeLower = filtroNome.toLowerCase();
+          const nomeOK = nomeLower.includes(filtroNomeLower);
+          const statusOK = filtroStatus == '' || disciplina.status.toString() === filtroStatus;
+          const cursoOK = filtroCurso == '' || disciplina.id_curso.toString() === filtroCurso;
+          return nomeOK && statusOK && cursoOK;
+        });
+      }, [disciplinas, filtroNome, filtroStatus, filtroCurso]);
+  
+      // Ordena os disciplinas filtrados conforme campo e direção
+      const disciplinasOrdenados = useMemo(() => {
+        if (!ordenarPor) return disciplinasFiltrados;
+  
+        return [...disciplinasFiltrados].sort((a, b) => {
+          let valA = a[ordenarPor];
+          let valB = b[ordenarPor];
+  
+          if (typeof valA === 'string') valA = valA.toLowerCase();
+          if (typeof valB === 'string') valB = valB.toLowerCase();
+  
+          if (valA > valB) return ordemAscendente ? 1 : -1;
+          if (valA < valB) return ordemAscendente ? -1 : 1;
+          return 0;
+        });
+      }, [disciplinasFiltrados, ordenarPor, ordemAscendente]);
+  
+      // Limita os disciplinas que cabem na tela (sem paginação)
+      const disciplinasVisiveis = disciplinasOrdenados.slice(0, 15);
+  
+      // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
+      const handleOrdenar = (campo) => {
+        if (ordenarPor === campo) {
+          setOrdemAscendente(!ordemAscendente);
+        } else {
+          setOrdenarPor(campo);
+          setOrdemAscendente(true);
+        }
+      };
 
   return (
-    <div className="tela-disciplinas">
-      <div className="header-disciplinas">
+    <div className="tela-turmas">
+      <div className="header-turmas">
         <h2>Cadastro de Disciplinas</h2>
-        <div className="filtros">
-          <select value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)}>
-            <option value="">Todos os Status</option>
-            {statusUnicos.map((status) => (
-              <option key={status} value={status}>{status === 1 ? 'Ativo' : 'Inativo'}</option>
+
+        <div className="filtros-cursos">
+          <input
+            type="text"
+            placeholder="Filtrar por nome"
+            value={filtroNome}
+            onChange={e => setFiltroNome(e.target.value)}
+            className="input-filtro"
+            />
+          <select
+            value={filtroStatus}
+            onChange={e => setFiltroStatus(e.target.value)}
+            className="select-filtro"
+            >
+            <option value="">Todos Status</option>
+            <option value="0">Ativo</option>
+            <option value="1">Inativo</option>
+          </select>
+          <select
+            value={filtroCurso}
+            onChange={e => setFiltroCurso(e.target.value)}
+            className="select-filtro"
+          >
+            <option value="">Todos Cursos</option>
+            {cursos.map(curso => (
+              <option key={curso.id} value={curso.id}>
+                {curso.descricao}
+              </option>
             ))}
           </select>
+
         </div>
+
       </div>
 
-      <table className="tabela-disciplinas">
+      <table className="tabela-usuarios">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Nome</th>
+          <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
+              Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+            </th>
+            <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
+              Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
+            </th>
+            <th>Curso</th>
             <th>Status</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          {disciplinasFiltradas.map((d) => (
+          {disciplinasVisiveis.map((d) => (
             <tr key={d.id}>
               <td>{d.id}</td>
               <td>{d.descricao}</td>
-              <td>{d.status === 1 ? 'Ativo' : 'Inativo'}</td>
+              <td>{d.Curso?.descricao || 'Sem curso'}</td>
+              <td>{d.status === 0 ? 'Ativo' : 'Inativo'}</td>
               <td>
-                <button className="btn-editar" onClick={() => handleEditarDisciplina(d.id)}><FaEdit size={20} color="#4caf50" /></button>
-                <button className="btn-excluir" onClick={() => handleExcluirDisciplina(d.id)}><FaTrashAlt size={20} color="#f44336" /></button>
+                <button
+                 onClick={() => handleEditarDisciplina(d.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }}
+                >
+                  <FaPen size={16} />
+                </button>
+                <button
+                 onClick={() => handleExcluirDisciplina(d.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                >
+                  <FaTrash size={16} />
+                </button>
               </td>
             </tr>
           ))}
@@ -111,14 +227,12 @@ const Disciplinas = () => {
         <FaPlus size={28} />
       </button>
 
-      {showModal && (
+      {confirmarExclusao && (
         <div className="modal">
-          <div className="modal-content">
-            <h3>Tem certeza que deseja excluir esta disciplina?</h3>
-            <div className="modal-buttons">
-              <button className="btn-confirm" onClick={confirmExcluirDisciplina}>Confirmar</button>
-              <button className="btn-cancel" onClick={cancelExcluirDisciplina}>Cancelar</button>
-            </div>
+          <div className="modal-conteudo">
+            <h3>Deseja realmente excluir essa disciplina?</h3>
+            <button onClick={() => confirmarExclusaoDisciplina(confirmarExclusao)}>Confirmar</button>
+            <button onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
           </div>
         </div>
       )}

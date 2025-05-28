@@ -3,18 +3,22 @@ import './Usuarios.css';
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const Usuarios = () => {
   // Estado para armazenar lista de usuários
-  const [usuarios, setUsuarios] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
   // Estado para controlar o id do usuário que está sendo confirmado para exclusão
-  const [confirmarExclusao, setConfirmarExclusao] = useState(null);
+    const [confirmarExclusao, setConfirmarExclusao] = useState(null);
   // Estados para filtros de nome e tipo
-  const [filtroNome, setFiltroNome] = useState('');
-  const [filtroTipo, setFiltroTipo] = useState('');
-  const [filtroStatus, setFiltroStatus] = useState('');
+    const [filtroNome, setFiltroNome] = useState('');
+    const [filtroTipo, setFiltroTipo] = useState('');
+    const [filtroStatus, setFiltroStatus] = useState('');
   // Estado para campo de ordenação e direção da ordenação
-  const [ordenarPor, setOrdenarPor] = useState(null);
-  const [ordemAscendente, setOrdemAscendente] = useState(true);
+    const [ordenarPor, setOrdenarPor] = useState(null);
+    const [ordemAscendente, setOrdemAscendente] = useState(true);
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
   const navigate = useNavigate();
 
@@ -45,17 +49,42 @@ const Usuarios = () => {
   };
 
   // Confirma a exclusão do usuário e atualiza lista localmente
-  const confirmarExclusaoUsuario = (id) => {
+  const confirmarExclusaoUsuario = async (id) => {
     const token = localStorage.getItem("token");
-    fetch(`https://projeto-iii-4.vercel.app/usuarios/${id}`, {
+
+    try {
+      const resDel = await fetch(`https://projeto-iii-4.vercel.app/usuarios/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(() => {
-        setUsuarios(usuarios.filter(user => user.id !== id));
-        setConfirmarExclusao(null);
       })
-      .catch(err => console.error('Erro ao excluir usuário:', err));
+
+      const data = await resDel.json()
+          
+      if (!resDel.ok) {
+        console.log(data.message)
+        throw new Error(data.message || "Erro ao deletar usuário")
+      }
+
+      setPopup({
+        show: true,
+        message: data.message || "Usuário deletado com sucesso!",
+        type: "success",
+      });
+
+      setUsuarios(usuarios.filter(user => user.id !== id));
+      setConfirmarExclusao(null);
+
+      setTimeout(() => navigate("/usuarios"), 1500)
+
+    } catch (error) {
+      console.log(error.message)
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
   };
 
   // Cancela a exclusão e fecha o modal
@@ -152,13 +181,17 @@ const Usuarios = () => {
         </div>
       </div>
 
+      {popup.show && (
+        <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+
       {/* Conteúdo principal da lista de usuários */}
       <div className="tela-usuarios">
         <table className="tabela-usuarios">
           <thead>
             <tr>
               <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
-                ID {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+                Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
               </th>
               <th onClick={() => handleOrdenar('nome')} style={{ cursor: 'pointer' }}>
                 Nome {ordenarPor === 'nome' ? (ordemAscendente ? '▲' : '▼') : ''}
