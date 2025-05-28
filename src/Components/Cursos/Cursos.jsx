@@ -7,7 +7,7 @@ import PopUpTopo from '../PopUp/PopUpTopo';
 
 const Cursos = () => {
   const [cursos, setCursos] = useState([]);
-  const [confirmarExclusao, setConfirmarExclusao] = useState(null);
+  const [confirmarExclusao, setConfirmarExclusao] = useState(null); 
 
   // Estados para filtros de nome e tipo
     const [filtroNome, setFiltroNome] = useState('');
@@ -31,7 +31,6 @@ const Cursos = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Cursos:", data);
         setCursos(data);
       })
       .catch((err) => console.error('Erro ao buscar cursos:', err));
@@ -165,12 +164,12 @@ const Cursos = () => {
       <table className="tabela-usuarios">
         <thead>
           <tr>
-          <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
-                Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
-              </th>
-              <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
-                Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
-              </th>
+            <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
+              Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+            </th>
+            <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
+              Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
+            </th>
             <th>Semestres</th>
             <th>Status</th>
             <th>Ações</th>

@@ -7,8 +7,8 @@ import PopUpTopo from '../PopUp/PopUpTopo';
 const EditarUsuario = () => {
   const [usuario, setUsuario] = useState({
     id: '',
-    status: '',
     nome: '',
+    status: '',
     cpf: '',
     ra: '',
     imei: '',
@@ -42,8 +42,8 @@ const EditarUsuario = () => {
       .then(data => {
           setUsuario({
             id,
-            status: parseInt(data.status, 10) || '',
             nome: data.nome || '',
+            status: parseInt(data.status, 10),
             cpf: data.cpf || '',
             ra: data.ra || '',
             imei: data.imei || '',
