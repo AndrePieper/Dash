@@ -1,56 +1,143 @@
 import React, { useEffect, useState } from "react";
 import { decodeJwt } from "jose";
-import { useNavigate } from "react-router-dom";
-import { Button, Typography, Alert, Card, CardContent } from "@mui/material";
+import {
+  Typography,
+  Alert,
+  Card,
+  CardContent,
+} from "@mui/material";
 import "./Chamada.css";
+import ModaisChamada from "./ModaisChamada";
 
 const Chamada = () => {
   const [chamadas, setChamadas] = useState([]);
+  const [filtroMateria, setFiltroMateria] = useState("");
+  const [filtroData, setFiltroData] = useState("");
   const [mensagemErro, setMensagemErro] = useState("");
-  const navigate = useNavigate();
+  const [tokenDecodificado, setTokenDecodificado] = useState(null);
 
-  useEffect(() => {
+  const [abrirModalSelecionarMateria, setAbrirModalSelecionarMateria] = useState(false);
+  const [abrirModalConfirmacao, setAbrirModalConfirmacao] = useState(false);
+  const [modalQRCodeAberto, setModalQRCodeAberto] = useState(false);
+
+  const [materias, setMaterias] = useState([]);
+  const [materiaSelecionada, setMateriaSelecionada] = useState("");
+  const [carregandoMaterias, setCarregandoMaterias] = useState(false);
+
+  const [qrCodeData, setQRCodeData] = useState(null);
+  const [idChamadaCriada, setIdChamadaCriada] = useState(null);
+  const [chamadaSelecionada, setChamadaSelecionada] = useState(null);
+
+  // Função para buscar matérias do professor
+  const buscarMaterias = () => {
+    setCarregandoMaterias(true);
     const token = localStorage.getItem("token");
-    
     let idProfessor = null;
+
     try {
       const decoded = decodeJwt(token);
       idProfessor = decoded.id;
     } catch (error) {
       setMensagemErro("Erro ao decodificar o token.");
-      console.error(error.message);
+      setCarregandoMaterias(false);
       return;
     }
 
-    const url = `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${idProfessor}`;
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    fetch(url, { headers })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Erro ao buscar as chamadas.");
-        }
-        return response.json();
+    fetch(`https://projeto-iii-4.vercel.app/semestre/professor/?id_professor=${idProfessor}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Erro ao buscar matérias");
+        return res.json();
       })
       .then((data) => {
-        setChamadas(data.reverse().slice(0, 9));
+        console.log("Matérias recebidas da API:", data); // <-- log da resposta
+        setMaterias(data);
+        setCarregandoMaterias(false);
       })
+
+      .catch((err) => {
+        setMensagemErro("Erro ao carregar matérias: " + err.message);
+        setCarregandoMaterias(false);
+      });
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    let idProfessor = null;
+
+    try {
+      const decoded = decodeJwt(token);
+      idProfessor = decoded.id;
+      setTokenDecodificado(decoded);
+    } catch (error) {
+      setMensagemErro("Erro ao decodificar o token.");
+      return;
+    }
+
+    fetch(`https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${idProfessor}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Erro ao buscar as chamadas.");
+        return res.json();
+      })
+      .then((data) => setChamadas(data.reverse().slice(0, 9)))
       .catch((error) => {
         setMensagemErro(error.message);
-        console.error("❌ Erro na requisição:", error.message);
+        console.error("Erro na requisição:", error.message);
       });
+
+    // Busca as matérias logo no início pra filtro
+    buscarMaterias();
   }, []);
 
-  const handleNovaChamada = () => {
-    navigate("/novachamada");
+  const abrirModalMatérias = () => {
+    setAbrirModalSelecionarMateria(true);
+    // Como as matérias já são buscadas no load, só muda o estado de carregamento aqui
+    setCarregandoMaterias(true);
+    buscarMaterias();
   };
+
+  // Filtra as chamadas pela matéria e data selecionada
+  const chamadasFiltradas = chamadas.filter((chamada) => {
+    const chamadaData = new Date(chamada.data_hora_inicio).toISOString().split("T")[0];
+
+    const filtraPorMateria = filtroMateria
+      ? chamada.descricao.toLowerCase().includes(filtroMateria.toLowerCase())
+      : true;
+
+    const filtraPorData = filtroData ? chamadaData === filtroData : true;
+
+    return filtraPorMateria && filtraPorData;
+  });
 
   return (
     <div className="tela-chamadas">
       <div className="header-chamadas">
         <h2>Chamadas Antigas</h2>
+      </div>
+
+      <div className="filtros">
+        <select
+          value={filtroMateria}
+          onChange={(e) => setFiltroMateria(e.target.value)}
+          aria-label="Filtro por matéria"
+        >
+          <option value="">Todas as matérias</option>
+          {materias.map((m) => (
+            <option key={m.id} value={m.nome || m.descricao || m.materia || m}>
+              {m.nome || m.descricao || m.materia || m}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="date"
+          value={filtroData}
+          onChange={(e) => setFiltroData(e.target.value)}
+          aria-label="Filtro por data"
+        />
       </div>
 
       {mensagemErro && (
@@ -59,14 +146,23 @@ const Chamada = () => {
         </Alert>
       )}
 
-      {chamadas.length === 0 && !mensagemErro && (
+      {chamadasFiltradas.length === 0 && !mensagemErro && (
         <Typography variant="body1">Nenhuma chamada encontrada.</Typography>
       )}
 
-      {chamadas.length > 0 && (
+      {chamadasFiltradas.length > 0 && (
         <div className="lista-cards">
-          {chamadas.map((chamada) => (
-            <Card key={chamada.id} className="card">
+          {chamadasFiltradas.map((chamada) => (
+            <Card
+              key={chamada.id}
+              className="card"
+              onClick={() => {
+                setChamadaSelecionada(chamada);
+                setAbrirModalConfirmacao(true);
+              }}
+              style={{ cursor: "pointer" }}
+              title="Clique para iniciar essa chamada"
+            >
               <CardContent>
                 <Typography className="cardTexto">
                   <strong>{chamada.descricao}</strong>
@@ -92,9 +188,29 @@ const Chamada = () => {
         </div>
       )}
 
-      <button className="botao-adicionar" onClick={handleNovaChamada} title="Nova Chamada">
+      <button className="botao-adicionar" onClick={abrirModalMatérias} title="Nova Chamada">
         +
       </button>
+
+      <ModaisChamada
+        abrirModalSelecionarMateria={abrirModalSelecionarMateria}
+        setAbrirModalSelecionarMateria={setAbrirModalSelecionarMateria}
+        abrirModalConfirmacao={abrirModalConfirmacao}
+        setAbrirModalConfirmacao={setAbrirModalConfirmacao}
+        modalQRCodeAberto={modalQRCodeAberto}
+        setModalQRCodeAberto={setModalQRCodeAberto}
+        materias={materias}
+        materiaSelecionada={materiaSelecionada}
+        setMateriaSelecionada={setMateriaSelecionada}
+        carregandoMaterias={carregandoMaterias}
+        setCarregandoMaterias={setCarregandoMaterias}
+        chamadaSelecionada={chamadaSelecionada}
+        tokenDecodificado={tokenDecodificado}
+        setQRCodeData={setQRCodeData}
+        setIdChamadaCriada={setIdChamadaCriada}
+        qrCodeData={qrCodeData}
+        idChamadaCriada={idChamadaCriada}
+      />
     </div>
   );
 };

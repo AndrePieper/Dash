@@ -1,33 +1,37 @@
-/* Chamada.css */
-
+/* Container principal com espaço lateral e sem scroll desnecessário */
 .tela-chamadas {
-  padding: 2rem;
+  margin-left: 250px;
+  padding: 25px;
   background-color: #e9e9e9;
-  margin-left: 250px; /* Largura do menu lateral */
   min-height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden; /* Impede rolagem lateral */
 }
 
-/* Título */
-.titulo {
-  margin-bottom: 1.5rem;
-  color: #333;
-  font-weight: bold;
+/* Header visual no mesmo nível do grid, com gradiente */
+.header-chamadas {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to right, #009c3b, #00c853);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
 }
 
-/* Mensagem de erro */
-.mensagem-erro {
-  margin-bottom: 1rem;
-}
-
-/* Grid dos cards */
-.grid {
+/* Grid fixo 3x3 com máximo de 9 cards */
+.lista-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+  max-width: 100%;
 }
 
-/* Card individual */
+/* Card individual com transição sutil */
 .card {
   background-color: #fff;
   padding: 1rem;
@@ -40,38 +44,33 @@
   transform: scale(1.02);
 }
 
-/* Texto dentro do card */
+/* Texto principal do card */
 .cardTexto {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   color: #2e7d32;
 }
 
-/* Botão editar dentro do card */
-.botao-editar {
-  margin-top: 1rem;
-  border: 1px solid #4caf50;
-  color: #4caf50;
-  transition: 0.3s;
-}
-
-.botao-editar:hover {
-  background-color: #4caf50;
+/* Botão adicionar fixo, verde, canto inferior direito */
+.botao-adicionar {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #009232;
   color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 15px;
+  cursor: pointer;
+  font-size: 24px;
+  transition: background-color 0.2s ease;
 }
 
-/* Botão padrão no final da tela */
-.botaoPadrao {
-  display: block;
-  margin: 0 auto;
-  background-color: #2e7d32;
-  color: white;
-  padding: 0.75rem 2rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: 0.3s;
+.botao-adicionar:hover {
+  background-color: #006c24;
 }
 
-.botaoPadrao:hover {
-  background-color: #1b5e20;
+/* Oculta scroll global (se necessário) */
+body {
+  overflow-x: hidden;
 }
