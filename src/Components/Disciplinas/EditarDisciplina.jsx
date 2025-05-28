@@ -10,18 +10,17 @@ const EditarDisciplina = () => {
 
   const [descricao, setDescricao] = useState('');
   const [disciplinas, setDisciplinas] = useState([]);
+  const [cargaHorario, setCargaHorario] = useState('');
   const [curso, setCurso] = useState('');
-  const [semestre, setSemestre] = useState('');
   const [status, setStatus] = useState('');
   const [cursos, setCursos] = useState([]);
-  const [semestres, setSemestres] = useState([]);
 
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    // Buscar cursos e semestres
+    // Buscar cursos
     fetch('https://projeto-iii-4.vercel.app/cursos', {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     })
@@ -29,22 +28,6 @@ const EditarDisciplina = () => {
       .then(data => setCursos(data))
       .catch((err) => {
         console.error('Erro ao buscar cursos: ', err)
-        setPopup({
-          show: true,
-          message: err.message || "Erro inesperado!",
-          type: "error",
-        });
-
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/disciplinas"), 2000);
-      });
-
-    fetch('https://projeto-iii-4.vercel.app/semestres', {
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(data => setSemestres(data))
-      .catch((err) => {
-        console.error('Erro ao buscar semestres: ', err)
         setPopup({
           show: true,
           message: err.message || "Erro inesperado!",
@@ -62,6 +45,7 @@ const EditarDisciplina = () => {
         .then(data => {
           setDescricao(data.descricao);
           setStatus(data.status.toString());
+          setCargaHorario(data.carga_horario);
         })
         .catch((err) => {
           console.error('Erro ao buscar disciplinas: ', err)
@@ -84,7 +68,7 @@ const EditarDisciplina = () => {
       id: parseInt(id),
       descricao,
       id_curso: parseInt(curso),
-      id_semestre: parseInt(semestre),
+      carga_horario,
       status: parseInt(status),
     };
 
@@ -158,17 +142,16 @@ const EditarDisciplina = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="semestre">Semestre:</label>
-          <select
-            id="semestre"
-            value={semestre}
-            onChange={e => setSemestre(e.target.value)}
+          <label htmlFor="cargaHorario">Carga Horária:</label>
+          <input
+            type="number"
+            id="cargaHorario"
+            value={cargaHorario}
+            onChange={e => setCargaHorario(e.target.value)}
             required
-          >
-            {semestres.map(sem => (
-              <option key={sem.id} value={sem.id}>{sem.descricao}</option>
-            ))}
-          </select>
+            placeholder="Digite a carga horária"
+            min="30"
+          />
         </div>
         <div>
           <label htmlFor="status">Status:</label>
