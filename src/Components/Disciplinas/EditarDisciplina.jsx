@@ -2,31 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './CadastroDisciplina.css';
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const EditarDisciplina = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [descricao, setDescricao] = useState('');
+  const [disciplinas, setDisciplinas] = useState([]);
   const [curso, setCurso] = useState('');
   const [semestre, setSemestre] = useState('');
   const [status, setStatus] = useState('');
   const [cursos, setCursos] = useState([]);
   const [semestres, setSemestres] = useState([]);
 
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+
   useEffect(() => {
     const token = localStorage.getItem('token');
 
     // Buscar cursos e semestres
-    Promise.all([
-      fetch('https://projeto-iii-4.vercel.app/cursos', {
-        headers: { Authorization: `Bearer ${token}` },
-      }).then(res => res.json()),
-      fetch('https://projeto-iii-4.vercel.app/semestres', {
-        headers: { Authorization: `Bearer ${token}` },
-      }).then(res => res.json())
-    ]).then(([cursosData, semestresData]) => {
-      setCursos(cursosData);
-      setSemestres(semestresData);
+    fetch('https://projeto-iii-4.vercel.app/cursos', {
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => setCursos(data))
+      .catch((err) => {
+        console.error('Erro ao buscar cursos: ', err)
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/disciplinas"), 2000);
+      });
+
+    fetch('https://projeto-iii-4.vercel.app/semestres', {
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => setSemestres(data))
+      .catch((err) => {
+        console.error('Erro ao buscar semestres: ', err)
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/disciplinas"), 2000);
+      });
 
       // Buscar dados da disciplina
       fetch(`https://projeto-iii-4.vercel.app/disciplinas/${id}`, {
@@ -35,15 +61,23 @@ const EditarDisciplina = () => {
         .then(res => res.json())
         .then(data => {
           setDescricao(data.descricao);
-          setCurso(data.id_curso.toString());
-          setSemestre(data.id_semestre.toString());
           setStatus(data.status.toString());
+        })
+        .catch((err) => {
+          console.error('Erro ao buscar disciplinas: ', err)
+          setPopup({
+            show: true,
+            message: err.message || "Erro inesperado!",
+            type: "error",
+          });
+  
+          setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/disciplinas"), 2000);
         });
-    }).catch(err => console.error('Erro ao buscar dados:', err));
   }, [id]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const token = localStorage.getItem('token');
 
     const disciplinaAtualizada = {
@@ -54,22 +88,51 @@ const EditarDisciplina = () => {
       status: parseInt(status),
     };
 
-    fetch('https://projeto-iii-4.vercel.app/disciplinas', {
+    try{
+
+      const res = await fetch('https://projeto-iii-4.vercel.app/disciplinas', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(disciplinaAtualizada),
     })
-      .then(res => res.json())
-      .then(data => {
-        console.log('Disciplina atualizada:', data);
-        navigate('/disciplinas');
-      })
-      .catch(err => console.error('Erro ao atualizar disciplina:', err));
+    
+    const data = await res.json()
+  
+    if (!res.ok) {
+      console.log(data.message)
+      throw new Error(data.message || "Erro ao alterar curso")
+    }
+
+    setPopup({
+      show: true,
+      message: data.message || "Curso alterado com sucesso!",
+      type: "success",
+    });
+
+    setTimeout(() => navigate("/disciplinas"), 1500)
+
+    }  catch (error) {
+      console.log(error.message)
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
   };
 
   return (
-    <div className="tela-cadastro-disciplina">
-      <h2>Editar Disciplina</h2>
+    <div className="tela-turmas">
+      <div className="header-turmas">
+        <h2>Editar Disciplina</h2>
+      </div>
+
+      {popup.show && (
+            <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="descricao">Descrição:</label>
@@ -89,7 +152,6 @@ const EditarDisciplina = () => {
             onChange={e => setCurso(e.target.value)}
             required
           >
-            <option value="">Selecione o Curso</option>
             {cursos.map(cur => (
               <option key={cur.id} value={cur.id}>{cur.descricao}</option>
             ))}
@@ -103,7 +165,6 @@ const EditarDisciplina = () => {
             onChange={e => setSemestre(e.target.value)}
             required
           >
-            <option value="">Selecione o Semestre</option>
             {semestres.map(sem => (
               <option key={sem.id} value={sem.id}>{sem.descricao}</option>
             ))}
@@ -118,8 +179,8 @@ const EditarDisciplina = () => {
             required
           >
             <option value="">Selecione o Status</option>
-            <option value="1">Ativa</option>
-            <option value="0">Inativa</option>
+            <option value={0}>Ativa</option>
+            <option value={1}>Inativa</option>
           </select>
         </div>
         <button type="submit">Salvar Alterações</button>
