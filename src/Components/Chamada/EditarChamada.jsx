@@ -199,29 +199,42 @@ const EditarChamada = () => {
         Alunos Presentes:
       </Typography>
 
-      <List>
-        {alunosPresentes.map((aluno) => (
-          <div key={aluno.id_aluno}>
-            <ListItem
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  onClick={() => {
-                    setAlunoParaRemover(aluno);
-                    setModalRemocaoOpen(true);
-                  }}
-                  aria-label={`Remover ${aluno.Aluno.nome}`}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              }
+<List>
+  {alunosPresentes.map((aluno) => (
+    <div key={aluno.id_aluno}>
+      <ListItem>
+        <Box display="flex" justifyContent="space-between" width="100%" alignItems="center">
+          {/* Nome do aluno */}
+          <Typography>{aluno.Aluno.nome}</Typography>
+
+          {/* Status centralizado */}
+          <Typography
+            style={{ width: 100, textAlign: "center" }}
+            color={aluno.status === 1 ? "green" : "gray"}
+          >
+            {aluno.status === 1 ? "Presente" : "Removido"}
+          </Typography>
+
+          {/* Botão de remover (somente se presente) */}
+          {aluno.status === 1 && (
+            <IconButton
+              edge="end"
+              onClick={() => {
+                setAlunoParaRemover(aluno);
+                setModalRemocaoOpen(true);
+              }}
+              aria-label={`Remover ${aluno.Aluno.nome}`}
             >
-              <ListItemText primary={aluno.Aluno.nome} />
-            </ListItem>
-            <Divider />
-          </div>
-        ))}
-      </List>
+              <DeleteIcon />
+            </IconButton>
+          )}
+        </Box>
+      </ListItem>
+      <Divider />
+    </div>
+  ))}
+</List>
+
 
       <Button
         variant="contained"
