@@ -51,7 +51,7 @@ const EditarChamada = () => {
       return;
     }
 
-    fetch(`https://projeto-iii-4.vercel.app/chamada/alunos/?id_chamada=${id}`, {
+    fetch(`https://projeto-iii-4.vercel.app/chamada/presencas/?id_chamada=${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -68,7 +68,7 @@ const EditarChamada = () => {
       });
   }, [id]);
 
-  const confirmarRemocaoAluno = () => {
+const confirmarRemocaoAluno = () => {
   if (!alunoParaRemover) return;
   const token = localStorage.getItem("token");
 
@@ -86,20 +86,17 @@ const EditarChamada = () => {
     }
   )
     .then(async (res) => {
-  if (!res.ok) throw new Error(`Erro ao remover aluno: ${res.status}`);
+      if (!res.ok) throw new Error(`Erro ao remover aluno: ${res.status}`);
 
-  const contentType = res.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
-    return res.json();
-  }
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return res.json();
+      }
 
-  return {}; // Caso não tenha corpo JSON
-})
-
+      return {}; // Caso não tenha corpo JSON
+    })
     .then(() => {
-      setAlunosPresentes((prev) =>
-        prev.filter((a) => a.id_aluno !== alunoParaRemover.id_aluno)
-      );
+      // Em vez de remover da lista, apenas fecha o modal
       setModalRemocaoOpen(false);
       setAlunoParaRemover(null);
     })
@@ -159,7 +156,7 @@ const EditarChamada = () => {
 
     Promise.all(
       alunosSelecionados.map((id_aluno) =>
-        fetch("https://projeto-iii-4.vercel.app/chamada/alunos", {
+        fetch("https://projeto-iii-4.vercel.app/chamada/alunos/manual", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
