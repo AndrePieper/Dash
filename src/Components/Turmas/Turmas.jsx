@@ -164,7 +164,7 @@ const Turmas = () => {
           >
             <option value="">Todos os Cursos</option>
             {cursos.map((curso) => (
-              <option key={curso.id} value={curso.id}>
+              <option key={curso} value={curso}>
                 {curso}
               </option>
             ))}

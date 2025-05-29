@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CadastroTurma.css';
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const CadastroTurma = () => {
   const [semestre, setSemestre] = useState('1'); // Definindo o valor default como 1
   const [curso, setCurso] = useState('');
   const [status, setStatus] = useState('');
   const [cursos, setCursos] = useState([]);
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +33,7 @@ const CadastroTurma = () => {
       .catch(err => console.error('Erro ao buscar cursos:', err));
   }, []);  
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
 
@@ -38,25 +43,52 @@ const CadastroTurma = () => {
       status: status
     };
 
-    fetch('https://projeto-iii-4.vercel.app/turmas', {
+    try{
+
+      const res = await fetch('https://projeto-iii-4.vercel.app/turmas', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(novaTurma),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Turma cadastrada:", data);
-        navigate('/turmas'); // Redireciona de volta para a página de turmas após o cadastro
-      })
-      .catch((err) => console.error('Erro ao cadastrar turma:', err));
+    }) 
+
+    const data = await res.json()
+        
+      if (!res.ok) {
+        console.log(data.message)
+        throw new Error(data.message || "Erro ao cadastrar turma")
+      }
+  
+      setPopup({
+        show: true,
+        message: data.message || "Turma cadastrado com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => navigate("/turmas"), 1500)
+
+    }  catch (error) {
+      console.log(error.message)
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+    }
   };
 
   return (
-    <div className="tela-cadastro-turma">
-      <h2>Cadastrar Turma</h2>
+    <div className="tela-turmas">
+      <div className="header-turmas">
+        <h2>Cadastrar Turma</h2>
+      </div>
+
+      {popup.show && (
+          <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="semestre">Semestre:</label>
@@ -92,8 +124,8 @@ const CadastroTurma = () => {
             required
           >
             <option value="">Selecione o Status</option>
-            <option value="1">Concluído</option>
             <option value="0">Cursando</option>
+            <option value="1">Concluído</option>
           </select>
         </div>
         <button type="submit">Cadastrar</button>
