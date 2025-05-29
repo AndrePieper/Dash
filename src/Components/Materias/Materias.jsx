@@ -7,6 +7,11 @@ const Materias = () => {
   const idProfessor = localStorage.getItem("id_professor");
 
   useEffect(() => {
+    if (!idProfessor) {
+      console.error("ID do professor não encontrado no localStorage.");
+      return;
+    }
+
     fetch(`https://projeto-iii-4.vercel.app/semestre/professor/?id_professor=${idProfessor}`, {
       headers: {
         Authorization: `Bearer ${token}`,

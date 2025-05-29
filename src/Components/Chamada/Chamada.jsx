@@ -30,7 +30,6 @@ const Chamada = () => {
   const [idChamadaCriada, setIdChamadaCriada] = useState(null);
   const [chamadaSelecionada, setChamadaSelecionada] = useState(null);
 
-  // Função para buscar matérias do professor
   const buscarMaterias = () => {
     setCarregandoMaterias(true);
     const token = localStorage.getItem("token");
@@ -158,7 +157,12 @@ const Chamada = () => {
            <Card
               key={chamada.id}
               className="card"
-              onClick={() => navigate(`/editarchamada/${chamada.id}`)}
+              onClick={() =>
+              navigate(`/editarchamada/${chamada.id}`, {
+              state: { id_disciplina: chamada.id_disciplina }
+              })
+            }
+
               style={{ cursor: "pointer" }}
               title="Clique para editar essa chamada"
             >
