@@ -27,7 +27,6 @@ const CadastroTurma = () => {
     })
       .then(res => res.json())
       .then(data => {
-        console.log('Dados do curso:', data);
         setCursos(data);
       })
       .catch(err => console.error('Erro ao buscar cursos:', err));
