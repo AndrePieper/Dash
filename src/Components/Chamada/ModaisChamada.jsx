@@ -70,7 +70,7 @@ const ModaisChamada = ({
         // Chamada iniciada, fecha modal e abre QRCode
         fecharModalMatérias();
         const qrData = {
-          id_chamada: data.id,
+          id: data.id,
           id_professor: chamadaData.id_professor,
           id_disciplina: chamadaData.id_disciplina,
           data_hora_inicio: chamadaData.data_hora_inicio,
