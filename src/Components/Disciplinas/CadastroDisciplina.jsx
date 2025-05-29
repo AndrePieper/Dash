@@ -7,11 +7,9 @@ import PopUpTopo from '../PopUp/PopUpTopo';
 const CadastroDisciplina = () => {
   const [descricao, setDescricao] = useState('');
   const [curso, setCurso] = useState('');
-  const [semestre, setSemestre] = useState('');
   const [status, setStatus] = useState('');
   const [cargaHorario, setCargaHorario] = useState(''); // novo estado para carga_horario
   const [cursos, setCursos] = useState([]);
-  const [semestres, setSemestres] = useState([]);
 
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
@@ -27,12 +25,6 @@ const CadastroDisciplina = () => {
       .then(data => setCursos(data))
       .catch(err => console.error('Erro ao buscar cursos:', err));
 
-    fetch('https://projeto-iii-4.vercel.app/semestres', {
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(data => setSemestres(data))
-      .catch(err => console.error('Erro ao buscar semestres:', err));
   }, []);
 
   const handleSubmit = async (e) => {
@@ -42,9 +34,8 @@ const CadastroDisciplina = () => {
     const novaDisciplina = {
       descricao,
       id_curso: parseInt(curso),
-      id_semestre: parseInt(semestre),
-      status: parseInt(status),
       carga_horario: parseInt(cargaHorario),  // enviar carga_horario como número
+      status: parseInt(status),
     };
 
     try{
@@ -113,20 +104,6 @@ const CadastroDisciplina = () => {
             <option value="">Selecione o Curso</option>
             {cursos.map(cur => (
               <option key={cur.id} value={cur.id}>{cur.descricao}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="semestre">Semestre:</label>
-          <select
-            id="semestre"
-            value={semestre}
-            onChange={e => setSemestre(e.target.value)}
-            required
-          >
-            <option value="">Selecione o Semestre</option>
-            {semestres.map(sem => (
-              <option key={sem.id} value={sem.id}>{sem.descricao}</option>
             ))}
           </select>
         </div>

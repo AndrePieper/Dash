@@ -104,47 +104,47 @@ const Disciplinas = () => {
   };
 
   //FILTROS
-      // Aplica filtros de nome e tipo sobre os disciplinas
-      const disciplinasFiltrados = useMemo(() => {
-        return disciplinas.filter(disciplina => {
-          const nomeLower = disciplina.descricao.toLowerCase();
-          const filtroNomeLower = filtroNome.toLowerCase();
-          const nomeOK = nomeLower.includes(filtroNomeLower);
-          const statusOK = filtroStatus == '' || disciplina.status.toString() === filtroStatus;
-          const cursoOK = filtroCurso == '' || disciplina.id_curso.toString() === filtroCurso;
-          return nomeOK && statusOK && cursoOK;
-        });
-      }, [disciplinas, filtroNome, filtroStatus, filtroCurso]);
-  
-      // Ordena os disciplinas filtrados conforme campo e direção
-      const disciplinasOrdenados = useMemo(() => {
-        if (!ordenarPor) return disciplinasFiltrados;
-  
-        return [...disciplinasFiltrados].sort((a, b) => {
-          let valA = a[ordenarPor];
-          let valB = b[ordenarPor];
-  
-          if (typeof valA === 'string') valA = valA.toLowerCase();
-          if (typeof valB === 'string') valB = valB.toLowerCase();
-  
-          if (valA > valB) return ordemAscendente ? 1 : -1;
-          if (valA < valB) return ordemAscendente ? -1 : 1;
-          return 0;
-        });
-      }, [disciplinasFiltrados, ordenarPor, ordemAscendente]);
-  
-      // Limita os disciplinas que cabem na tela (sem paginação)
-      const disciplinasVisiveis = disciplinasOrdenados.slice(0, 15);
-  
-      // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
-      const handleOrdenar = (campo) => {
-        if (ordenarPor === campo) {
-          setOrdemAscendente(!ordemAscendente);
-        } else {
-          setOrdenarPor(campo);
-          setOrdemAscendente(true);
-        }
-      };
+    // Aplica filtros de nome e tipo sobre os disciplinas
+    const disciplinasFiltrados = useMemo(() => {
+      return disciplinas.filter(disciplina => {
+        const nomeLower = disciplina.descricao.toLowerCase();
+        const filtroNomeLower = filtroNome.toLowerCase();
+        const nomeOK = nomeLower.includes(filtroNomeLower);
+        const statusOK = filtroStatus == '' || disciplina.status.toString() === filtroStatus;
+        const cursoOK = filtroCurso == '' || disciplina.id_curso.toString() === filtroCurso;
+        return nomeOK && statusOK && cursoOK;
+      });
+    }, [disciplinas, filtroNome, filtroStatus, filtroCurso]);
+
+    // Ordena os disciplinas filtrados conforme campo e direção
+    const disciplinasOrdenados = useMemo(() => {
+      if (!ordenarPor) return disciplinasFiltrados;
+
+      return [...disciplinasFiltrados].sort((a, b) => {
+        let valA = a[ordenarPor];
+        let valB = b[ordenarPor];
+
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+        if (valA > valB) return ordemAscendente ? 1 : -1;
+        if (valA < valB) return ordemAscendente ? -1 : 1;
+        return 0;
+      });
+    }, [disciplinasFiltrados, ordenarPor, ordemAscendente]);
+
+    // Limita os disciplinas que cabem na tela (sem paginação)
+    const disciplinasVisiveis = disciplinasOrdenados.slice(0, 15);
+
+    // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
+    const handleOrdenar = (campo) => {
+      if (ordenarPor === campo) {
+        setOrdemAscendente(!ordemAscendente);
+      } else {
+        setOrdenarPor(campo);
+        setOrdemAscendente(true);
+      }
+    };
 
   return (
     <div className="tela-turmas">
@@ -180,23 +180,25 @@ const Disciplinas = () => {
               </option>
             ))}
           </select>
-
         </div>
-
       </div>
+
+      {popup.show && (
+        <PopUpTopo message={popup.message} type={popup.type} />
+      )}
 
       <table className="tabela-usuarios">
         <thead>
           <tr>
           <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
               Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
-            </th>
-            <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
-              Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
-            </th>
-            <th>Curso</th>
-            <th>Status</th>
-            <th>Ações</th>
+          </th>
+          <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
+            Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
+          </th>
+          <th>Curso</th>
+          <th>Status</th>
+          <th>Ações</th>
           </tr>
         </thead>
         <tbody>
