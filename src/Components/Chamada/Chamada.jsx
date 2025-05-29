@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { decodeJwt } from "jose";
 import {
   Typography,
@@ -10,6 +11,7 @@ import "./Chamada.css";
 import ModaisChamada from "./ModaisChamada";
 
 const Chamada = () => {
+  const navigate = useNavigate();
   const [chamadas, setChamadas] = useState([]);
   const [filtroMateria, setFiltroMateria] = useState("");
   const [filtroData, setFiltroData] = useState("");
@@ -153,15 +155,12 @@ const Chamada = () => {
       {chamadasFiltradas.length > 0 && (
         <div className="lista-cards">
           {chamadasFiltradas.map((chamada) => (
-            <Card
+           <Card
               key={chamada.id}
               className="card"
-              onClick={() => {
-                setChamadaSelecionada(chamada);
-                setAbrirModalConfirmacao(true);
-              }}
+              onClick={() => navigate(`/editarchamada/${chamada.id}`)}
               style={{ cursor: "pointer" }}
-              title="Clique para iniciar essa chamada"
+              title="Clique para editar essa chamada"
             >
               <CardContent>
                 <Typography className="cardTexto">
