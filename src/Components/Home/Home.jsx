@@ -1,170 +1,88 @@
-import React, { useEffect, useState } from "react";
-import { decodeJwt } from "jose";
-import {
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  CircularProgress,
-} from "@mui/material";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Bar, Line, Pie } from "react-chartjs-2";
-import "./Home.css";
+import React, { useEffect, useState } from 'react';
+import { Plus } from 'lucide-react';
+import ModaisChamada from "../Chamada/ModaisChamada";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  ArcElement,
-  Tooltip,
-  Legend
-);
-
-const Home = () => {
-  const [loading, setLoading] = useState(true);
+export default function Home({ nomeProfessor, idProfessor, token }) {
   const [chamadas, setChamadas] = useState([]);
+  const [modalAberto, setModalAberto] = useState(false);
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    console.error("Token não encontrado");
-    return;
-  }
+    if (!idProfessor || !token) return;
 
-  let idProfessor;
-  try {
-    const decoded = decodeJwt(token);
-    idProfessor = decoded.id;
-  } catch (err) {
-    console.error("Erro ao decodificar token");
-    return;
-  }
-
-  fetch(`https://projeto-iii-4.vercel.app/chamadas/professor?id_professor=${idProfessor}`, {
-    headers: {
-      Authorization: token,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (!Array.isArray(data)) {
-        console.error("Formato de dados inválido:", data);
-        return;
-      }
-      setChamadas(data);
+    fetch(`https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${idProfessor}`, {
+      headers: { Authorization: `Bearer ${token}` },
     })
-    .catch((err) => console.error(err));
-}, []);
+      .then(async (res) => {
+        const contentType = res.headers.get("content-type");
+        if (!res.ok || !contentType.includes("application/json")) {
+          throw new Error("Resposta inválida da API");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setChamadas(data);
+        } else {
+          console.warn("Resposta inesperada:", data);
+          setChamadas([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar chamadas:", err);
+        setChamadas([]);
+      });
+  }, [idProfessor, token]);
 
-
-  const totalChamadas = chamadas.length;
-
-  const chamadasPorMes = chamadas.reduce((acc, chamada) => {
-    const mes = new Date(chamada.data_hora_inicio).getMonth();
-    acc[mes] = (acc[mes] || 0) + 1;
-    return acc;
-  }, {});
-
-  const dadosChamadasMensais = {
-    labels: [
-      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-      "Jul", "Ago", "Set", "Out", "Nov", "Dez",
-    ],
-    datasets: [
-      {
-        label: "Chamadas por mês",
-        data: Array.from({ length: 12 }, (_, i) => chamadasPorMes[i] || 0),
-        backgroundColor: "#1976d2",
-      },
-    ],
-  };
-
-  const dadosDistribuicaoChamadas = {
-    labels: ["Com faltas", "Sem faltas"],
-    datasets: [
-      {
-        data: [
-          chamadas.filter((c) => c.faltas > 0).length,
-          chamadas.filter((c) => c.faltas === 0).length,
-        ],
-        backgroundColor: ["#e53935", "#43a047"],
-      },
-    ],
-  };
-
-  const linhaTempoChamadas = {
-    labels: chamadas.map((c) =>
-      new Date(c.data_hora_inicio).toLocaleDateString()
-    ),
-    datasets: [
-      {
-        label: "Faltas registradas",
-        data: chamadas.map((c) => c.faltas || 0),
-        borderColor: "#ffa726",
-        fill: false,
-      },
-    ],
-  };
-
-  if (loading) return <div className="carregando"><CircularProgress /></div>;
+  if (!idProfessor || !token) {
+    return <div className="ml-[220px] p-6">Carregando dados do professor...</div>;
+  }
 
   return (
-    <div className="home-container">
-      <Typography variant="h4" className="titulo">
-        Painel do Professor
-      </Typography>
+    <div className="ml-[220px] p-6 bg-gray-100 min-h-screen">
+      <h2 className="text-xl font-semibold mb-4">NOME PROFESSOR: {nomeProfessor}</h2>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Card className="card">
-            <CardContent>
-              <Typography variant="h6">Total de Chamadas</Typography>
-              <Typography variant="h3" color="primary">{totalChamadas}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+      <div className="flex gap-4 mb-6">
+        <div className="bg-blue-500 text-white p-4 rounded-lg shadow w-1/3">
+          <p className="font-semibold">Aulas Por Dia da Semana</p>
+          {/* gráfico ou imagem aqui */}
+        </div>
+        <div className="bg-green-500 text-white p-4 rounded-lg shadow w-1/3">
+          <p className="font-semibold">Aulas Aplicadas Por Mês</p>
+        </div>
+        <div className="bg-gray-600 text-white p-4 rounded-lg shadow w-1/3">
+          <p className="font-semibold">Aulas Por Matéria</p>
+        </div>
+      </div>
 
-        <Grid item xs={12} md={6}>
-          <Card className="card">
-            <CardContent>
-              <Typography variant="h6">Distribuição de Chamadas</Typography>
-              <Pie data={dadosDistribuicaoChamadas} />
-            </CardContent>
-          </Card>
-        </Grid>
+      <div className="bg-white p-4 rounded-lg shadow">
+        <h3 className="text-lg font-semibold mb-2">Últimas chamadas</h3>
+        <div className="border-b border-gray-300 mb-2" />
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-gray-600">
+              <th className="pb-1">Disciplina</th>
+              <th className="pb-1">Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            {chamadas.map((chamada, index) => (
+              <tr key={index} className="border-t border-gray-200">
+                <td className="py-2">{chamada.nome_disciplina}</td>
+                <td className="py-2">{chamada.data_hora_inicio}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        <Grid item xs={12} md={6}>
-          <Card className="card">
-            <CardContent>
-              <Typography variant="h6">Chamadas por Mês</Typography>
-              <Bar data={dadosChamadasMensais} />
-            </CardContent>
-          </Card>
-        </Grid>
+      <button
+        onClick={() => setModalAberto(true)}
+        className="fixed bottom-8 right-8 bg-green-500 text-white rounded-full p-4 shadow-lg hover:bg-green-600"
+      >
+        <Plus size={28} />
+      </button>
 
-        <Grid item xs={12} md={6}>
-          <Card className="card">
-            <CardContent>
-              <Typography variant="h6">Histórico de Faltas</Typography>
-              <Line data={linhaTempoChamadas} />
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      <ModaisChamada isOpen={modalAberto} onClose={() => setModalAberto(false)} />
     </div>
   );
-};
-
-export default Home;
+}

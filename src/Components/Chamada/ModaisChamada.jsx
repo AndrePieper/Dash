@@ -32,6 +32,7 @@ const ModaisChamada = ({
   setIdChamadaCriada,
   qrCodeData,
   idChamadaCriada,
+  onChamadaCriada, // função para atualizar lista, passada por props
 }) => {
   const [abrirModalConfirmarEncerramento, setAbrirModalConfirmarEncerramento] = useState(false);
 
@@ -75,6 +76,7 @@ const ModaisChamada = ({
         setQRCodeData(qrData);
         setIdChamadaCriada(data.id);
         setModalQRCodeAberto(true);
+        // NÃO chama onChamadaCriada aqui - só quando confirmar encerramento
       })
       .catch(() => {
         // Tratar erro visualmente
@@ -115,7 +117,9 @@ const ModaisChamada = ({
       .then(() => {
         setModalQRCodeAberto(false);
         setAbrirModalConfirmarEncerramento(false);
-        window.location.reload();
+        if (onChamadaCriada) {
+          onChamadaCriada(); // ATUALIZA A LISTA APENAS AQUI, quando confirmar encerramento
+        }
       })
       .catch(() => {
         setAbrirModalConfirmarEncerramento(false);

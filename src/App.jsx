@@ -41,7 +41,7 @@ const App = () => {
           <Route path="/home" element={<Home />} />
 
           <Route path="/chamada" element={<Chamada />} />
-          <Route path="/editarchamada/:id" element={<EditarChamada />} />
+          <Route path="/chamada/editarchamada/:id" element={<EditarChamada />} />
 
           <Route path="/materias" element={<Materias />} />
           <Route path="/materias/cadastromateria" element={<CadastroMateria />} />
