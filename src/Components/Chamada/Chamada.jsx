@@ -52,7 +52,7 @@ const Chamada = () => {
         return res.json();
       })
       .then((data) => {
-        console.log("Matérias recebidas da API:", data); // <-- log da resposta
+        console.log("Matérias recebidas da API:", data); 
         setMaterias(data);
         setCarregandoMaterias(false);
       })
@@ -89,18 +89,15 @@ const Chamada = () => {
         console.error("Erro na requisição:", error.message);
       });
 
-    // Busca as matérias logo no início pra filtro
     buscarMaterias();
   }, []);
 
   const abrirModalMatérias = () => {
     setAbrirModalSelecionarMateria(true);
-    // Como as matérias já são buscadas no load, só muda o estado de carregamento aqui
     setCarregandoMaterias(true);
     buscarMaterias();
   };
 
-  // Filtra as chamadas pela matéria e data selecionada
   const chamadasFiltradas = chamadas.filter((chamada) => {
     const chamadaData = new Date(chamada.data_hora_inicio).toISOString().split("T")[0];
 
@@ -126,11 +123,16 @@ const Chamada = () => {
           aria-label="Filtro por matéria"
         >
           <option value="">Todas as matérias</option>
-          {materias.map((m) => (
-            <option key={m.id} value={m.nome || m.descricao || m.materia || m}>
-              {m.nome || m.descricao || m.materia || m}
-            </option>
-          ))}
+            {materias.map((m, index) => {
+            const valor = m.nome || m.descricao || m.materia || `materia-${index}`;
+            const chave = m.id || `materia-${index}`;
+              return (
+              <option key={chave} value={valor}>
+              {valor}
+          </option>
+          );
+        })}
+
         </select>
 
         <input

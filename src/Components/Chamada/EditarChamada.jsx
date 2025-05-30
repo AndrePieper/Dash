@@ -1,3 +1,4 @@
+// ... imports
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import {
@@ -5,7 +6,6 @@ import {
   Button,
   List,
   ListItem,
-  ListItemText,
   IconButton,
   Divider,
   Modal,
@@ -31,7 +31,7 @@ const styleModal = {
 };
 
 const EditarChamada = () => {
-  const { id } = useParams(); // id da chamada
+  const { id } = useParams();
   const location = useLocation();
   const { id_disciplina } = location.state || {};
 
@@ -43,14 +43,9 @@ const EditarChamada = () => {
   const [alunoParaRemover, setAlunoParaRemover] = useState(null);
   const [modalRemocaoOpen, setModalRemocaoOpen] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    if (!id) {
-      setMensagemErro("ID da chamada não foi fornecido.");
-      return;
-    }
-
+  const buscarAlunosPresentes = () => {
     fetch(`https://projeto-iii-4.vercel.app/chamada/presencas/?id_chamada=${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -58,56 +53,49 @@ const EditarChamada = () => {
         if (!res.ok) throw new Error("Erro ao buscar alunos da chamada.");
         return res.json();
       })
-      .then((data) => {
-        setAlunosPresentes(data);
-        setMensagemErro("");
+      .then(setAlunosPresentes)
+      .catch((err) => setMensagemErro(err.message));
+  };
+
+  useEffect(() => {
+    if (!id) {
+      setMensagemErro("ID da chamada não foi fornecido.");
+      return;
+    }
+    buscarAlunosPresentes();
+  }, [id]);
+
+  const confirmarRemocaoAluno = () => {
+    if (!alunoParaRemover) return;
+
+    fetch(
+      `https://projeto-iii-4.vercel.app/chamada/alunos/remover?id_chamada=${id}&id_aluno=${alunoParaRemover.id_aluno}`,
+      {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+      .then((res) => {
+        if (!res.ok) throw new Error(`Erro ao remover aluno: ${res.status}`);
+        return res.json();
+      })
+      .then(() => {
+        setAlunosPresentes((prev) =>
+          prev.map((aluno) =>
+            aluno.id_aluno === alunoParaRemover.id_aluno
+              ? { ...aluno, status: 0 }
+              : aluno
+          )
+        );
+        setModalRemocaoOpen(false);
+        setAlunoParaRemover(null);
+        buscarAlunosPresentes();
       })
       .catch((err) => {
         setMensagemErro(err.message);
-        console.error(err);
+        setModalRemocaoOpen(false);
       });
-  }, [id]);
-
-const confirmarRemocaoAluno = () => {
-  if (!alunoParaRemover) return;
-  const token = localStorage.getItem("token");
-
-  console.log("Removendo aluno com os dados:");
-  console.log("id_chamada:", id);
-  console.log("id_aluno:", alunoParaRemover.id_aluno);
-
-  fetch(
-    `https://projeto-iii-4.vercel.app/chamada/alunos/remover?id_chamada=${id}&id_aluno=${alunoParaRemover.id_aluno}`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  )
-    .then(async (res) => {
-      if (!res.ok) throw new Error(`Erro ao remover aluno: ${res.status}`);
-
-      const contentType = res.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        return res.json();
-      }
-
-      return {}; // Caso não tenha corpo JSON
-    })
-    .then(() => {
-      // Em vez de remover da lista, apenas fecha o modal
-      setModalRemocaoOpen(false);
-      setAlunoParaRemover(null);
-    })
-    .catch((err) => {
-      setMensagemErro(err.message);
-      console.error("Erro na remoção do aluno:", err);
-      setModalRemocaoOpen(false);
-    });
-};
-
-
+  };
 
   const abrirModal = () => {
     if (!id_disciplina) {
@@ -115,13 +103,9 @@ const confirmarRemocaoAluno = () => {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    fetch(
-      `https://projeto-iii-4.vercel.app/chamada/falta?id_disciplina=${id_disciplina}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    )
+    fetch(`https://projeto-iii-4.vercel.app/chamada/falta?id_disciplina=${id_disciplina}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao buscar alunos faltantes.");
         return res.json();
@@ -129,13 +113,9 @@ const confirmarRemocaoAluno = () => {
       .then((data) => {
         setAlunosFaltantes(data);
         setAlunosSelecionados([]);
-        setMensagemErro("");
         setModalOpen(true);
       })
-      .catch((err) => {
-        setMensagemErro(err.message);
-        console.error(err);
-      });
+      .catch((err) => setMensagemErro(err.message));
   };
 
   const toggleAlunoSelecionado = (id_aluno) => {
@@ -152,8 +132,6 @@ const confirmarRemocaoAluno = () => {
       return;
     }
 
-    const token = localStorage.getItem("token");
-
     Promise.all(
       alunosSelecionados.map((id_aluno) =>
         fetch("https://projeto-iii-4.vercel.app/chamada/alunos/manual", {
@@ -164,24 +142,34 @@ const confirmarRemocaoAluno = () => {
           },
           body: JSON.stringify({ id_chamada: id, id_aluno }),
         }).then((res) => {
-          if (!res.ok)
-            throw new Error(`Erro ao adicionar aluno ID ${id_aluno}`);
+          if (!res.ok) throw new Error(`Erro ao adicionar aluno ID ${id_aluno}`);
           return res.json();
         })
       )
     )
       .then(() => {
-        const novosAlunos = alunosFaltantes.filter((a) =>
+        const novos = alunosFaltantes.filter((a) =>
           alunosSelecionados.includes(a.id_aluno)
         );
-        setAlunosPresentes((prev) => [...prev, ...novosAlunos]);
-        setMensagemErro("");
+        const novosFormatados = novos.map((a) => ({
+          id_aluno: a.id_aluno,
+          status: 1,
+          Aluno: { nome: a.nome },
+        }));
+
+        setAlunosPresentes((prev) => {
+          const atualizados = [...prev];
+          novosFormatados.forEach((novo) => {
+            const existe = atualizados.find((a) => a.id_aluno === novo.id_aluno);
+            if (!existe) atualizados.push(novo);
+          });
+          return [...atualizados];
+        });
+
         setModalOpen(false);
+        buscarAlunosPresentes();
       })
-      .catch((err) => {
-        setMensagemErro(err.message);
-        console.error(err);
-      });
+      .catch((err) => setMensagemErro(err.message));
   };
 
   return (
@@ -192,46 +180,37 @@ const confirmarRemocaoAluno = () => {
 
       {mensagemErro && <p style={{ color: "red" }}>{mensagemErro}</p>}
 
-      <Typography variant="h6" gutterBottom>
-        Alunos Presentes:
-      </Typography>
+      <Typography variant="h6">Alunos Presentes:</Typography>
+      <List>
+        {alunosPresentes.map((aluno) => (
+          <div key={aluno.id_aluno}>
+            <ListItem>
+              <Box display="flex" justifyContent="space-between" width="100%">
+                <Typography>{aluno.Aluno.nome}</Typography>
+                <Typography
+                  style={{ width: 100, textAlign: "center" }}
+                  color={aluno.status === 1 ? "green" : "gray"}
+                >
+                  {aluno.status === 1 ? "Presente" : "Removido"}
+                </Typography>
 
-<List>
-  {alunosPresentes.map((aluno) => (
-    <div key={aluno.id_aluno}>
-      <ListItem>
-        <Box display="flex" justifyContent="space-between" width="100%" alignItems="center">
-          {/* Nome do aluno */}
-          <Typography>{aluno.Aluno.nome}</Typography>
-
-          {/* Status centralizado */}
-          <Typography
-            style={{ width: 100, textAlign: "center" }}
-            color={aluno.status === 1 ? "green" : "gray"}
-          >
-            {aluno.status === 1 ? "Presente" : "Removido"}
-          </Typography>
-
-          {/* Botão de remover (somente se presente) */}
-          {aluno.status === 1 && (
-            <IconButton
-              edge="end"
-              onClick={() => {
-                setAlunoParaRemover(aluno);
-                setModalRemocaoOpen(true);
-              }}
-              aria-label={`Remover ${aluno.Aluno.nome}`}
-            >
-              <DeleteIcon />
-            </IconButton>
-          )}
-        </Box>
-      </ListItem>
-      <Divider />
-    </div>
-  ))}
-</List>
-
+                {aluno.status === 1 && (
+                  <IconButton
+                    edge="end"
+                    onClick={() => {
+                      setAlunoParaRemover(aluno);
+                      setModalRemocaoOpen(true);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </Box>
+            </ListItem>
+            <Divider />
+          </div>
+        ))}
+      </List>
 
       <Button
         variant="contained"
@@ -243,17 +222,13 @@ const confirmarRemocaoAluno = () => {
         Adicionar Aluno
       </Button>
 
-      {/* Modal para adicionar alunos */}
+      {/* Modal de adicionar */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
         <Box sx={styleModal}>
-          <Typography variant="h6" gutterBottom>
-            Selecione alunos para adicionar:
-          </Typography>
-
+          <Typography variant="h6">Selecione alunos para adicionar:</Typography>
           {alunosFaltantes.length === 0 && (
             <Typography>Nenhum aluno faltante encontrado.</Typography>
           )}
-
           {alunosFaltantes.map((aluno) => (
             <FormControlLabel
               key={aluno.id_aluno}
@@ -266,43 +241,27 @@ const confirmarRemocaoAluno = () => {
               label={aluno.nome}
             />
           ))}
-
           <Box mt={2} display="flex" justifyContent="space-between">
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => setModalOpen(false)}
-            >
+            <Button variant="outlined" onClick={() => setModalOpen(false)}>
               Cancelar
             </Button>
-            <Button variant="contained" color="primary" onClick={adicionarAlunos}>
+            <Button variant="contained" onClick={adicionarAlunos}>
               Adicionar
             </Button>
           </Box>
         </Box>
       </Modal>
 
-      {/* Modal de confirmação de remoção */}
+      {/* Modal de remover */}
       <Modal open={modalRemocaoOpen} onClose={() => setModalRemocaoOpen(false)}>
         <Box sx={styleModal}>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6">
             Deseja remover a presença do aluno{" "}
             <strong>{alunoParaRemover?.Aluno?.nome}</strong>?
           </Typography>
-
           <Box mt={2} display="flex" justifyContent="space-between">
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => setModalRemocaoOpen(false)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={confirmarRemocaoAluno}
-            >
+            <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button>
+            <Button color="error" variant="contained" onClick={confirmarRemocaoAluno}>
               Remover
             </Button>
           </Box>

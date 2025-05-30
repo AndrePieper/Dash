@@ -33,7 +33,6 @@ const ModaisChamada = ({
   qrCodeData,
   idChamadaCriada,
 }) => {
-  // Novo estado para modal de confirmação de encerramento
   const [abrirModalConfirmarEncerramento, setAbrirModalConfirmarEncerramento] = useState(false);
 
   const fecharModalMatérias = () => {
@@ -43,14 +42,13 @@ const ModaisChamada = ({
 
   const confirmarMateriaSelecionada = () => {
     if (!tokenDecodificado || !materiaSelecionada) {
-      // Aqui pode tratar visualmente, pois removemos alert
       return;
     }
 
     const dataHoraInicio = new Date().toISOString();
     const chamadaData = {
       id_professor: tokenDecodificado.id,
-      id_disciplina: materiaSelecionada,
+      id_disciplina: materiaSelecionada.id_disciplina,
       data_hora_inicio: dataHoraInicio,
     };
 
@@ -67,7 +65,6 @@ const ModaisChamada = ({
         return res.json();
       })
       .then((data) => {
-        // Chamada iniciada, fecha modal e abre QRCode
         fecharModalMatérias();
         const qrData = {
           id: data.id,
@@ -80,11 +77,10 @@ const ModaisChamada = ({
         setModalQRCodeAberto(true);
       })
       .catch(() => {
-        // Tratar erro visualmente (pode criar estado para mensagens)
+        // Tratar erro visualmente
       });
   };
 
-  // Ao clicar em encerrar, abre modal de confirmação
   const abrirConfirmarEncerramento = () => {
     setAbrirModalConfirmarEncerramento(true);
   };
@@ -122,7 +118,6 @@ const ModaisChamada = ({
         window.location.reload();
       })
       .catch(() => {
-        // Tratar erro visualmente
         setAbrirModalConfirmarEncerramento(false);
       });
   };
@@ -133,7 +128,6 @@ const ModaisChamada = ({
 
   const confirmarChamada = () => {
     if (!tokenDecodificado || !chamadaSelecionada) {
-      // Tratar erro visualmente
       return;
     }
 
@@ -181,7 +175,7 @@ const ModaisChamada = ({
                 label="Matéria"
               >
                 {materias.map((materia) => (
-                  <MenuItem key={materia.id} value={materia.id}>
+                  <MenuItem key={materia.id_disciplina} value={materia}>
                     {materia.descricao}
                   </MenuItem>
                 ))}
