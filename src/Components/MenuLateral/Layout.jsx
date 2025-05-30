@@ -36,7 +36,7 @@ const Layout = () => {
   ];
 
   const menuItemsAdm = [
-    { text: "Entidades", icon: <GroupIcon />, route: "/Usuarios" },
+    { text: "Entidades", icon: <GroupIcon />, route: "/usuarios" },
     { text: "Disciplinas", icon: <CourseIcon />, route: "/disciplinas" },
     { text: "Cursos", icon: <SchoolIcon />, route: "/cursos" },
     { text: "Turmas", icon: <ClassIcon />, route: "/turmas" },
@@ -74,7 +74,8 @@ const Layout = () => {
           )}
 
           {menuItems.map((item) => {
-            const isSelected = pathname === item.route;
+            // const isSelected = pathname === item.route; - Antes
+            const isSelected = pathname.startsWith(item.route);
             return (
               <ListItemButton
                 key={item.text}
