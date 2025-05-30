@@ -52,18 +52,17 @@ const Chamada = () => {
         return res.json();
       })
       .then((data) => {
-        console.log("Matérias recebidas da API:", data); 
+        console.log("Matérias recebidas da API:", data);
         setMaterias(data);
         setCarregandoMaterias(false);
       })
-
       .catch((err) => {
         setMensagemErro("Erro ao carregar matérias: " + err.message);
         setCarregandoMaterias(false);
       });
   };
 
-  useEffect(() => {
+  const buscarChamadas = () => {
     const token = localStorage.getItem("token");
     let idProfessor = null;
 
@@ -88,7 +87,10 @@ const Chamada = () => {
         setMensagemErro(error.message);
         console.error("Erro na requisição:", error.message);
       });
+  };
 
+  useEffect(() => {
+    buscarChamadas();
     buscarMaterias();
   }, []);
 
@@ -123,16 +125,15 @@ const Chamada = () => {
           aria-label="Filtro por matéria"
         >
           <option value="">Todas as matérias</option>
-            {materias.map((m, index) => {
+          {materias.map((m, index) => {
             const valor = m.nome || m.descricao || m.materia || `materia-${index}`;
             const chave = m.id || `materia-${index}`;
-              return (
+            return (
               <option key={chave} value={valor}>
-              {valor}
-          </option>
-          );
-        })}
-
+                {valor}
+              </option>
+            );
+          })}
         </select>
 
         <input
@@ -156,15 +157,14 @@ const Chamada = () => {
       {chamadasFiltradas.length > 0 && (
         <div className="lista-cards">
           {chamadasFiltradas.map((chamada) => (
-           <Card
+            <Card
               key={chamada.id}
               className="card"
               onClick={() =>
-              navigate(`/editarchamada/${chamada.id}`, {
-              state: { id_disciplina: chamada.id_disciplina }
-              })
-            }
-
+                navigate(`/chamada/editarchamada/${chamada.id}`, {
+                  state: { id_disciplina: chamada.id_disciplina },
+                })
+              }
               style={{ cursor: "pointer" }}
               title="Clique para editar essa chamada"
             >
@@ -215,6 +215,7 @@ const Chamada = () => {
         setIdChamadaCriada={setIdChamadaCriada}
         qrCodeData={qrCodeData}
         idChamadaCriada={idChamadaCriada}
+        onChamadaCriada={buscarChamadas} 
       />
     </div>
   );
