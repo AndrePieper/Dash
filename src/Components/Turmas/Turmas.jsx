@@ -16,7 +16,6 @@ const Turmas = () => {
   const [filtroCurso, setFiltroCurso] = useState('');
   const [filtroStatus, setFiltroStatus] = useState(''); // 0 Cursando - 1 Conluido
 
-  
 
   // Estado para campo de ordenação e direção da ordenação
     const [ordenarPor, setOrdenarPor] = useState(null);

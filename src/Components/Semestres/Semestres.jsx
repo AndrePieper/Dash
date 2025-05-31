@@ -144,6 +144,10 @@ const Semestres = () => {
         <h2>Cadastro de Semestres</h2>
       </div>
 
+      {popup.show && (
+            <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+
       <table className="tabela-usuarios">
         <thead>
           <tr>

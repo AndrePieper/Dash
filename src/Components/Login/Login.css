@@ -1,5 +1,5 @@
 .conteiner {
-  font-family: 'Roboto', sans-serif;
+  /* font-family: 'Roboto', sans-serif; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,7 +22,7 @@
 
 .formulario {
   display: flex;
-  font-family: 'Roboto', sans-serif;
+  /* font-family: 'Roboto', sans-serif; */
   flex-direction: column;
   gap: 1rem; 
   width: 100%;
