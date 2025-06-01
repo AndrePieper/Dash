@@ -2,14 +2,14 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login/Login';
 import Layout from './Components/MenuLateral/Layout';
+
 import Home from './Components/Home/Home';
+import HomeADM from './Components/Home/HomeADM';
 
 import Chamada from './Components/Chamada/Chamada';
 import EditarChamada from './Components/Chamada/EditarChamada';
 
 import Materias from './Components/Materias/Materias';
-import CadastroMateria from './Components/Materias/CadastroMateria'
-import EditarMateria from './Components/Materias/EditarMateria'
 
 import Usuarios from './Components/Usuarios/Usuarios';
 import CadastroUsuario from './Components/Usuarios/CadastroUsuario'
@@ -39,13 +39,12 @@ const App = () => {
         <Route element={<Layout />}>
   
           <Route path="/home" element={<Home />} />
+          <Route path="/homeadm" element={<HomeADM />} />
 
           <Route path="/chamada" element={<Chamada />} />
           <Route path="/chamada/editarchamada/:id" element={<EditarChamada />} />
 
           <Route path="/materias" element={<Materias />} />
-          <Route path="/materias/cadastromateria" element={<CadastroMateria />} />
-          <Route path="/materias/editarmateria/:id" element={<EditarMateria />} />
 
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/usuarios/cadastrousuario" element={<CadastroUsuario />} />
