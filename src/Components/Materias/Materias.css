@@ -1,117 +1,68 @@
-.tela-materias {
-  padding: 2rem;
-  background-color: #e9e9e9;
-  position: relative;
+/* Área principal, sem scroll e com padding */
+.tela-usuarios.no-scroll {
   margin-left: 250px;
-  min-height: 100vh;
+  padding: 25px;
+  height: 100vh; /* Garante altura total da tela */
+  box-sizing: border-box;
+  overflow: hidden; /* Impede qualquer rolagem */
 }
 
-.header-materias {
+/* Reutilizando cabeçalho de usuários */
+.header-usuarios {
+  margin-top: 20px;
+  margin-left: 250px;
+  width: calc(100% - 250px);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: linear-gradient(to right, #009c3b, #00c853); /* verde */
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
+  justify-content: space-between;
+  background: linear-gradient(to right, #009c3b, #00c853);
   color: white;
+  padding: 15px 20px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
-.filtros select {
-  margin-left: 1rem;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: none;
-}
-
-.tabela-materias {
+/* Tabela básica formatada */
+.tabela-usuarios {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
-  border-radius: 8px;
-  overflow: hidden;
+  margin-top: 10px;
+  table-layout: fixed;
+  overflow-wrap: break-word; /* Quebra o texto longo */
 }
 
-.tabela-materias th, .tabela-materias td {
-  padding: 1rem;
+.tabela-usuarios th,
+.tabela-usuarios td {
+  border: 1px solid #ccc;
+  padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px; /* Evita que células fiquem largas demais */
+}
+
+.tabela-usuarios th {
+  background-color: #e0e0e0;
+  user-select: none;
 }
 
 .botao-adicionar {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  background-color: #00c853;
+  background-color: #009232;
   color: white;
   border: none;
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 15px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background-color 0.2s ease;
 }
 
 .botao-adicionar:hover {
-  background-color: #00b341;
-}
-
-.btn-editar, .btn-excluir {
-  background-color: white;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-editar:hover {
-  background-color: #4caf50;
-  color: white;
-}
-
-.btn-excluir:hover {
-  background-color: #f44336;
-  color: white;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.modal-buttons button {
-  margin: 0 1rem;
-  padding: 0.5rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-confirm {
-  background-color: #4caf50;
-  color: white;
-}
-
-.btn-cancel {
-  background-color: #f44336;
-  color: white;
+  background-color: #006c24;
 }

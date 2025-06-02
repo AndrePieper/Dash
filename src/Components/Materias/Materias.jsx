@@ -30,32 +30,42 @@ const Materias = () => {
   }, [idProfessor, token]);
 
   return (
-    <div className="tela-materias">
-      <div className="header-materias">
+    <>
+      <div className="header-usuarios">
         <h2>Matérias Vinculadas</h2>
       </div>
 
-      <table className="tabela-materias">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Descrição</th>
-            <th>Carga Horária</th>
-            <th>Semestre</th>
-          </tr>
-        </thead>
-        <tbody>
-          {materias.map((m, idx) => (
-            <tr key={`${m.id}-${idx}`}>
-              <td>{m.id}</td>
-              <td>{m.descricao}</td>
-              <td>{m.carga_horaria}</td>
-              <td>{m.semestre}</td>
+      <div className="tela-usuarios no-scroll">
+        <table className="tabela-usuarios">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Carga Horária</th>
+              <th>Semestre</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {materias.length > 0 ? (
+              materias.map((m, idx) => (
+                <tr key={`${m.id_disciplina}-${idx}`}>
+                  <td>{m.id_disciplina}</td>
+                  <td>{m.descricao}</td>
+                  <td>{m.carga_horaria}</td>
+                  <td>{m.semestre}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" style={{ textAlign: 'center' }}>
+                  Nenhuma matéria encontrada.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 };
 

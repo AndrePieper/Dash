@@ -36,6 +36,7 @@ const Layout = () => {
   ];
 
   const menuItemsAdm = [
+    { text: "Home", icon: <DashboardIcon />, route: "/homeadm" },
     { text: "Entidades", icon: <GroupIcon />, route: "/usuarios" },
     { text: "Disciplinas", icon: <CourseIcon />, route: "/disciplinas" },
     { text: "Cursos", icon: <SchoolIcon />, route: "/cursos" },

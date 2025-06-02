@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { decodeJwt } from "jose";
-import {
-  Typography,
-  Alert,
-  Card,
-  CardContent,
-} from "@mui/material";
+import { Typography, Alert, Card, CardContent } from "@mui/material";
+import { FaPlus } from "react-icons/fa";
 import "./Chamada.css";
 import ModaisChamada from "./ModaisChamada";
 
@@ -52,7 +48,6 @@ const Chamada = () => {
         return res.json();
       })
       .then((data) => {
-        console.log("Matérias recebidas da API:", data);
         setMaterias(data);
         setCarregandoMaterias(false);
       })
@@ -85,7 +80,6 @@ const Chamada = () => {
       .then((data) => setChamadas(data.reverse().slice(0, 9)))
       .catch((error) => {
         setMensagemErro(error.message);
-        console.error("Erro na requisição:", error.message);
       });
   };
 
@@ -102,23 +96,24 @@ const Chamada = () => {
 
   const chamadasFiltradas = chamadas.filter((chamada) => {
     const chamadaData = new Date(chamada.data_hora_inicio).toISOString().split("T")[0];
-
     const filtraPorMateria = filtroMateria
       ? chamada.descricao.toLowerCase().includes(filtroMateria.toLowerCase())
       : true;
-
     const filtraPorData = filtroData ? chamadaData === filtroData : true;
-
     return filtraPorMateria && filtraPorData;
   });
 
-  return (
-    <div className="tela-chamadas">
-      <div className="header-chamadas">
-        <h2>Chamadas Antigas</h2>
-      </div>
+return (
+  <div className="tela-usuarios no-scroll">
+    {/* Área do leitor QR code (coloque seu componente aqui) */}
+    <div className="reader-area">
+      {/* Aqui você pode renderizar seu reader / QR code */}
+    </div>
 
-      <div className="filtros">
+    {/* Header com filtros */}
+    <div className="header-usuarios">
+      <h2>Chamadas</h2>
+      <div className="filtros-header">
         <select
           value={filtroMateria}
           onChange={(e) => setFiltroMateria(e.target.value)}
@@ -142,83 +137,88 @@ const Chamada = () => {
           onChange={(e) => setFiltroData(e.target.value)}
           aria-label="Filtro por data"
         />
+
+        <button
+          className="botao-adicionar"
+          onClick={abrirModalMatérias}
+          title="Nova Chamada"
+        >
+          <FaPlus />
+        </button>
       </div>
-
-      {mensagemErro && (
-        <Alert className="mensagem-erro" severity="error">
-          {mensagemErro}
-        </Alert>
-      )}
-
-      {chamadasFiltradas.length === 0 && !mensagemErro && (
-        <Typography variant="body1">Nenhuma chamada encontrada.</Typography>
-      )}
-
-      {chamadasFiltradas.length > 0 && (
-        <div className="lista-cards">
-          {chamadasFiltradas.map((chamada) => (
-            <Card
-              key={chamada.id}
-              className="card"
-              onClick={() =>
-                navigate(`/chamada/editarchamada/${chamada.id}`, {
-                  state: { id_disciplina: chamada.id_disciplina },
-                })
-              }
-              style={{ cursor: "pointer" }}
-              title="Clique para editar essa chamada"
-            >
-              <CardContent>
-                <Typography className="cardTexto">
-                  <strong>{chamada.descricao}</strong>
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Número:</strong> {chamada.id}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Data:</strong>{" "}
-                  {new Date(chamada.data_hora_inicio).toLocaleDateString()}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Hora de Início:</strong>{" "}
-                  {new Date(chamada.data_hora_inicio).toLocaleTimeString()}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Hora de Fechamento:</strong>{" "}
-                  {new Date(chamada.data_hora_final).toLocaleTimeString()}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      <button className="botao-adicionar" onClick={abrirModalMatérias} title="Nova Chamada">
-        +
-      </button>
-
-      <ModaisChamada
-        abrirModalSelecionarMateria={abrirModalSelecionarMateria}
-        setAbrirModalSelecionarMateria={setAbrirModalSelecionarMateria}
-        abrirModalConfirmacao={abrirModalConfirmacao}
-        setAbrirModalConfirmacao={setAbrirModalConfirmacao}
-        modalQRCodeAberto={modalQRCodeAberto}
-        setModalQRCodeAberto={setModalQRCodeAberto}
-        materias={materias}
-        materiaSelecionada={materiaSelecionada}
-        setMateriaSelecionada={setMateriaSelecionada}
-        carregandoMaterias={carregandoMaterias}
-        setCarregandoMaterias={setCarregandoMaterias}
-        chamadaSelecionada={chamadaSelecionada}
-        tokenDecodificado={tokenDecodificado}
-        setQRCodeData={setQRCodeData}
-        setIdChamadaCriada={setIdChamadaCriada}
-        qrCodeData={qrCodeData}
-        idChamadaCriada={idChamadaCriada}
-        onChamadaCriada={buscarChamadas} 
-      />
     </div>
-  );
+
+    {mensagemErro && (
+      <Alert className="mensagem-erro" severity="error">
+        {mensagemErro}
+      </Alert>
+    )}
+
+    {chamadasFiltradas.length === 0 && !mensagemErro && (
+      <Typography variant="body1">Nenhuma chamada encontrada.</Typography>
+    )}
+
+    {chamadasFiltradas.length > 0 && (
+      <div className="lista-cards">
+        {chamadasFiltradas.map((chamada) => (
+          <Card
+            key={chamada.id}
+            className="card"
+            onClick={() =>
+              navigate(`/chamada/editarchamada/${chamada.id}`, {
+                state: { id_disciplina: chamada.id_disciplina },
+              })
+            }
+            title="Clique para editar essa chamada"
+          >
+            <CardContent>
+              <Typography className="cardTexto">
+                <strong>{chamada.descricao}</strong>
+              </Typography>
+              <Typography variant="body2">
+                <strong>Número:</strong> {chamada.id}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Data:</strong>{" "}
+                {new Date(chamada.data_hora_inicio).toLocaleDateString()}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Hora de Início:</strong>{" "}
+                {new Date(chamada.data_hora_inicio).toLocaleTimeString()}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Hora de Fechamento:</strong>{" "}
+                {new Date(chamada.data_hora_final).toLocaleTimeString()}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )}
+
+    <ModaisChamada
+      abrirModalSelecionarMateria={abrirModalSelecionarMateria}
+      setAbrirModalSelecionarMateria={setAbrirModalSelecionarMateria}
+      abrirModalConfirmacao={abrirModalConfirmacao}
+      setAbrirModalConfirmacao={setAbrirModalConfirmacao}
+      modalQRCodeAberto={modalQRCodeAberto}
+      setModalQRCodeAberto={setModalQRCodeAberto}
+      materias={materias}
+      materiaSelecionada={materiaSelecionada}
+      setMateriaSelecionada={setMateriaSelecionada}
+      carregandoMaterias={carregandoMaterias}
+      setCarregandoMaterias={setCarregandoMaterias}
+      chamadaSelecionada={chamadaSelecionada}
+      tokenDecodificado={tokenDecodificado}
+      setQRCodeData={setQRCodeData}
+      setIdChamadaCriada={setIdChamadaCriada}
+      qrCodeData={qrCodeData}
+      idChamadaCriada={idChamadaCriada}
+      onChamadaCriada={buscarChamadas}
+    />
+  </div>
+);
+
 };
 
 export default Chamada;
