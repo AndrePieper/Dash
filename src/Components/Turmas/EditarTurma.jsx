@@ -194,7 +194,6 @@ const EditarTurma = () => {
   };
 
   const abrirModalExclusao = (idVinculo) => {
-    console.log('AbrirModalExclusao: ' + idVinculo)
     setModalData({ tipo: 'excluir', idVinculo });
   };
 
@@ -202,7 +201,6 @@ const EditarTurma = () => {
     const token = localStorage.getItem('token');
     const idVinculo = modalData.idVinculo;
 
-    console.log('ID_Vinculo: ' + idVinculo + 'Modal_ID_Vinculo: ' + modalData.idVinculo)
     try {
       const res = await fetch(`https://projeto-iii-4.vercel.app/turma/alunos/?id_vinculo=${idVinculo}`, {
         method: 'DELETE',
@@ -210,7 +208,7 @@ const EditarTurma = () => {
       });
       if (!res.ok) throw new Error("Erro ao excluir aluno da turma");
 
-      setAlunos((prev) => prev.filter(a => a.id !== idVinculo));
+      setAlunos((prev) => prev.filter(a => a.id !== idVinculo)); // Remover o registro do aluno no front
       setModalData(null);
     } catch (error) {
       console.error(error);
@@ -449,6 +447,7 @@ const EditarTurma = () => {
           onClose={() => setModalData(null)}
           onConfirm={confirmarAdicao}
         >
+          <h3>Adicionar alunos à turma</h3>
           <input
             type="text"
             placeholder="Buscar por nome"
