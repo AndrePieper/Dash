@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import './Semestres.css';
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
@@ -9,10 +10,11 @@ const Semestres = () => {
   const [semestres, setSemestres] = useState([]);
   const [confirmarExclusao, setConfirmarExclusao] = useState(null);
 
-
   // Estado para campo de ordenação e direção da ordenação
-    const [ordenarPor, setOrdenarPor] = useState(null);
-    const [ordemAscendente, setOrdemAscendente] = useState(true);
+  const [ordenarPor, setOrdenarPor] = useState(null);
+  const [ordemAscendente, setOrdemAscendente] = useState(true);
+
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
@@ -79,6 +81,11 @@ const Semestres = () => {
       setSemestres(semestres.filter(sem => sem.id !== id));
         setConfirmarExclusao(null);
 
+      // Ajustar página se excluir último item da página
+      if ((semestres.length - 1) <= (paginaAtual - 1) * 9 && paginaAtual > 1) {
+        setPaginaAtual(paginaAtual - 1);
+      }  
+
       setTimeout(() => navigate("/usuarios"), 1500)
 
 
@@ -124,6 +131,10 @@ const Semestres = () => {
     });
   }, [semestres, ordenarPor, ordemAscendente]);
 
+  // Pagina os usuários ordenados
+  const registrosPorPagina = 9;
+  const totalPaginas = Math.ceil(semestresOrdenados.length / registrosPorPagina);
+
   // Limita os usuários que cabem na tela (sem paginação)
   const semestresVisiveis = semestresOrdenados.slice(0, 15);
 
@@ -137,10 +148,18 @@ const Semestres = () => {
     }
   };
 
+  // Navegação das páginas
+  const handlePaginaAnterior = () => {
+    if (paginaAtual > 1) setPaginaAtual(paginaAtual - 1);
+  };
+
+  const handleProximaPagina = () => {
+    if (paginaAtual < totalPaginas) setPaginaAtual(paginaAtual + 1);
+  };
 
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+      <div className="header-usuarios">
         <h2>Cadastro de Semestres</h2>
       </div>
 
@@ -148,41 +167,62 @@ const Semestres = () => {
             <PopUpTopo message={popup.message} type={popup.type} />
       )}
 
-      <table className="tabela-usuarios">
-        <thead>
-          <tr>
-            <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
-              Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
-            </th>
-            <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
-              Descrição {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
-            </th>
-            <th>Data Inicial</th>
-            <th>Data Final</th>
-            <th>Padrão</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {semestresVisiveis.map((sem) => (
-            <tr key={sem.id}>
-              <td>{sem.id}</td>
-              <td>{sem.descricao}</td>
-              <td>{formatarData(sem.data_inicio)}</td>
-              <td>{formatarData(sem.data_final)}</td>
-              <td>{padraoSemestreTexto(sem.padrao)}</td>
-              <td>
-                <button className="botao-editar" onClick={() => handleEditarSemestre(sem.id)}>
-                  <FaPen size={16} />
-                </button>
-                <button className="botao-excluir" onClick={() => handleExcluirSemestre(sem.id)}>
-                  <FaTrash size={16} />
-                </button>
-              </td>
+      <div className="tela-usuarios">
+        <table className="tabela-usuarios">
+          <thead>
+            <tr>
+              <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
+                Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+              </th>
+              <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
+                Descrição {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
+              </th>
+              <th>Data Inicial</th>
+              <th>Data Final</th>
+              <th>Padrão</th>
+              <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {semestresVisiveis.map((sem) => (
+              <tr key={sem.id}>
+                <td>{sem.id}</td>
+                <td>{sem.descricao}</td>
+                <td>{formatarData(sem.data_inicio)}</td>
+                <td>{formatarData(sem.data_final)}</td>
+                <td>{padraoSemestreTexto(sem.padrao)}</td>
+                <td>
+                  <button className="botao-editar" onClick={() => handleEditarSemestre(sem.id)}>
+                    <FaPen size={16} />
+                  </button>
+                  <button className="botao-excluir" onClick={() => handleExcluirSemestre(sem.id)}>
+                    <FaTrash size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="paginacao-container">
+          <button
+            onClick={handlePaginaAnterior}
+            disabled={paginaAtual === 1}
+            className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+          >
+            <FiArrowLeft size={20} />
+          </button>
+          <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
+          <button
+            onClick={handleProximaPagina}
+            disabled={paginaAtual === totalPaginas}
+            className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+          >
+            <FiArrowRight size={20} />
+          </button>
+        </div>
+
+      </div>
 
       <button className="botao-adicionar" onClick={handleAdicionarSemestre}>
         <FaPlus size={28} />
@@ -197,7 +237,7 @@ const Semestres = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import './Usuarios.css';
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
 
@@ -246,23 +246,23 @@ const Usuarios = () => {
           </tbody>
         </table>
 
- <div className="paginacao-container">
-  <button
-    onClick={handlePaginaAnterior}
-    disabled={paginaAtual === 1}
-    className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
-  >
-    <FiArrowLeft size={20} />
-  </button>
-  <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
-  <button
-    onClick={handleProximaPagina}
-    disabled={paginaAtual === totalPaginas}
-    className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
-  >
-    <FiArrowRight size={20} />
-  </button>
-</div>
+        <div className="paginacao-container">
+          <button
+            onClick={handlePaginaAnterior}
+            disabled={paginaAtual === 1}
+            className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+          >
+            <FiArrowLeft size={20} />
+          </button>
+          <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
+          <button
+            onClick={handleProximaPagina}
+            disabled={paginaAtual === totalPaginas}
+            className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+          >
+            <FiArrowRight size={20} />
+          </button>
+        </div>
         <button
           onClick={handleAdicionarUsuario}
           className="botao-adicionar"

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import './Turmas.css';
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
@@ -16,12 +17,13 @@ const Turmas = () => {
   const [filtroCurso, setFiltroCurso] = useState('');
   const [filtroStatus, setFiltroStatus] = useState(''); // 0 Cursando - 1 Conluido
 
-
   // Estado para campo de ordenação e direção da ordenação
-    const [ordenarPor, setOrdenarPor] = useState(null);
-    const [ordemAscendente, setOrdemAscendente] = useState(true);
+  const [ordenarPor, setOrdenarPor] = useState(null);
+  const [ordemAscendente, setOrdemAscendente] = useState(true);
 
-    const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+  const [paginaAtual, setPaginaAtual] = useState(1);
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
 
   const navigate = useNavigate();  // Navegaçãoa
@@ -98,6 +100,11 @@ const Turmas = () => {
     setTurmas(turmas.filter((t) => t.id !== id));
     setConfirmarExclusao(null);
 
+    // Ajustar página se excluir último item da página
+    if ((turmas.length - 1) <= (paginaAtual - 1) * 9 && paginaAtual > 1) {
+      setPaginaAtual(paginaAtual - 1);
+    }
+
     setTimeout(() => navigate("/turmas"), 1500)
 
     } catch (error) {
@@ -112,51 +119,64 @@ const Turmas = () => {
   };
 
   //FILTROS
-        // Aplica filtros de nome e tipo sobre os turmas
-        const turmasFiltrados = useMemo(() => {
-          return turmas.filter(turma => {
-            const statusOK = filtroStatus == '' || turma.status.toString() === filtroStatus;
-            const cursoOK = filtroCurso == '' || turma.id_curso.toString() === filtroCurso;
-            return statusOK && cursoOK;
-          });
-        }, [turmas, filtroStatus, filtroCurso]);
-    
-        // Ordena os turmas filtrados conforme campo e direção
-        const turmasOrdenados = useMemo(() => {
-          if (!ordenarPor) return turmasFiltrados;
-    
-          return [...turmasFiltrados].sort((a, b) => {
-            let valA = a[ordenarPor];
-            let valB = b[ordenarPor];
-    
-            if (typeof valA === 'string') valA = valA.toLowerCase();
-            if (typeof valB === 'string') valB = valB.toLowerCase();
-    
-            if (valA > valB) return ordemAscendente ? 1 : -1;
-            if (valA < valB) return ordemAscendente ? -1 : 1;
-            return 0;
-          });
-        }, [turmasFiltrados, ordenarPor, ordemAscendente]);
-    
-        // Limita os disciplinas que cabem na tela (sem paginação)
-        const turmasVisiveis = turmasOrdenados.slice(0, 15);
-    
-        // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
-        const handleOrdenar = (campo) => {
-          if (ordenarPor === campo) {
-            setOrdemAscendente(!ordemAscendente);
-          } else {
-            setOrdenarPor(campo);
-            setOrdemAscendente(true);
-          }
-        };
+    // Aplica filtros de nome e tipo sobre os turmas
+    const turmasFiltrados = useMemo(() => {
+      return turmas.filter(turma => {
+        const statusOK = filtroStatus == '' || turma.status.toString() === filtroStatus;
+        const cursoOK = filtroCurso == '' || turma.id_curso.toString() === filtroCurso;
+        return statusOK && cursoOK;
+      });
+    }, [turmas, filtroStatus, filtroCurso]);
+
+  // Ordena os turmas filtrados conforme campo e direção
+  const turmasOrdenados = useMemo(() => {
+    if (!ordenarPor) return turmasFiltrados;
+
+    return [...turmasFiltrados].sort((a, b) => {
+      let valA = a[ordenarPor];
+      let valB = b[ordenarPor];
+
+      if (typeof valA === 'string') valA = valA.toLowerCase();
+      if (typeof valB === 'string') valB = valB.toLowerCase();
+
+      if (valA > valB) return ordemAscendente ? 1 : -1;
+      if (valA < valB) return ordemAscendente ? -1 : 1;
+      return 0;
+    });
+  }, [turmasFiltrados, ordenarPor, ordemAscendente]);
+
+  // Limita os disciplinas que cabem na tela (sem paginação)
+  const turmasVisiveis = turmasOrdenados.slice(0, 15);
+
+  // Pagina os usuários ordenados
+  const registrosPorPagina = 9;
+  const totalPaginas = Math.ceil(turmasOrdenados.length / registrosPorPagina);
+
+  // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
+  const handleOrdenar = (campo) => {
+    if (ordenarPor === campo) {
+      setOrdemAscendente(!ordemAscendente);
+    } else {
+      setOrdenarPor(campo);
+      setOrdemAscendente(true);
+    }
+  };
+
+  // Navegação das páginas
+  const handlePaginaAnterior = () => {
+    if (paginaAtual > 1) setPaginaAtual(paginaAtual - 1);
+  };
+
+  const handleProximaPagina = () => {
+    if (paginaAtual < totalPaginas) setPaginaAtual(paginaAtual + 1);
+  };
 
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
-        <h2>Cadastro de Turmas</h2>
+    <>
+      <div className="header-usuarios">
+        <h2>Turmas</h2>
 
-        <div className="filtros">
+        <div className="filtros-usuarios">
           <select 
             value={filtroCurso} 
             onChange={(e) => setFiltroCurso(e.target.value)}
@@ -182,45 +202,66 @@ const Turmas = () => {
         <PopUpTopo message={popup.message} type={popup.type} />
       )}
 
-      <table className="tabela-usuarios">
-        <thead>
-          <tr>
-            <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
-              Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
-            </th>
-            <th onClick={() => handleOrdenar('semestre_curso')} style={{ cursor: 'pointer' }}>
-              Semestre {ordenarPor === 'semestre_curso' ? (ordemAscendente ? '▲' : '▼') : ''}
-            </th>
-            <th onClick={() => handleOrdenar('id_curso')} style={{ cursor: 'pointer' }}>
-              Curso {ordenarPor === 'id_curso' ? (ordemAscendente ? '▲' : '▼') : ''}
-            </th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {turmasVisiveis.map((t) => (
-            <tr key={t.id}>
-              <td>{t.id}</td>
-              <td>{t.semestre_curso}</td>
-              <td>{t.Curso.descricao}</td>
-              <td>{t.status === 0 ? 'Cursando' : 'Concluído'}</td>
-              <td>
-                <button
-                  onClick={() => handleEditarTurma(t.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }} 
-                >
-                  <FaPen size={20}/>
-                </button>
-                <button 
-                  onClick={() => handleExcluirTurma(t.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
-                >
-                  <FaTrash size={20}/>
-                </button>
-              </td>
+      <div className="tela-usuarios">
+        <table className="tabela-usuarios">
+          <thead>
+            <tr>
+              <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
+                Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+              </th>
+              <th onClick={() => handleOrdenar('semestre_curso')} style={{ cursor: 'pointer' }}>
+                Semestre {ordenarPor === 'semestre_curso' ? (ordemAscendente ? '▲' : '▼') : ''}
+              </th>
+              <th onClick={() => handleOrdenar('id_curso')} style={{ cursor: 'pointer' }}>
+                Curso {ordenarPor === 'id_curso' ? (ordemAscendente ? '▲' : '▼') : ''}
+              </th>
+              <th>Status</th>
+              <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {turmasVisiveis.map((t) => (
+              <tr key={t.id}>
+                <td>{t.id}</td>
+                <td>{t.semestre_curso}</td>
+                <td>{t.Curso.descricao}</td>
+                <td>{t.status === 0 ? 'Cursando' : 'Concluído'}</td>
+                <td>
+                  <button
+                    onClick={() => handleEditarTurma(t.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }} 
+                  >
+                    <FaPen size={20}/>
+                  </button>
+                  <button 
+                    onClick={() => handleExcluirTurma(t.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                  >
+                    <FaTrash size={20}/>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="paginacao-container">
+          <button
+            onClick={handlePaginaAnterior}
+            disabled={paginaAtual === 1}
+            className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+          >
+            <FiArrowLeft size={20} />
+          </button>
+          <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
+          <button
+            onClick={handleProximaPagina}
+            disabled={paginaAtual === totalPaginas}
+            className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+          >
+            <FiArrowRight size={20} />
+          </button>
+        </div>
+
+      </div>
 
       <button className="botao-adicionar" onClick={handleAdicionarTurma}>
         <FaPlus size={28} />
@@ -236,7 +277,7 @@ const Turmas = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import './Disciplinas.css';
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa';
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
@@ -11,13 +12,15 @@ const Disciplinas = () => {
   const [confirmarExclusao, setConfirmarExclusao] = useState(null);
 
   // Estados para filtros de nome e tipo
-    const [filtroNome, setFiltroNome] = useState('');
-    const [filtroCurso, setFiltroCurso] = useState('');
-    const [filtroStatus, setFiltroStatus] = useState('');
+  const [filtroNome, setFiltroNome] = useState('');
+  const [filtroCurso, setFiltroCurso] = useState('');
+  const [filtroStatus, setFiltroStatus] = useState('');
 
   // Estado para campo de ordenação e direção da ordenação
-    const [ordenarPor, setOrdenarPor] = useState(null);
-    const [ordemAscendente, setOrdemAscendente] = useState(true);
+  const [ordenarPor, setOrdenarPor] = useState(null);
+  const [ordemAscendente, setOrdemAscendente] = useState(true);
+
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
@@ -90,6 +93,11 @@ const Disciplinas = () => {
     setDisciplinas(disciplinas.filter((d) => d.id !== id));
     setConfirmarExclusao(null);
 
+    // Ajustar página se excluir último item da página
+    if ((disciplinas.length - 1) <= (paginaAtual - 1) * 9 && paginaAtual > 1) {
+      setPaginaAtual(paginaAtual - 1);
+    }
+
     setTimeout(() => navigate("/disciplinas"), 1500)
 
     } catch (error) {
@@ -133,6 +141,11 @@ const Disciplinas = () => {
       });
     }, [disciplinasFiltrados, ordenarPor, ordemAscendente]);
 
+    // Pagina os usuários ordenados
+    const registrosPorPagina = 9;
+    const totalPaginas = Math.ceil(disciplinasOrdenados.length / registrosPorPagina);
+
+
     // Limita os disciplinas que cabem na tela (sem paginação)
     const disciplinasVisiveis = disciplinasOrdenados.slice(0, 15);
 
@@ -146,12 +159,21 @@ const Disciplinas = () => {
       }
     };
 
+    // Navegação das páginas
+    const handlePaginaAnterior = () => {
+      if (paginaAtual > 1) setPaginaAtual(paginaAtual - 1);
+    };
+
+    const handleProximaPagina = () => {
+      if (paginaAtual < totalPaginas) setPaginaAtual(paginaAtual + 1);
+    };
+
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+      <div className="header-usuarios">
         <h2>Cadastro de Disciplinas</h2>
 
-        <div className="filtros-cursos">
+        <div className="filtros-usuarios">
           <input
             type="text"
             placeholder="Filtrar por nome"
@@ -186,44 +208,64 @@ const Disciplinas = () => {
       {popup.show && (
         <PopUpTopo message={popup.message} type={popup.type} />
       )}
-
-      <table className="tabela-usuarios">
-        <thead>
-          <tr>
-          <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
-              Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
-          </th>
-          <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
-            Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
-          </th>
-          <th>Curso</th>
-          <th>Status</th>
-          <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {disciplinasVisiveis.map((d) => (
-            <tr key={d.id}>
-              <td>{d.id}</td>
-              <td>{d.descricao}</td>
-              <td>{d.Curso?.descricao || 'Sem curso'}</td>
-              <td>{d.status === 0 ? 'Ativo' : 'Inativo'}</td>
-              <td>
-                <button
-                 onClick={() => handleEditarDisciplina(d.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }}
-                >
-                  <FaPen size={16} />
-                </button>
-                <button
-                 onClick={() => handleExcluirDisciplina(d.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
-                >
-                  <FaTrash size={16} />
-                </button>
-              </td>
+      <div className="tela-usuarios">
+        <table className="tabela-usuarios">
+          <thead>
+            <tr>
+            <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
+                Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
+            </th>
+            <th onClick={() => handleOrdenar('descricao')} style={{ cursor: 'pointer' }}>
+              Nome {ordenarPor === 'descricao' ? (ordemAscendente ? '▲' : '▼') : ''}
+            </th>
+            <th>Curso</th>
+            <th>Status</th>
+            <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {disciplinasVisiveis.map((d) => (
+              <tr key={d.id}>
+                <td>{d.id}</td>
+                <td>{d.descricao}</td>
+                <td>{d.Curso?.descricao || 'Sem curso'}</td>
+                <td>{d.status === 0 ? 'Ativo' : 'Inativo'}</td>
+                <td>
+                  <button
+                  onClick={() => handleEditarDisciplina(d.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }}
+                  >
+                    <FaPen size={16} />
+                  </button>
+                  <button
+                  onClick={() => handleExcluirDisciplina(d.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                  >
+                    <FaTrash size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="paginacao-container">
+          <button
+            onClick={handlePaginaAnterior}
+            disabled={paginaAtual === 1}
+            className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+          >
+            <FiArrowLeft size={20} />
+          </button>
+          <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
+          <button
+            onClick={handleProximaPagina}
+            disabled={paginaAtual === totalPaginas}
+            className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+          >
+            <FiArrowRight size={20} />
+          </button>
+        </div>
+
+      </div>
 
       <button className="botao-adicionar" onClick={handleAdicionarDisciplina}>
         <FaPlus size={28} />
@@ -238,7 +280,7 @@ const Disciplinas = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
