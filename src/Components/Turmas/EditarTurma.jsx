@@ -1,8 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 import './CadastroTurma.css';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
+
+const Modal = ({ title, children, onClose, onConfirm }) => {
+  const modalRef = useRef();
+
+  const handleClickOutside = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      onClose(); // Fecha o modal ao clicar fora dele
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal" >
+        <h3>{title}</h3>
+        <div className="modal-content" ref={modalRef}>{children}
+          <div className="modal-actions">
+            <button onClick={onClose} className="modal-cancel">Cancelar</button>
+            {onConfirm && <button onClick={onConfirm} className="modal-confirm">Confirmar</button>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const EditarTurma = () => {
   const { id } = useParams();
@@ -23,7 +53,15 @@ const EditarTurma = () => {
   const [disciplinas, setDisciplinas] = useState([]);
 
   // Filtro
-  const [filtroSemestre, setFiltroSemestre] = useState('');
+  const [filtroSemestre, setFiltroSemestre] = useState(''); // Filtro Pesquisa Disciplina
+  const [filtroNome, setFiltroNome] = useState(''); // Filtro Adicionar Alunos
+
+  // Modal
+  const [modalData, setModalData] = useState(null);
+  
+  // Turma Alunos
+  const [usuarios, setUsuarios] = useState([]);
+  const [selecionados, setSelecionados] = useState([]);
 
 
   useEffect(() => {
@@ -112,7 +150,7 @@ const EditarTurma = () => {
   
     const turmaAtualizada = {
       id: parseInt(id),
-      semestre_curso: parseInt(semestre), // Agora é um valor direto
+      semestre_curso: parseInt(semestre),
       id_curso: parseInt(curso),
       status: parseInt(status),
     };
@@ -154,6 +192,60 @@ const EditarTurma = () => {
       setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
     }
   };
+
+  const abrirModalExclusao = (idVinculo) => {
+    console.log('AbrirModalExclusao: ' + idVinculo)
+    setModalData({ tipo: 'excluir', idVinculo });
+  };
+
+  const confirmarExclusao = async () => {
+    const token = localStorage.getItem('token');
+    const idVinculo = modalData.idVinculo;
+
+    console.log('ID_Vinculo: ' + idVinculo + 'Modal_ID_Vinculo: ' + modalData.idVinculo)
+    try {
+      const res = await fetch(`https://projeto-iii-4.vercel.app/turma/alunos/?id_vinculo=${idVinculo}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Erro ao excluir aluno da turma");
+
+      setAlunos((prev) => prev.filter(a => a.id !== idVinculo));
+      setModalData(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const abrirModalAdicionar = async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`https://projeto-iii-4.vercel.app/usuarios`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    setUsuarios(data.filter(u => u.tipo === 0));
+    setModalData({ tipo: 'adicionar' });
+  };
+
+  const confirmarAdicao = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      for (let idAluno of selecionados) {
+        await fetch(`https://projeto-iii-4.vercel.app/turma/alunos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ id_turma: parseInt(id), id_aluno: idAluno })
+        });
+      }
+      setModalData(null);
+      setSelecionados([]);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const alunosFiltrados = usuarios.filter(u => u.nome.toLowerCase().includes(filtroNome.toLowerCase()));
 
   const semestresDisponiveis = [...new Set(disciplinas.map((d) => d.Semestre?.descricao))];
 
@@ -221,7 +313,7 @@ const EditarTurma = () => {
             <button
               onClick={() => setAbaSelecionada('alunos')}
               style={{
-                backgroundColor: abaSelecionada === 'alunos' ? '#009232' : '#ccc',
+                backgroundColor: abaSelecionada === 'alunos' ? '#009232' : '#4E4E4E',
                 color: 'white',
                 border: 'none',
                 padding: '0.5rem 1rem',
@@ -234,7 +326,7 @@ const EditarTurma = () => {
             <button
               onClick={() => setAbaSelecionada('disciplinas')}
               style={{
-                backgroundColor: abaSelecionada === 'disciplinas' ? '#009232' : '#ccc',
+                backgroundColor: abaSelecionada === 'disciplinas' ? '#009232' : '#4E4E4E',
                 color: 'white',
                 border: 'none',
                 padding: '0.5rem 1rem',
@@ -257,15 +349,27 @@ const EditarTurma = () => {
                   <thead>
                     <tr>
                       <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Nome</th>
+                      <th style={{ width: '15%' }}>Remover</th>
                     </tr>
                   </thead>
                   <tbody>
                     {alunos.map((aluno) => (
                       <tr key={aluno.id}>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{aluno.Usuario?.nome}</td>
+                        <td style={{ justifyContent: 'center', display: 'flex' }}>
+                          <button 
+                            onClick={() => abrirModalExclusao(aluno.id)} 
+                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                          >
+                            <FaTrash size={20}/>
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
+                  <button onClick={abrirModalAdicionar} className="botao-editar" >
+                    <FaPlus size={28} />
+                  </button>
                 </table>
               )}
             </div>
@@ -279,12 +383,12 @@ const EditarTurma = () => {
               <p>Nenhuma disciplina vinculada à turma.</p>
             ) : (
               <>
-                <div style={{ marginBottom: '1rem' }}>
+                <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'end' }}>
                   <select
                     id="filtroSemestre"
                     value={filtroSemestre}
                     onChange={(e) => setFiltroSemestre(e.target.value)}
-                    style={{ padding: '0.4rem', width: '50%', display: 'flex', alignItems: 'rigth' }}
+                    style={{ padding: '0.4rem', width: '42%', display: 'flex', alignItems: 'rigth' }}
                   >
                     <option value="">Todos os Semestres</option>
                     {semestresDisponiveis.map((semestre) => (
@@ -299,7 +403,8 @@ const EditarTurma = () => {
                   <thead>
                     <tr>
                       <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Disciplina</th>
-                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Semestre</th>
+                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem', width: '20%' }}>Semestre</th>
+                      <th style={{ width: '15%' }}>Remover</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -307,9 +412,19 @@ const EditarTurma = () => {
                       <tr key={item.id}>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Disciplina?.descricao || '—'}</td>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Semestre?.descricao || '—'}</td>
+                        <td style={{ justifyContent: 'center', display: 'flex', borderBottom: '1px solid #D0D0D0' }}>
+                          <button 
+                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                          >
+                            <FaTrash size={20}/>
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
+                  <button className="botao-editar" >
+                    <FaPlus size={28} />
+                  </button>
                 </table>
               </>
             )}
@@ -317,62 +432,54 @@ const EditarTurma = () => {
           )}
         </div>
       </div>
+
+      {modalData?.tipo === 'excluir' && (
+        <Modal
+          title="Remover Aluno da Turma"
+          onClose={() => setModalData(null)}
+          onConfirm={confirmarExclusao}
+        >
+          <p>Você realmente deseja remover este aluno desta turma?</p>
+        </Modal>
+      )}
+
+      {modalData && modalData.tipo === 'adicionar' && (
+        <Modal
+          title="Adicionar alunos à turma"
+          onClose={() => setModalData(null)}
+          onConfirm={confirmarAdicao}
+        >
+          <input
+            type="text"
+            placeholder="Buscar por nome"
+            value={filtroNome}
+            onChange={e => setFiltroNome(e.target.value)}
+          />
+          <div className="lista-alunos-disponiveis">
+            {alunosFiltrados.map(aluno => (
+              <label key={aluno.id} style={{ display: 'flex', padding: '5px' }}>
+                <input
+                  type="checkbox"
+                  checked={selecionados.includes(aluno.id)}
+                  onChange={(e) =>
+                    setSelecionados((prev) =>
+                      e.target.checked
+                        ? [...prev, aluno.id]
+                        : prev.filter((id) => id !== aluno.id)
+                    )
+                  }
+                  style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
+                />
+                {aluno.nome}
+              </label>
+            ))}
+          </div>
+        </Modal>
+      )}
+
     </div>
   );
   
-  // return (
-  //   <div className="tela-turmas">
-  //     <div className="header-turmas">
-  //       <h2>Editar Turma</h2>
-  //     </div>
-
-  //     {popup.show && (
-  //           <PopUpTopo message={popup.message} type={popup.type} />
-  //     )}
-
-  //     <form onSubmit={handleSubmit}>
-  //       <div>
-  //         <label htmlFor="semestre">Semestre:</label>
-  //         <input
-  //           type="number"
-  //           id="semestre"
-  //           value={semestre}
-  //           onChange={(e) => setSemestre(e.target.value)}
-  //           required
-  //           placeholder="Digite o semestre"
-  //         />
-  //       </div>
-  //       <div>
-  //         <label htmlFor="curso">Curso:</label>
-  //         <select
-  //           id="curso"
-  //           value={curso}
-  //           onChange={(e) => setCurso(e.target.value)}
-  //           required
-  //         >
-  //           <option value="">Selecione o Curso</option>
-  //           {cursos.map((cur) => (
-  //             <option key={cur.id} value={cur.id}>{cur.descricao}</option>
-  //           ))}
-  //         </select>
-  //       </div>
-  //       <div>
-  //         <label htmlFor="status">Status:</label>
-  //         <select
-  //           id="status"
-  //           value={status}
-  //           onChange={(e) => setStatus(e.target.value)}
-  //           required
-  //         >
-  //           <option value="">Selecione o Status</option>
-  //           <option value="0">Cursando</option>
-  //           <option value="1">Concluído</option>
-  //         </select>
-  //       </div>
-  //       <button type="submit">Salvar Alterações</button>
-  //     </form>
-  //   </div>
-  // );
 };
 
 export default EditarTurma;
