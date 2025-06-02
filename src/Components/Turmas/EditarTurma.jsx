@@ -252,8 +252,8 @@ const EditarTurma = () => {
   : disciplinas;
 
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+      <div className="header-usuarios">
         <h2>Editar Turma</h2>
       </div>
   
@@ -261,222 +261,223 @@ const EditarTurma = () => {
         <PopUpTopo message={popup.message} type={popup.type} />
       )}
   
-      <div style={{ display: 'flex', gap: '2rem' }}>
-        {/* CARD 1: FORMULÁRIO */}
-        <form onSubmit={handleSubmit} style={{ flex: 1, background: '#fff', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
-          <div>
-            <label htmlFor="semestre">Semestre:</label>
-            <input
-              type="number"
-              id="semestre"
-              value={semestre}
-              onChange={(e) => setSemestre(e.target.value)}
-              required
-              placeholder="Digite o semestre"
-            />
-          </div>
-          <div>
-            <label htmlFor="curso">Curso:</label>
-            <select
-              id="curso"
-              value={curso}
-              onChange={(e) => setCurso(e.target.value)}
-              required
-            >
-              <option value="">Selecione o Curso</option>
-              {cursos.map((cur) => (
-                <option key={cur.id} value={cur.id}>{cur.descricao}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="status">Status:</label>
-            <select
-              id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              required
-            >
-              <option value="">Selecione o Status</option>
-              <option value="0">Cursando</option>
-              <option value="1">Concluído</option>
-            </select>
-          </div>
-          <button type="submit">Salvar Alterações</button>
-        </form>
-  
-        {/* CARD 2: GESTÃO DE VÍNCULOS */}
-        <div style={{ flex: 1, background: '#f9f9f9', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-            <button
-              onClick={() => setAbaSelecionada('alunos')}
-              style={{
-                backgroundColor: abaSelecionada === 'alunos' ? '#009232' : '#4E4E4E',
-                color: 'white',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              Alunos
-            </button>
-            <button
-              onClick={() => setAbaSelecionada('disciplinas')}
-              style={{
-                backgroundColor: abaSelecionada === 'disciplinas' ? '#009232' : '#4E4E4E',
-                color: 'white',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              Disciplinas
-            </button>
-          </div>
-  
-          {/* CONTEÚDO DAS ABAS */}
-          {abaSelecionada === 'alunos' && (
+      <div className="tela-usuarios">
+        <div style={{ display: 'flex', gap: '2rem' }} >
+          {/* CARD 1: FORMULÁRIO */}
+          <form onSubmit={handleSubmit} style={{ flex: 1, background: '#fff', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}> 
             <div>
-              <h3>Alunos Vinculados</h3>
-              {alunos.length === 0 ? (
-                <p>Nenhum aluno vinculado à turma.</p>
-              ) : (
-                <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr>
-                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Nome</th>
-                      <th style={{ width: '15%' }}>Remover</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {alunos.map((aluno) => (
-                      <tr key={aluno.id}>
-                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{aluno.Usuario?.nome}</td>
-                        <td style={{ justifyContent: 'center', display: 'flex' }}>
-                          <button 
-                            onClick={() => abrirModalExclusao(aluno.id)} 
-                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
-                          >
-                            <FaTrash size={20}/>
-                          </button>
-                        </td>
+              <label htmlFor="semestre">Semestre:</label>
+              <input
+                type="number"
+                id="semestre"
+                value={semestre}
+                onChange={(e) => setSemestre(e.target.value)}
+                required
+                placeholder="Digite o semestre"
+              />
+            </div>
+            <div>
+              <label htmlFor="curso">Curso:</label>
+              <select
+                id="curso"
+                value={curso}
+                onChange={(e) => setCurso(e.target.value)}
+                required
+              >
+                <option value="">Selecione o Curso</option>
+                {cursos.map((cur) => (
+                  <option key={cur.id} value={cur.id}>{cur.descricao}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="status">Status:</label>
+              <select
+                id="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                required
+              >
+                <option value="">Selecione o Status</option>
+                <option value="0">Cursando</option>
+                <option value="1">Concluído</option>
+              </select>
+            </div>
+            <button type="submit">Salvar Alterações</button>
+          </form>
+    
+          {/* CARD 2: GESTÃO DE VÍNCULOS */}
+          <div style={{ flex: 1, background: '#f9f9f9', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+              <button
+                onClick={() => setAbaSelecionada('alunos')}
+                style={{
+                  backgroundColor: abaSelecionada === 'alunos' ? '#009232' : '#4E4E4E',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                Alunos
+              </button>
+              <button
+                onClick={() => setAbaSelecionada('disciplinas')}
+                style={{
+                  backgroundColor: abaSelecionada === 'disciplinas' ? '#009232' : '#4E4E4E',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                Disciplinas
+              </button>
+            </div>
+    
+            {/* CONTEÚDO DAS ABAS */}
+            {abaSelecionada === 'alunos' && (
+              <div>
+                <h3>Alunos Vinculados</h3>
+                {alunos.length === 0 ? (
+                  <p>Nenhum aluno vinculado à turma.</p>
+                ) : (
+                  <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Nome</th>
+                        <th style={{ width: '15%' }}>Remover</th>
                       </tr>
-                    ))}
-                  </tbody>
-                  <button onClick={abrirModalAdicionar} className="botao-editar" >
-                    <FaPlus size={28} />
-                  </button>
-                </table>
+                    </thead>
+                    <tbody>
+                      {alunos.map((aluno) => (
+                        <tr key={aluno.id}>
+                          <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{aluno.Usuario?.nome}</td>
+                          <td style={{ justifyContent: 'center', display: 'flex' }}>
+                            <button 
+                              onClick={() => abrirModalExclusao(aluno.id)} 
+                              className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                            >
+                              <FaTrash size={20}/>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <button onClick={abrirModalAdicionar} className="botao-editar" >
+                      <FaPlus size={28} />
+                    </button>
+                  </table>
+                )}
+              </div>
+            )}
+    
+            {abaSelecionada === 'disciplinas' && (
+              <div>
+              <h3>Disciplinas Vinculadas</h3>
+          
+              {disciplinas.length === 0 ? (
+                <p>Nenhuma disciplina vinculada à turma.</p>
+              ) : (
+                <>
+                  <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'end' }}>
+                    <select
+                      id="filtroSemestre"
+                      value={filtroSemestre}
+                      onChange={(e) => setFiltroSemestre(e.target.value)}
+                      style={{ padding: '0.4rem', width: '42%', display: 'flex', alignItems: 'rigth' }}
+                    >
+                      <option value="">Todos os Semestres</option>
+                      {semestresDisponiveis.map((semestre) => (
+                        <option key={semestre} value={semestre}>
+                          {semestre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+          
+                  <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Disciplina</th>
+                        <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem', width: '20%' }}>Semestre</th>
+                        <th style={{ width: '15%' }}>Remover</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {disciplinasFiltradas.map((item) => (
+                        <tr key={item.id}>
+                          <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Disciplina?.descricao || '—'}</td>
+                          <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Semestre?.descricao || '—'}</td>
+                          <td style={{ justifyContent: 'center', display: 'flex', borderBottom: '1px solid #D0D0D0' }}>
+                            <button 
+                              className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                            >
+                              <FaTrash size={20}/>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <button className="botao-editar" >
+                      <FaPlus size={28} />
+                    </button>
+                  </table>
+                </>
               )}
             </div>
-          )}
-  
-          {abaSelecionada === 'disciplinas' && (
-            <div>
-            <h3>Disciplinas Vinculadas</h3>
-        
-            {disciplinas.length === 0 ? (
-              <p>Nenhuma disciplina vinculada à turma.</p>
-            ) : (
-              <>
-                <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'end' }}>
-                  <select
-                    id="filtroSemestre"
-                    value={filtroSemestre}
-                    onChange={(e) => setFiltroSemestre(e.target.value)}
-                    style={{ padding: '0.4rem', width: '42%', display: 'flex', alignItems: 'rigth' }}
-                  >
-                    <option value="">Todos os Semestres</option>
-                    {semestresDisponiveis.map((semestre) => (
-                      <option key={semestre} value={semestre}>
-                        {semestre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-        
-                <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr>
-                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Disciplina</th>
-                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem', width: '20%' }}>Semestre</th>
-                      <th style={{ width: '15%' }}>Remover</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {disciplinasFiltradas.map((item) => (
-                      <tr key={item.id}>
-                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Disciplina?.descricao || '—'}</td>
-                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Semestre?.descricao || '—'}</td>
-                        <td style={{ justifyContent: 'center', display: 'flex', borderBottom: '1px solid #D0D0D0' }}>
-                          <button 
-                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
-                          >
-                            <FaTrash size={20}/>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <button className="botao-editar" >
-                    <FaPlus size={28} />
-                  </button>
-                </table>
-              </>
             )}
           </div>
-          )}
         </div>
+
+        {modalData?.tipo === 'excluir' && (
+          <Modal
+            title="Remover Aluno da Turma"
+            onClose={() => setModalData(null)}
+            onConfirm={confirmarExclusao}
+          >
+            <p>Você realmente deseja remover este aluno desta turma?</p>
+          </Modal>
+        )}
+
+        {modalData && modalData.tipo === 'adicionar' && (
+          <Modal
+            title="Adicionar alunos à turma"
+            onClose={() => setModalData(null)}
+            onConfirm={confirmarAdicao}
+          >
+            <h3>Adicionar alunos à turma</h3>
+            <input
+              type="text"
+              placeholder="Buscar por nome"
+              value={filtroNome}
+              onChange={e => setFiltroNome(e.target.value)}
+            />
+            <div className="lista-alunos-disponiveis">
+              {alunosFiltrados.map(aluno => (
+                <label key={aluno.id} style={{ display: 'flex', padding: '5px' }}>
+                  <input
+                    type="checkbox"
+                    checked={selecionados.includes(aluno.id)}
+                    onChange={(e) =>
+                      setSelecionados((prev) =>
+                        e.target.checked
+                          ? [...prev, aluno.id]
+                          : prev.filter((id) => id !== aluno.id)
+                      )
+                    }
+                    style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
+                  />
+                  {aluno.nome}
+                </label>
+              ))}
+            </div>
+          </Modal>
+        )}
       </div>
-
-      {modalData?.tipo === 'excluir' && (
-        <Modal
-          title="Remover Aluno da Turma"
-          onClose={() => setModalData(null)}
-          onConfirm={confirmarExclusao}
-        >
-          <p>Você realmente deseja remover este aluno desta turma?</p>
-        </Modal>
-      )}
-
-      {modalData && modalData.tipo === 'adicionar' && (
-        <Modal
-          title="Adicionar alunos à turma"
-          onClose={() => setModalData(null)}
-          onConfirm={confirmarAdicao}
-        >
-          <h3>Adicionar alunos à turma</h3>
-          <input
-            type="text"
-            placeholder="Buscar por nome"
-            value={filtroNome}
-            onChange={e => setFiltroNome(e.target.value)}
-          />
-          <div className="lista-alunos-disponiveis">
-            {alunosFiltrados.map(aluno => (
-              <label key={aluno.id} style={{ display: 'flex', padding: '5px' }}>
-                <input
-                  type="checkbox"
-                  checked={selecionados.includes(aluno.id)}
-                  onChange={(e) =>
-                    setSelecionados((prev) =>
-                      e.target.checked
-                        ? [...prev, aluno.id]
-                        : prev.filter((id) => id !== aluno.id)
-                    )
-                  }
-                  style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
-                />
-                {aluno.nome}
-              </label>
-            ))}
-          </div>
-        </Modal>
-      )}
-
-    </div>
+    </>
   );
   
 };
