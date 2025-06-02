@@ -6,11 +6,12 @@ import PopUpTopo from '../PopUp/PopUpTopo';
  
 const CadastroDisciplina = () => {
   const [descricao, setDescricao] = useState('');
-  const [curso, setCurso] = useState('');
   const [status, setStatus] = useState('');
   const [cargaHorario, setCargaHorario] = useState(''); // novo estado para carga_horario
+  
+  const [curso, setCurso] = useState('');
   const [cursos, setCursos] = useState([]);
-
+  
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
   const navigate = useNavigate();
@@ -72,68 +73,73 @@ const CadastroDisciplina = () => {
   };
 
   return (
-    <div className="tela-turmas">
+    <>
       <div className="header-turmas">
         <h2>Cadastrar Disciplina</h2>
       </div>
 
       {popup.show && (
           <PopUpTopo message={popup.message} type={popup.type} />
-      )}
+        )}
       
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="descricao">Descrição:</label>
-          <input
-            type="text"
-            id="descricao"
-            value={descricao}
-            onChange={e => setDescricao(e.target.value)}
-            required
-            placeholder="Digite o nome da disciplina"
-          />
+      <div className="tela-turmas">
+        <div className="container-form">
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="descricao">Descrição:</label>
+              <input
+                type="text"
+                id="descricao"
+                value={descricao}
+                onChange={e => setDescricao(e.target.value)}
+                required
+                placeholder="Digite o nome da disciplina"
+              />
+            </div>
+            <div>
+              <label htmlFor="curso">Curso:</label>
+              <select
+                id="curso"
+                value={curso}
+                onChange={e => setCurso(e.target.value)}
+                required
+              >
+                <option value="">Selecione o Curso</option>
+                {cursos.map(cur => (
+                  <option key={cur.id} value={cur.id}>{cur.descricao}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="cargaHorario">Carga Horária:</label>
+              <input
+                type="number"
+                id="cargaHorario"
+                value={cargaHorario}
+                onChange={e => setCargaHorario(e.target.value)}
+                required
+                placeholder="Digite a carga horária"
+                min="30"
+              />
+            </div>
+            <div>
+              <label htmlFor="status">Status:</label>
+              <select
+                id="status"
+                value={status}
+                onChange={e => setStatus(e.target.value)}
+                required
+              >
+                <option value={0}>Ativo</option>
+                <option value={1}>Inativo</option>
+              </select>
+            </div>
+            <button type="submit">Cadastrar</button>
+          </form>
         </div>
-        <div>
-          <label htmlFor="curso">Curso:</label>
-          <select
-            id="curso"
-            value={curso}
-            onChange={e => setCurso(e.target.value)}
-            required
-          >
-            <option value="">Selecione o Curso</option>
-            {cursos.map(cur => (
-              <option key={cur.id} value={cur.id}>{cur.descricao}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="cargaHorario">Carga Horária:</label>
-          <input
-            type="number"
-            id="cargaHorario"
-            value={cargaHorario}
-            onChange={e => setCargaHorario(e.target.value)}
-            required
-            placeholder="Digite a carga horária"
-            min="30"
-          />
-        </div>
-        <div>
-          <label htmlFor="status">Status:</label>
-          <select
-            id="status"
-            value={status}
-            onChange={e => setStatus(e.target.value)}
-            required
-          >
-            <option value={0}>Ativo</option>
-            <option value={1}>Inativo</option>
-          </select>
-        </div>
-        <button type="submit">Cadastrar</button>
-      </form>
-    </div>
+      </div>
+    </>
+
   );
 };
 

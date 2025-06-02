@@ -9,10 +9,10 @@ const EditarDisciplina = () => {
   const navigate = useNavigate();
 
   const [descricao, setDescricao] = useState('');
-  const [disciplinas, setDisciplinas] = useState([]);
   const [cargaHorario, setCargaHorario] = useState('');
-  const [curso, setCurso] = useState('');
   const [status, setStatus] = useState('');
+
+  const [curso, setCurso] = useState('');
   const [cursos, setCursos] = useState([]);
 
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
@@ -108,67 +108,71 @@ const EditarDisciplina = () => {
   };
 
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+      <div className="header-usuarios">
         <h2>Editar Disciplina</h2>
       </div>
 
       {popup.show && (
-            <PopUpTopo message={popup.message} type={popup.type} />
+        <PopUpTopo message={popup.message} type={popup.type} />
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="descricao">Descrição:</label>
-          <input
-            type="text"
-            id="descricao"
-            value={descricao}
-            onChange={e => setDescricao(e.target.value)}
-            required
-          />
+      <div className="tela-usuarios">
+        <div className="container-form">
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="descricao">Descrição:</label>
+              <input
+                type="text"
+                id="descricao"
+                value={descricao}
+                onChange={e => setDescricao(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="curso">Curso:</label>
+              <select
+                id="curso"
+                value={curso}
+                onChange={e => setCurso(e.target.value)}
+                required
+              >
+                {cursos.map(cur => (
+                  <option key={cur.id} value={cur.id}>{cur.descricao}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="cargaHorario">Carga Horária:</label>
+              <input
+                type="number"
+                id="cargaHorario"
+                value={cargaHorario}
+                onChange={e => setCargaHorario(e.target.value)}
+                required
+                placeholder="Digite a carga horária"
+                min="30"
+              />
+            </div>
+            <div>
+              <label htmlFor="status">Status:</label>
+              <select
+                id="status"
+                value={status}
+                onChange={e => setStatus(e.target.value)}
+                required
+              >
+                <option value="">Selecione o Status</option>
+                <option value={0}>Ativa</option>
+                <option value={1}>Inativa</option>
+              </select>
+            </div>
+            <button type="submit">Salvar Alterações</button>
+          </form>
         </div>
-        <div>
-          <label htmlFor="curso">Curso:</label>
-          <select
-            id="curso"
-            value={curso}
-            onChange={e => setCurso(e.target.value)}
-            required
-          >
-            {cursos.map(cur => (
-              <option key={cur.id} value={cur.id}>{cur.descricao}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="cargaHorario">Carga Horária:</label>
-          <input
-            type="number"
-            id="cargaHorario"
-            value={cargaHorario}
-            onChange={e => setCargaHorario(e.target.value)}
-            required
-            placeholder="Digite a carga horária"
-            min="30"
-          />
-        </div>
-        <div>
-          <label htmlFor="status">Status:</label>
-          <select
-            id="status"
-            value={status}
-            onChange={e => setStatus(e.target.value)}
-            required
-          >
-            <option value="">Selecione o Status</option>
-            <option value={0}>Ativa</option>
-            <option value={1}>Inativa</option>
-          </select>
-        </div>
-        <button type="submit">Salvar Alterações</button>
-      </form>
-    </div>
+      </div>
+    </>
   );
 };
 
