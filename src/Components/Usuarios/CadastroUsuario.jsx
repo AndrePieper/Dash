@@ -56,16 +56,17 @@ const CadastroUsuario = () => {
   }
 
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+      <div className="header-usuarios">
         <h2>Cadastro de Entidades</h2>
       </div>
 
-      <div className="container-form">
+      <div className="tela-usuarios">
+        <div className="container-form">
 
-      {popup.show && (
-          <PopUpTopo message={popup.message} type={popup.type} />
-      )}
+        {popup.show && (
+            <PopUpTopo message={popup.message} type={popup.type} />
+        )}
 
         <form onSubmit={handleSubmit}>
         <label>Nome</label>
@@ -118,6 +119,7 @@ const CadastroUsuario = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

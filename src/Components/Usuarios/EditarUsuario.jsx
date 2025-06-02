@@ -112,14 +112,14 @@ const EditarUsuario = () => {
     }
   }
  
-  // <div className="header-turmas"> - cabeçalho verde - remover
-
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+    
+    <div className="header-usuarios">
         <h2>Editar Entidade</h2>
       </div>
 
+        <div className="tela-usuarios">
       <div className="container-form">
         {popup.show && (
           <PopUpTopo message={popup.message} type={popup.type} />
@@ -191,6 +191,7 @@ const EditarUsuario = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 
