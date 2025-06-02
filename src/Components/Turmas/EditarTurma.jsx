@@ -1,12 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 import './CadastroTurma.css';
-
-// import { Card, CardContent } from "../../components/ui/card";
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import PopUpTopo from '../PopUp/PopUpTopo';
 
+const Modal = ({ title, children, onClose, onConfirm }) => {
+  const modalRef = useRef();
+
+  const handleClickOutside = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      onClose(); // Fecha o modal ao clicar fora dele
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal" >
+        <h3>{title}</h3>
+        <div className="modal-content" ref={modalRef}>{children}
+          <div className="modal-actions">
+            <button onClick={onClose} className="modal-cancel">Cancelar</button>
+            {onConfirm && <button onClick={onConfirm} className="modal-confirm">Confirmar</button>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const EditarTurma = () => {
   const { id } = useParams();
@@ -17,10 +43,25 @@ const EditarTurma = () => {
   const [status, setStatus] = useState('');
   const [cursos, setCursos] = useState([]);
 
-  const [alunosTurma, setAlunosTurma] = useState([]);
-
   const [popup, setPopup] = useState({ show: false, message: "", type: "" })
 
+  // Armazenar Alunos
+  const [abaSelecionada, setAbaSelecionada] = useState('alunos');
+  const [alunos, setAlunos] = useState([]);
+
+  // Armazenar Discilpinas
+  const [disciplinas, setDisciplinas] = useState([]);
+
+  // Filtro
+  const [filtroSemestre, setFiltroSemestre] = useState(''); // Filtro Pesquisa Disciplina
+  const [filtroNome, setFiltroNome] = useState(''); // Filtro Adicionar Alunos
+
+  // Modal
+  const [modalData, setModalData] = useState(null);
+  
+  // Turma Alunos
+  const [usuarios, setUsuarios] = useState([]);
+  const [selecionados, setSelecionados] = useState([]);
 
 
   useEffect(() => {
@@ -64,20 +105,43 @@ const EditarTurma = () => {
           setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
         });
 
-      fetch(`https://projeto-iii-4.vercel.app/turma/alunos/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(res => res.json())
-        .then(data => setAlunosTurma(data))
-        .catch((err) => {
-          console.error('Erro ao buscar alunos da turma:', err);
-          setPopup({
-            show: true,
-            message: "Erro ao buscar alunos da turma",
-            type: "error"
+        // Buscar alunos vinculados a turma
+        fetch(`https://projeto-iii-4.vercel.app/turma/alunos/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+          .then(res => {
+            if (!res.ok) {
+              if (res.status === 404) return [];
+              throw new Error("Erro ao buscar alunos.");
+            }
+            return res.json();
+          })
+          .then(data => {
+            setAlunos(Array.isArray(data) ? data : []);
+          })
+          .catch(err => {
+            console.error(err);
+            setAlunos([]); // Garante array vazio mesmo em caso de erro
           });
-          setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
-        });
+
+          // Buscar disciplinas vinculados a turma
+          fetch(`https://projeto-iii-4.vercel.app/turma/disciplinas/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+            .then(res => {
+              if (!res.ok) {
+                if (res.status === 404) return [];
+                throw new Error("Erro ao buscar disciplinas.");
+              }
+              return res.json();
+            })
+            .then(data => {
+              setDisciplinas(Array.isArray(data) ? data : []);
+            })
+            .catch(err => {
+              console.error(err);
+              setDisciplinas([]);
+            });
   }, [id]);
 
   const handleSubmit = async (e) => {
@@ -86,7 +150,7 @@ const EditarTurma = () => {
   
     const turmaAtualizada = {
       id: parseInt(id),
-      semestre_curso: parseInt(semestre), // Agora é um valor direto
+      semestre_curso: parseInt(semestre),
       id_curso: parseInt(curso),
       status: parseInt(status),
     };
@@ -129,20 +193,77 @@ const EditarTurma = () => {
     }
   };
 
+  const abrirModalExclusao = (idVinculo) => {
+    setModalData({ tipo: 'excluir', idVinculo });
+  };
+
+  const confirmarExclusao = async () => {
+    const token = localStorage.getItem('token');
+    const idVinculo = modalData.idVinculo;
+
+    try {
+      const res = await fetch(`https://projeto-iii-4.vercel.app/turma/alunos/?id_vinculo=${idVinculo}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Erro ao excluir aluno da turma");
+
+      setAlunos((prev) => prev.filter(a => a.id !== idVinculo)); // Remover o registro do aluno no front
+      setModalData(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const abrirModalAdicionar = async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`https://projeto-iii-4.vercel.app/usuarios`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    setUsuarios(data.filter(u => u.tipo === 0));
+    setModalData({ tipo: 'adicionar' });
+  };
+
+  const confirmarAdicao = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      for (let idAluno of selecionados) {
+        await fetch(`https://projeto-iii-4.vercel.app/turma/alunos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ id_turma: parseInt(id), id_aluno: idAluno })
+        });
+      }
+      setModalData(null);
+      setSelecionados([]);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const alunosFiltrados = usuarios.filter(u => u.nome.toLowerCase().includes(filtroNome.toLowerCase()));
+
+  const semestresDisponiveis = [...new Set(disciplinas.map((d) => d.Semestre?.descricao))];
+
+  const disciplinasFiltradas = filtroSemestre
+  ? disciplinas.filter((d) => d.Semestre?.descricao === filtroSemestre)
+  : disciplinas;
+
   return (
     <div className="tela-turmas">
       <div className="header-turmas">
         <h2>Editar Turma</h2>
       </div>
-
+  
       {popup.show && (
-            <PopUpTopo message={popup.message} type={popup.type} />
+        <PopUpTopo message={popup.message} type={popup.type} />
       )}
-
-       {/* <div style={{ display: 'flex', gap: '20px' }}>
-    <form onSubmit={handleSubmit} style={{ flex: 1 }}>
-      <Card>
-        <CardContent className="p-4 space-y-4">
+  
+      <div style={{ display: 'flex', gap: '2rem' }}>
+        {/* CARD 1: FORMULÁRIO */}
+        <form onSubmit={handleSubmit} style={{ flex: 1, background: '#fff', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
           <div>
             <label htmlFor="semestre">Semestre:</label>
             <input
@@ -182,95 +303,182 @@ const EditarTurma = () => {
             </select>
           </div>
           <button type="submit">Salvar Alterações</button>
-        </CardContent>
-      </Card>
-    </form>
-
-    <div style={{ flex: 1 }}>
-      <Card>
-        <CardContent className="p-4">
-          <Tabs defaultValue="alunos">
-            <TabsList className="mb-4">
-              <TabsTrigger value="alunos">Alunos</TabsTrigger>
-              <TabsTrigger value="disciplinas">Disciplinas</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="alunos">
-              <h3 className="text-lg font-semibold mb-2">Alunos vinculados à turma</h3>
-              <table className="min-w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b font-medium">
-                    <th className="p-2">Nome do Aluno</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {alunosTurma.length === 0 ? (
+        </form>
+  
+        {/* CARD 2: GESTÃO DE VÍNCULOS */}
+        <div style={{ flex: 1, background: '#f9f9f9', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+            <button
+              onClick={() => setAbaSelecionada('alunos')}
+              style={{
+                backgroundColor: abaSelecionada === 'alunos' ? '#009232' : '#4E4E4E',
+                color: 'white',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Alunos
+            </button>
+            <button
+              onClick={() => setAbaSelecionada('disciplinas')}
+              style={{
+                backgroundColor: abaSelecionada === 'disciplinas' ? '#009232' : '#4E4E4E',
+                color: 'white',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Disciplinas
+            </button>
+          </div>
+  
+          {/* CONTEÚDO DAS ABAS */}
+          {abaSelecionada === 'alunos' && (
+            <div>
+              <h3>Alunos Vinculados</h3>
+              {alunos.length === 0 ? (
+                <p>Nenhum aluno vinculado à turma.</p>
+              ) : (
+                <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
                     <tr>
-                      <td className="p-2">Nenhum aluno vinculado</td>
+                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Nome</th>
+                      <th style={{ width: '15%' }}>Remover</th>
                     </tr>
-                  ) : (
-                    alunosTurma.map((aluno) => (
-                      <tr key={aluno.id} className="border-t">
-                        <td className="p-2">{aluno.Usuario?.nome}</td>
+                  </thead>
+                  <tbody>
+                    {alunos.map((aluno) => (
+                      <tr key={aluno.id}>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{aluno.Usuario?.nome}</td>
+                        <td style={{ justifyContent: 'center', display: 'flex' }}>
+                          <button 
+                            onClick={() => abrirModalExclusao(aluno.id)} 
+                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                          >
+                            <FaTrash size={20}/>
+                          </button>
+                        </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </TabsContent>
+                    ))}
+                  </tbody>
+                  <button onClick={abrirModalAdicionar} className="botao-editar" >
+                    <FaPlus size={28} />
+                  </button>
+                </table>
+              )}
+            </div>
+          )}
+  
+          {abaSelecionada === 'disciplinas' && (
+            <div>
+            <h3>Disciplinas Vinculadas</h3>
+        
+            {disciplinas.length === 0 ? (
+              <p>Nenhuma disciplina vinculada à turma.</p>
+            ) : (
+              <>
+                <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'end' }}>
+                  <select
+                    id="filtroSemestre"
+                    value={filtroSemestre}
+                    onChange={(e) => setFiltroSemestre(e.target.value)}
+                    style={{ padding: '0.4rem', width: '42%', display: 'flex', alignItems: 'rigth' }}
+                  >
+                    <option value="">Todos os Semestres</option>
+                    {semestresDisponiveis.map((semestre) => (
+                      <option key={semestre} value={semestre}>
+                        {semestre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+        
+                <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Disciplina</th>
+                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem', width: '20%' }}>Semestre</th>
+                      <th style={{ width: '15%' }}>Remover</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {disciplinasFiltradas.map((item) => (
+                      <tr key={item.id}>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Disciplina?.descricao || '—'}</td>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Semestre?.descricao || '—'}</td>
+                        <td style={{ justifyContent: 'center', display: 'flex', borderBottom: '1px solid #D0D0D0' }}>
+                          <button 
+                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                          >
+                            <FaTrash size={20}/>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <button className="botao-editar" >
+                    <FaPlus size={28} />
+                  </button>
+                </table>
+              </>
+            )}
+          </div>
+          )}
+        </div>
+      </div>
 
-            <TabsContent value="disciplinas">
-              <p>Conteúdo das disciplinas ainda será implementado.</p>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-    </div>
-  </div> */}
+      {modalData?.tipo === 'excluir' && (
+        <Modal
+          title="Remover Aluno da Turma"
+          onClose={() => setModalData(null)}
+          onConfirm={confirmarExclusao}
+        >
+          <p>Você realmente deseja remover este aluno desta turma?</p>
+        </Modal>
+      )}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="semestre">Semestre:</label>
+      {modalData && modalData.tipo === 'adicionar' && (
+        <Modal
+          title="Adicionar alunos à turma"
+          onClose={() => setModalData(null)}
+          onConfirm={confirmarAdicao}
+        >
+          <h3>Adicionar alunos à turma</h3>
           <input
-            type="number"
-            id="semestre"
-            value={semestre}
-            onChange={(e) => setSemestre(e.target.value)}
-            required
-            placeholder="Digite o semestre"
+            type="text"
+            placeholder="Buscar por nome"
+            value={filtroNome}
+            onChange={e => setFiltroNome(e.target.value)}
           />
-        </div>
-        <div>
-          <label htmlFor="curso">Curso:</label>
-          <select
-            id="curso"
-            value={curso}
-            onChange={(e) => setCurso(e.target.value)}
-            required
-          >
-            <option value="">Selecione o Curso</option>
-            {cursos.map((cur) => (
-              <option key={cur.id} value={cur.id}>{cur.descricao}</option>
+          <div className="lista-alunos-disponiveis">
+            {alunosFiltrados.map(aluno => (
+              <label key={aluno.id} style={{ display: 'flex', padding: '5px' }}>
+                <input
+                  type="checkbox"
+                  checked={selecionados.includes(aluno.id)}
+                  onChange={(e) =>
+                    setSelecionados((prev) =>
+                      e.target.checked
+                        ? [...prev, aluno.id]
+                        : prev.filter((id) => id !== aluno.id)
+                    )
+                  }
+                  style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
+                />
+                {aluno.nome}
+              </label>
             ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="status">Status:</label>
-          <select
-            id="status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            required
-          >
-            <option value="">Selecione o Status</option>
-            <option value="0">Cursando</option>
-            <option value="1">Concluído</option>
-          </select>
-        </div>
-        <button type="submit">Salvar Alterações</button>
-      </form>
+          </div>
+        </Modal>
+      )}
+
     </div>
   );
+  
 };
 
 export default EditarTurma;

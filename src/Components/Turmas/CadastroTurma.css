@@ -120,4 +120,24 @@
   .botao-adicionar:hover {
     background-color: #0056b3;
   }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+  }
   
