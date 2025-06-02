@@ -74,7 +74,7 @@ const CadastroDisciplina = () => {
 
   return (
     <>
-      <div className="header-turmas">
+      <div className="header-usuarios">
         <h2>Cadastrar Disciplina</h2>
       </div>
 
@@ -82,7 +82,7 @@ const CadastroDisciplina = () => {
           <PopUpTopo message={popup.message} type={popup.type} />
         )}
       
-      <div className="tela-turmas">
+      <div className="tela-usuarios">
         <div className="container-form">
           <form onSubmit={handleSubmit}>
             <div>

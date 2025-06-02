@@ -98,36 +98,39 @@ const EditarCurso = () => {
   };
 
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+      <div className="header-usuarios">
         <h2>Editar Curso</h2>
       </div>
 
       {/* <div className="container-form">   */}
         {popup.show && (
-            <PopUpTopo message={popup.message} type={popup.type} />
+          <PopUpTopo message={popup.message} type={popup.type} />
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Nome do Curso:</label>
-            <input value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
+        <div className="tela-usuarios">
+          <div className="container-form">
+            <form onSubmit={handleSubmit}>
+              <div>
+                <label>Nome do Curso:</label>
+                <input value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
+              </div>
+              <div>
+                <label>Quantidade de Semestres:</label>
+                <input type="number" value={qtdSemestres} onChange={(e) => setQtdSemestres(e.target.value)} required />
+              </div>
+              <div>
+                <label>Status:</label>
+                <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                  <option value={0}>Ativo</option>
+                  <option value={1}>Inativo</option>
+                </select>
+              </div>
+              <button type="submit">Salvar Alterações</button>
+            </form>
           </div>
-          <div>
-            <label>Quantidade de Semestres:</label>
-            <input type="number" value={qtdSemestres} onChange={(e) => setQtdSemestres(e.target.value)} required />
-          </div>
-          <div>
-            <label>Status:</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value={0}>Ativo</option>
-              <option value={1}>Inativo</option>
-            </select>
-          </div>
-          <button type="submit">Salvar Alterações</button>
-        </form>
       </div>
-    // </div>
+    </>
   );
 };
 
