@@ -1,0 +1,51 @@
+.qr-modal-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem;
+  flex-wrap: wrap;
+}
+
+.qr-instructions {
+  flex: 1;
+  min-width: 250px;
+}
+
+.qr-instructions p,
+.qr-instructions .MuiTypography-body1 {
+  margin-bottom: 16px;
+  font-size: 1.25rem;
+  color: #333;
+  line-height: 1.6;
+}
+
+.qr-code {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 250px;
+}
+
+.qr-code canvas {
+  width: 250px !important;
+  height: 250px !important;
+}
+
+.btn-verde {
+  background-color: green !important;
+  color: white !important;
+}
+
+.btn-verde:hover {
+  background-color: #0d6610 !important;
+}
+
+.btn-vermelho {
+  background-color: red !important;
+  color: white !important;
+}
+
+.btn-vermelho:hover {
+  background-color: #c62828 !important;
+}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -13,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { QRCodeCanvas } from "qrcode.react";
+import "./ModaisChamada.css";
 
 const ModaisChamada = ({
   abrirModalSelecionarMateria,
@@ -32,7 +34,7 @@ const ModaisChamada = ({
   setIdChamadaCriada,
   qrCodeData,
   idChamadaCriada,
-  onChamadaCriada, // função para atualizar lista, passada por props
+  onChamadaCriada,
 }) => {
   const [abrirModalConfirmarEncerramento, setAbrirModalConfirmarEncerramento] = useState(false);
 
@@ -40,11 +42,21 @@ const ModaisChamada = ({
     setAbrirModalSelecionarMateria(false);
     setMateriaSelecionada("");
   };
+  useEffect(() => {
+  const handleKeyDown = (e) => {
+    if (modalQRCodeAberto && e.key === "Escape") {
+      e.preventDefault();
+      abrirConfirmarEncerramento();
+    }
+  };
+
+  document.addEventListener("keydown", handleKeyDown);
+  return () => document.removeEventListener("keydown", handleKeyDown);
+}, [modalQRCodeAberto]);
+
 
   const confirmarMateriaSelecionada = () => {
-    if (!tokenDecodificado || !materiaSelecionada) {
-      return;
-    }
+    if (!tokenDecodificado || !materiaSelecionada) return;
 
     const dataHoraInicio = new Date().toISOString();
     const chamadaData = {
@@ -76,26 +88,15 @@ const ModaisChamada = ({
         setQRCodeData(qrData);
         setIdChamadaCriada(data.id);
         setModalQRCodeAberto(true);
-        // NÃO chama onChamadaCriada aqui - só quando confirmar encerramento
       })
-      .catch(() => {
-        // Tratar erro visualmente
-      });
+      .catch(() => {});
   };
 
-  const abrirConfirmarEncerramento = () => {
-    setAbrirModalConfirmarEncerramento(true);
-  };
-
-  const cancelarEncerramento = () => {
-    setAbrirModalConfirmarEncerramento(false);
-  };
+  const abrirConfirmarEncerramento = () => setAbrirModalConfirmarEncerramento(true);
+  const cancelarEncerramento = () => setAbrirModalConfirmarEncerramento(false);
 
   const confirmarEncerramento = () => {
-    if (!idChamadaCriada) {
-      setAbrirModalConfirmarEncerramento(false);
-      return;
-    }
+    if (!idChamadaCriada) return cancelarEncerramento();
 
     const dataHoraFinal = new Date().toISOString();
 
@@ -117,23 +118,15 @@ const ModaisChamada = ({
       .then(() => {
         setModalQRCodeAberto(false);
         setAbrirModalConfirmarEncerramento(false);
-        if (onChamadaCriada) {
-          onChamadaCriada(); // ATUALIZA A LISTA APENAS AQUI, quando confirmar encerramento
-        }
+        if (onChamadaCriada) onChamadaCriada();
       })
-      .catch(() => {
-        setAbrirModalConfirmarEncerramento(false);
-      });
+      .catch(cancelarEncerramento);
   };
 
-  const fecharConfirmacao = () => {
-    setAbrirModalConfirmacao(false);
-  };
+  const fecharConfirmacao = () => setAbrirModalConfirmacao(false);
 
   const confirmarChamada = () => {
-    if (!tokenDecodificado || !chamadaSelecionada) {
-      return;
-    }
+    if (!tokenDecodificado || !chamadaSelecionada) return;
 
     const dataHoraInicio = new Date().toISOString();
     const chamadaData = {
@@ -154,17 +147,13 @@ const ModaisChamada = ({
         if (!res.ok) throw new Error("Erro ao iniciar a chamada");
         return res.json();
       })
-      .then(() => {
-        fecharConfirmacao();
-      })
-      .catch(() => {
-        // Tratar erro visualmente
-      });
+      .then(fecharConfirmacao)
+      .catch(() => {});
   };
 
   return (
     <>
-      <Dialog open={abrirModalSelecionarMateria} onClose={fecharModalMatérias}>
+      <Dialog open={abrirModalSelecionarMateria} onClose={fecharModalMatérias} maxWidth="md" fullWidth>
         <DialogTitle>Selecione a Matéria</DialogTitle>
         <DialogContent dividers>
           {carregandoMaterias ? (
@@ -188,10 +177,10 @@ const ModaisChamada = ({
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={fecharModalMatérias}>Cancelar</Button>
+          <Button onClick={fecharModalMatérias} className="btn-vermelho">Cancelar</Button>
           <Button
             onClick={confirmarMateriaSelecionada}
-            color="primary"
+            className="btn-verde"
             variant="contained"
             disabled={!materiaSelecionada}
           >
@@ -200,17 +189,33 @@ const ModaisChamada = ({
         </DialogActions>
       </Dialog>
 
-      <Dialog open={modalQRCodeAberto} onClose={() => setModalQRCodeAberto(false)}>
-        <DialogTitle>QR Code da Chamada</DialogTitle>
-        <DialogContent dividers style={{ textAlign: "center" }}>
-          {qrCodeData && <QRCodeCanvas value={JSON.stringify(qrCodeData)} />}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={abrirConfirmarEncerramento} color="secondary" variant="contained">
-            Encerrar Chamada
-          </Button>
-        </DialogActions>
-      </Dialog>
+     <Dialog
+  open={modalQRCodeAberto}
+  onClose={() => setModalQRCodeAberto(false)}
+  maxWidth="md"
+  fullWidth
+  disableEscapeKeyDown  // ← impede o fechamento automático
+>
+  <DialogTitle>QR Code da Chamada</DialogTitle>
+  <DialogContent dividers>
+    <div className="qr-modal-content">
+      <div className="qr-instructions">
+        <Typography variant="body1">Acesse o seu aplicativo</Typography>
+        <Typography variant="body1">Realize Login com o seu email e senha cadastrados</Typography>
+        <Typography variant="body1">Selecione a opção de “Registrar”</Typography>
+        <Typography variant="body1">Centralize o QRCode na sua tela até que a presença seja registrada</Typography>
+      </div>
+      <div className="qr-code">
+        {qrCodeData && <QRCodeCanvas value={JSON.stringify(qrCodeData)} />}
+      </div>
+    </div>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={abrirConfirmarEncerramento} className="btn-verde" variant="contained">
+      Encerrar Chamada
+    </Button>
+  </DialogActions>
+</Dialog>
 
       <Dialog open={abrirModalConfirmarEncerramento} onClose={cancelarEncerramento}>
         <DialogTitle>Confirmar Encerramento</DialogTitle>
@@ -218,10 +223,8 @@ const ModaisChamada = ({
           <Typography>Deseja mesmo encerrar a chamada?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelarEncerramento}>Cancelar</Button>
-          <Button onClick={confirmarEncerramento} color="primary" variant="contained">
-            Confirmar
-          </Button>
+          <Button onClick={cancelarEncerramento} className="btn-vermelho">Cancelar</Button>
+          <Button onClick={confirmarEncerramento} className="btn-verde" variant="contained">Confirmar</Button>
         </DialogActions>
       </Dialog>
 
@@ -233,10 +236,8 @@ const ModaisChamada = ({
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={fecharConfirmacao}>Cancelar</Button>
-          <Button onClick={confirmarChamada} color="primary" variant="contained">
-            Confirmar
-          </Button>
+          <Button onClick={fecharConfirmacao} className="btn-vermelho">Cancelar</Button>
+          <Button onClick={confirmarChamada} className="btn-verde" variant="contained">Confirmar</Button>
         </DialogActions>
       </Dialog>
     </>

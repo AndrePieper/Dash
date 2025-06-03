@@ -32,7 +32,8 @@ const Materias = () => {
   return (
     <>
       <div className="header-usuarios">
-        <h2>Matérias Vinculadas</h2>
+        <h2>Matérias
+        </h2>
       </div>
 
       <div className="tela-usuarios no-scroll">
