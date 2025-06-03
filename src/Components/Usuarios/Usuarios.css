@@ -39,11 +39,11 @@
 .filtros-usuarios {
   display: flex;
   gap: 15px;
-  flex-wrap: nowrap;      /* Mantém os filtros em uma linha */
+  flex-wrap: nowrap;      
   flex-grow: 1;
-  max-width: 600px;       /* Aumenta o espaço para os filtros */
+  max-width: 600px;       
   justify-content: flex-end;
-  align-items: center;    /* Alinha verticalmente os filtros */
+  align-items: center;    
 }
 
 /* Estilos básicos para inputs e selects de filtro */
