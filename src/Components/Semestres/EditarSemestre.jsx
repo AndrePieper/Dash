@@ -93,66 +93,56 @@ const EditarSemestre = () => {
   };
 
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+      <div className="header-usuarios">
        <h2>Editar Semestre</h2>
       </div>
 
-      <div className="container-form">
-        {popup.show && (
-            <PopUpTopo message={popup.message} type={popup.type} />
-        )}
+      <div className="tela-usuarios">
+        <div className="container-form">
+          {popup.show && (
+              <PopUpTopo message={popup.message} type={popup.type} />
+          )}
 
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="descricao">Descrição:</label>
-            <input
-              type="text"
-              id="descricao"
-              value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="dataInicio">Data de Início:</label>
-            <input
-              type="date"
-              id="dataInicio"
-              value={dataInicio}
-              onChange={(e) => setDataInicio(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="dataFim">Data de Fim:</label>
-            <input
-              type="date"
-              id="dataFim"
-              value={dataFim}
-              onChange={(e) => setDataFim(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="padrao">Padrão:</label>
-            <select
-              id="padrao"
-              value={padrao}
-              onChange={(e) => setPadrao(Number(e.target.value))}
-            >
-              <option value={0}>Sim</option>
-              <option value={1}>Não</option>
-            </select>
-          </div>
-
-          <button type="submit">Salvar Alterações</button>
-        </form>
+          <form onSubmit={handleSubmit}>
+              <label htmlFor="descricao">Descrição:</label>
+              <input
+                type="text"
+                id="descricao"
+                value={descricao}
+                onChange={(e) => setDescricao(e.target.value)}
+                required
+              />
+              <label htmlFor="dataInicio">Data de Início:</label>
+              <input
+                type="date"
+                id="dataInicio"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+                required
+              />
+              <label htmlFor="dataFim">Data de Fim:</label>
+              <input
+                type="date"
+                id="dataFim"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+                required
+              />
+              <label htmlFor="padrao">Padrão:</label>
+              <select
+                id="padrao"
+                value={padrao}
+                onChange={(e) => setPadrao(Number(e.target.value))}
+              >
+                <option value={0}>Sim</option>
+                <option value={1}>Não</option>
+              </select>
+            <button type="submit">Salvar Alterações</button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

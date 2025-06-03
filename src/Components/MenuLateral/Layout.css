@@ -1,5 +1,5 @@
 html {
-  background-color: #EFEFEF;
+  background-color: #e2e2e2;
 }
 
 .dashboard-container {
@@ -57,7 +57,7 @@ html {
 
 .conteudo-principal {
   flex-grow: 1;
-  background-color: #EFEFEF;
+  background-color: #e2e2e2;
   height: 99vh;
   overflow-y: hidden; 
   box-sizing: border-box;

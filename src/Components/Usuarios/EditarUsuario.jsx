@@ -117,13 +117,14 @@ const EditarUsuario = () => {
     
     <div className="header-usuarios">
         <h2>Editar Entidade</h2>
-      </div>
+    </div>
 
-        <div className="tela-usuarios">
+    {popup.show && (
+      <PopUpTopo message={popup.message} type={popup.type} />
+    )}
+
+    <div className="tela-usuarios">
       <div className="container-form">
-        {popup.show && (
-          <PopUpTopo message={popup.message} type={popup.type} />
-        )}
 
         <form onSubmit={handleSubmit}>
           <label>Nome</label>

@@ -34,14 +34,14 @@
   margin-top: 20px;
   padding: 0 10px;
   box-sizing: border-box;
-  background: white;
+  background: #e2e2e2;
 }
 
 .container-form form {
+  box-shadow: 5px 5px 8px #0000001f;
   background: white;
   padding: 20px 30px;
   border-radius: 10px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
   max-width: 900px;
   width: 100%;
   display: grid;

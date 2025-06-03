@@ -79,15 +79,16 @@ const CadastroTurma = () => {
   };
 
   return (
-    <div className="tela-turmas">
-      <div className="header-turmas">
+    <>
+      <div className="header-usuarios">
         <h2>Cadastrar Turma</h2>
       </div>
 
       {popup.show && (
-          <PopUpTopo message={popup.message} type={popup.type} />
+        <PopUpTopo message={popup.message} type={popup.type} />
       )}
 
+    <div className="tela-usuarios">
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="semestre">Semestre:</label>
@@ -130,6 +131,7 @@ const CadastroTurma = () => {
         <button type="submit">Cadastrar</button>
       </form>
     </div>
+    </>
   );
 };
 

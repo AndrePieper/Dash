@@ -120,7 +120,6 @@ const EditarDisciplina = () => {
       <div className="tela-usuarios">
         <div className="container-form">
           <form onSubmit={handleSubmit}>
-            <div>
               <label htmlFor="descricao">Descrição:</label>
               <input
                 type="text"
@@ -129,8 +128,6 @@ const EditarDisciplina = () => {
                 onChange={e => setDescricao(e.target.value)}
                 required
               />
-            </div>
-            <div>
               <label htmlFor="curso">Curso:</label>
               <select
                 id="curso"
@@ -142,8 +139,6 @@ const EditarDisciplina = () => {
                   <option key={cur.id} value={cur.id}>{cur.descricao}</option>
                 ))}
               </select>
-            </div>
-            <div>
               <label htmlFor="cargaHorario">Carga Horária:</label>
               <input
                 type="number"
@@ -154,8 +149,6 @@ const EditarDisciplina = () => {
                 placeholder="Digite a carga horária"
                 min="30"
               />
-            </div>
-            <div>
               <label htmlFor="status">Status:</label>
               <select
                 id="status"
@@ -167,7 +160,6 @@ const EditarDisciplina = () => {
                 <option value={0}>Ativa</option>
                 <option value={1}>Inativa</option>
               </select>
-            </div>
             <button type="submit">Salvar Alterações</button>
           </form>
         </div>
