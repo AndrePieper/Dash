@@ -89,47 +89,49 @@ const CadastroTurma = () => {
       )}
 
     <div className="tela-usuarios">
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="semestre">Semestre:</label>
-          <input
-            type="number"
-            id="semestre"
-            value={semestre}
-            onChange={(e) => setSemestre(e.target.value)}
-            required
-            placeholder="Digite o semestre"
-          />
-        </div>
-        <div>
-          <label htmlFor="curso">Curso:</label>
-          <select
-            id="curso"
-            value={curso}
-            onChange={(e) => setCurso(e.target.value)}
-            required
-          >
-            <option value="">Selecione o Curso</option>
-            {cursos.map((cur, index) => (
-              <option key={index} value={cur.id}>{cur.descricao}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="status">Status:</label>
-          <select
-            id="status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            required
-          >
-            <option value="">Selecione o Status</option>
-            <option value="0">Cursando</option>
-            <option value="1">Concluído</option>
-          </select>
-        </div>
-        <button type="submit">Cadastrar</button>
-      </form>
+      <div className="container-form">
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="semestre">Semestre:</label>
+            <input
+              type="number"
+              id="semestre"
+              value={semestre}
+              onChange={(e) => setSemestre(e.target.value)}
+              required
+              placeholder="Digite o semestre"
+            />
+          </div>
+          <div>
+            <label htmlFor="curso">Curso:</label>
+            <select
+              id="curso"
+              value={curso}
+              onChange={(e) => setCurso(e.target.value)}
+              required
+            >
+              <option value="">Selecione o Curso</option>
+              {cursos.map((cur, index) => (
+                <option key={index} value={cur.id}>{cur.descricao}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="status">Status:</label>
+            <select
+              id="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              required
+            >
+              <option value="">Selecione o Status</option>
+              <option value="0">Cursando</option>
+              <option value="1">Concluído</option>
+            </select>
+          </div>
+          <button type="submit">Cadastrar</button>
+        </form>
+      </div>
     </div>
     </>
   );
