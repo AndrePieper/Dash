@@ -176,17 +176,20 @@ const ModaisChamada = ({
             </FormControl>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={fecharModalMatérias} className="btn-vermelho">Cancelar</Button>
-          <Button
-            onClick={confirmarMateriaSelecionada}
-            className="btn-verde"
-            variant="contained"
-            disabled={!materiaSelecionada}
-          >
-            Iniciar Chamada
-          </Button>
-        </DialogActions>
+  <DialogActions>
+  <Button onClick={fecharModalMatérias} className="btn-vermelho">
+    Cancelar
+  </Button>
+  <Button
+    onClick={confirmarMateriaSelecionada}
+    className="btn-verde"
+    disabled={!materiaSelecionada}
+    
+  >
+    Iniciar Chamada
+  </Button>
+</DialogActions>
+
       </Dialog>
 
      <Dialog
@@ -194,7 +197,7 @@ const ModaisChamada = ({
   onClose={() => setModalQRCodeAberto(false)}
   maxWidth="md"
   fullWidth
-  disableEscapeKeyDown  // ← impede o fechamento automático
+  disableEscapeKeyDown  
 >
   <DialogTitle>QR Code da Chamada</DialogTitle>
   <DialogContent dividers>
