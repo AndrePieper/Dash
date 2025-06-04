@@ -169,7 +169,7 @@ const ModaisChamada = ({
               >
                 {materias.map((materia) => (
                   <MenuItem key={materia.id_disciplina} value={materia}>
-                    {materia.descricao}
+                    {materia.descricao_disciplina}
                   </MenuItem>
                 ))}
               </Select>

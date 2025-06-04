@@ -6,6 +6,8 @@ import { FaPlus } from "react-icons/fa";
 import "./Chamada.css";
 import ModaisChamada from "./ModaisChamada";
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const Chamada = () => {
   const navigate = useNavigate();
   const [chamadas, setChamadas] = useState([]);
@@ -25,6 +27,8 @@ const Chamada = () => {
   const [qrCodeData, setQRCodeData] = useState(null);
   const [idChamadaCriada, setIdChamadaCriada] = useState(null);
   const [chamadaSelecionada, setChamadaSelecionada] = useState(null);
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
   const buscarMaterias = () => {
     setCarregandoMaterias(true);
@@ -52,7 +56,12 @@ const Chamada = () => {
         setCarregandoMaterias(false);
       })
       .catch((err) => {
-        setMensagemErro("Erro ao carregar matérias: " + err.message);
+        console.error('Erro ao buscar matérias: ', err)
+        setPopup({
+          show: true,
+          message: err.message || "Erro ao buscar matérias",
+          type: "success",
+        });
         setCarregandoMaterias(false);
       });
   };
@@ -66,7 +75,12 @@ const Chamada = () => {
       idProfessor = decoded.id;
       setTokenDecodificado(decoded);
     } catch (error) {
-      setMensagemErro("Erro ao decodificar o token.");
+      console.error('Erro ao decodificar o token: ', err)
+      setPopup({
+        show: true,
+        message: err.message || "Erro ao decodificar o token.",
+        type: "success",
+      });
       return;
     }
 
@@ -79,7 +93,13 @@ const Chamada = () => {
       })
       .then((data) => setChamadas(data.reverse().slice(0, 9)))
       .catch((error) => {
-        setMensagemErro(error.message);
+        console.error('Erro ao buscar matérias:', err)
+        setPopup({
+          show: true,
+          message: err.message || "Erro ao buscar matérias",
+          type: "success",
+        });
+        // setMensagemErro(error.message);
       });
   };
 
@@ -103,121 +123,118 @@ const Chamada = () => {
     return filtraPorMateria && filtraPorData;
   });
 
-return (
-  
-  <div className="tela-usuarios no-scroll">
-    <div className="header-usuarios">
-      <h2>Chamadas</h2>
-    <div className="reader-area">
-    </div>
+  return (
+    <>
+      <div className="header-usuarios">
+        <h2>Chamadas</h2>
+        <div className="reader-area">
+          <div className="filtros-header">
+            <select
+              value={filtroMateria}
+              onChange={(e) => setFiltroMateria(e.target.value)}
+              aria-label="Filtro por matéria"
+              >
+              <option value="">Todas as matérias</option>
+              {materias.map((m, index) => {
+                const valor = m.descricao_disciplina || `Undefined` || `materia-${index}`;
+                const chave = m.id || `materia-${index}`;
+                return (
+                  <option key={chave} value={valor}>
+                    {valor}
+                  </option>
+                );
+              })}
+            </select>
 
-    
-      <div className="filtros-header">
-        <select
-          value={filtroMateria}
-          onChange={(e) => setFiltroMateria(e.target.value)}
-          aria-label="Filtro por matéria"
-        >
-          <option value="">Todas as matérias</option>
-          {materias.map((m, index) => {
-            const valor = m.nome || m.descricao || m.materia || `materia-${index}`;
-            const chave = m.id || `materia-${index}`;
-            return (
-              <option key={chave} value={valor}>
-                {valor}
-              </option>
-            );
-          })}
-        </select>
+            <input
+              type="date"
+              value={filtroData}
+              onChange={(e) => setFiltroData(e.target.value)}
+              aria-label="Filtro por data"
+              />
 
-        <input
-          type="date"
-          value={filtroData}
-          onChange={(e) => setFiltroData(e.target.value)}
-          aria-label="Filtro por data"
+            <button
+              className="botao-adicionar"
+              onClick={abrirModalMatérias}
+              title="Nova Chamada"
+              >
+              <FaPlus />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {popup.show && (
+        <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+
+      {chamadasFiltradas.length === 0 && !popup && (
+        <Typography variant="body1">Nenhuma chamada encontrada.</Typography>
+      )}
+
+      <div className="tela-usuarios">
+        {chamadasFiltradas.length > 0 && (
+          <div className="lista-cards">
+            {chamadasFiltradas.map((chamada) => (
+              <Card
+                key={chamada.id}
+                className="card"
+                onClick={() =>
+                  navigate(`/chamada/editarchamada/${chamada.id}`, {
+                    state: { id_disciplina: chamada.id_disciplina },
+                  })
+                }
+                title="Clique para editar essa chamada"
+              >
+                <CardContent>
+                  <Typography className="cardTexto">
+                    <strong>{chamada.descricao}</strong>
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Número:</strong> {chamada.id}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Data:</strong>{" "}
+                    {new Date(chamada.data_hora_inicio).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Hora de Início:</strong>{" "}
+                    {new Date(chamada.data_hora_inicio).toLocaleTimeString()}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Hora de Fechamento:</strong>{" "}
+                    {new Date(chamada.data_hora_final).toLocaleTimeString()}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        <ModaisChamada
+          abrirModalSelecionarMateria={abrirModalSelecionarMateria}
+          setAbrirModalSelecionarMateria={setAbrirModalSelecionarMateria}
+          abrirModalConfirmacao={abrirModalConfirmacao}
+          setAbrirModalConfirmacao={setAbrirModalConfirmacao}
+          modalQRCodeAberto={modalQRCodeAberto}
+          setModalQRCodeAberto={setModalQRCodeAberto}
+          materias={materias}
+          materiaSelecionada={materiaSelecionada}
+          setMateriaSelecionada={setMateriaSelecionada}
+          carregandoMaterias={carregandoMaterias}
+          setCarregandoMaterias={setCarregandoMaterias}
+          chamadaSelecionada={chamadaSelecionada}
+          tokenDecodificado={tokenDecodificado}
+          setQRCodeData={setQRCodeData}
+          setIdChamadaCriada={setIdChamadaCriada}
+          qrCodeData={qrCodeData}
+          idChamadaCriada={idChamadaCriada}
+          onChamadaCriada={buscarChamadas}
         />
-
-        <button
-          className="botao-adicionar"
-          onClick={abrirModalMatérias}
-          title="Nova Chamada"
-        >
-          <FaPlus />
-        </button>
       </div>
-    </div>
-
-    {mensagemErro && (
-      <Alert className="mensagem-erro" severity="error">
-        {mensagemErro}
-      </Alert>
-    )}
-
-    {chamadasFiltradas.length === 0 && !mensagemErro && (
-      <Typography variant="body1">Nenhuma chamada encontrada.</Typography>
-    )}
-
-    {chamadasFiltradas.length > 0 && (
-      <div className="lista-cards">
-        {chamadasFiltradas.map((chamada) => (
-          <Card
-            key={chamada.id}
-            className="card"
-            onClick={() =>
-              navigate(`/chamada/editarchamada/${chamada.id}`, {
-                state: { id_disciplina: chamada.id_disciplina },
-              })
-            }
-            title="Clique para editar essa chamada"
-          >
-            <CardContent>
-              <Typography className="cardTexto">
-                <strong>{chamada.descricao}</strong>
-              </Typography>
-              <Typography variant="body2">
-                <strong>Número:</strong> {chamada.id}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Data:</strong>{" "}
-                {new Date(chamada.data_hora_inicio).toLocaleDateString()}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Hora de Início:</strong>{" "}
-                {new Date(chamada.data_hora_inicio).toLocaleTimeString()}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Hora de Fechamento:</strong>{" "}
-                {new Date(chamada.data_hora_final).toLocaleTimeString()}
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    )}
-
-    <ModaisChamada
-      abrirModalSelecionarMateria={abrirModalSelecionarMateria}
-      setAbrirModalSelecionarMateria={setAbrirModalSelecionarMateria}
-      abrirModalConfirmacao={abrirModalConfirmacao}
-      setAbrirModalConfirmacao={setAbrirModalConfirmacao}
-      modalQRCodeAberto={modalQRCodeAberto}
-      setModalQRCodeAberto={setModalQRCodeAberto}
-      materias={materias}
-      materiaSelecionada={materiaSelecionada}
-      setMateriaSelecionada={setMateriaSelecionada}
-      carregandoMaterias={carregandoMaterias}
-      setCarregandoMaterias={setCarregandoMaterias}
-      chamadaSelecionada={chamadaSelecionada}
-      tokenDecodificado={tokenDecodificado}
-      setQRCodeData={setQRCodeData}
-      setIdChamadaCriada={setIdChamadaCriada}
-      qrCodeData={qrCodeData}
-      idChamadaCriada={idChamadaCriada}
-      onChamadaCriada={buscarChamadas}
-    />
-  </div>
-);
-
+    </>
+    
+  );
 };
 
 export default Chamada;
