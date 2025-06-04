@@ -86,7 +86,7 @@ const Login = () => {
           fullWidth
           variant="contained"
           disabled={carregando}
-          className="btn-verde"
+          className="btn-verde-login"
         >
           {carregando ? <CircularProgress size={24} color="inherit" /> : "Entrar"}
         </Button>

@@ -177,17 +177,19 @@ const ModaisChamada = ({
           )}
         </DialogContent>
   <DialogActions>
+
   <Button onClick={fecharModalMatérias} className="btn-vermelho">
     Cancelar
   </Button>
+  
   <Button
     onClick={confirmarMateriaSelecionada}
     className="btn-verde"
     disabled={!materiaSelecionada}
-    
   >
     Iniciar Chamada
   </Button>
+
 </DialogActions>
 
       </Dialog>
