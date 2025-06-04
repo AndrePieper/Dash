@@ -181,12 +181,10 @@ const ModaisChamada = ({
   <Button onClick={fecharModalMatérias} className="btn-vermelho">
     Cancelar
   </Button>
-  
-  <Button
-    onClick={confirmarMateriaSelecionada}
-    className="btn-verde"
-    disabled={!materiaSelecionada}
-  >
+
+   <Button 
+   onClick={confirmarMateriaSelecionada} 
+   className="btn-verde">
     Iniciar Chamada
   </Button>
 

@@ -33,12 +33,12 @@
 }
 
 .btn-verde {
-  background-color: green;
-  color: white; 
+  background-color: green !important;
+  color: white !important;
 }
 
 .btn-verde:hover {
-  background-color: #0d6610;
+  background-color: #0d6610 !important;
 }
 
 .btn-vermelho {

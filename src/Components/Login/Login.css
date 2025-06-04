@@ -28,7 +28,7 @@
 }
 
 .btn-verde-login {
-  background-color: #4caf50 !important;
+  background-color: #138a17 !important;
   color: white !important;
   height: 50px;
   border-radius: 15px;
@@ -37,7 +37,7 @@
 }
 
 .btn-verde-login:hover {
-  background-color: #388e3c !important;
+  background-color: #f7f7f7 !important;
 }
 
 @media (min-width: 600px) {
