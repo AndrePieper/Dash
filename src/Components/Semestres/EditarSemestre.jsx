@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 import './CadastroSemestre.css';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
@@ -12,6 +13,8 @@ const EditarSemestre = () => {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
   const [padrao, setPadrao] = useState(0);
+
+  const [disciplinas, setProfessorDisciplinas] = useState([]);
 
    const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
@@ -39,6 +42,25 @@ const EditarSemestre = () => {
         });
 
         setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/semestres"), 2000);
+      });
+
+    // Buscar disciplinas vinculados a turma
+    fetch(`https://projeto-iii-4.vercel.app/semestre/${id}/disciplinas`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 404) return [];
+          throw new Error("Erro ao buscar disciplinas do professor.");
+        }
+        return res.json();
+      })
+      .then(data => {
+        setProfessorDisciplinas(Array.isArray(data) ? data : []);
+      })
+      .catch(err => {
+        console.error(err);
+        setProfessorDisciplinas([]);
       });
   }, [id]);
 
@@ -99,12 +121,12 @@ const EditarSemestre = () => {
       </div>
 
       <div className="tela-usuarios">
-        <div className="container-form">
           {popup.show && (
               <PopUpTopo message={popup.message} type={popup.type} />
           )}
-
-          <form onSubmit={handleSubmit}>
+        <div style={{ display: 'flex', gap: '2rem' }} >
+          {/* CARD 1: FORMULÁRIO */}
+          <form onSubmit={handleSubmit} style={{ flex: 1, background: '#fff', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
               <label htmlFor="descricao">Descrição:</label>
               <input
                 type="text"
@@ -140,6 +162,46 @@ const EditarSemestre = () => {
               </select>
             <button type="submit">Salvar Alterações</button>
           </form>
+
+          {/* CARD 2: GESTÃO DE VÍNCULOS */}
+          <div style={{ flex: 1, background: '#f9f9f9', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
+            {/* CONTEÚDO DAS ABAS */}
+            <div>
+              <h3>Disciplinas Professores</h3>
+              {disciplinas.length === 0 ? (
+                <p>Nenhuma disciplina vinculada a professores.</p>
+              ) : (
+                <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr>
+                    <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Professor</th>
+                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Disciplina</th>
+                      <th style={{ width: '15%' }}>Remover</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {disciplinas.map((disciplina) => (
+                      <tr key={disciplina.id}>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{disciplina.nome_professor}</td>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{disciplina.descricao_disciplina}</td>
+                        <td style={{ justifyContent: 'center', display: 'flex' }}>
+                          <button 
+                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                          >
+                            <FaTrash size={20}/>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <button 
+                    className="botao-editar" >
+                    <FaPlus size={28} />
+                  </button>
+                </table>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </>

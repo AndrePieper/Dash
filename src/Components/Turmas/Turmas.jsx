@@ -223,7 +223,7 @@ const Turmas = () => {
             {turmasVisiveis.map((t) => (
               <tr key={t.id}>
                 <td>{t.id}</td>
-                <td>{t.semestre_curso}</td>
+                <td>{t.semestre_curso}º Semestre</td>
                 <td>{t.Curso.descricao}</td>
                 <td>{t.status === 0 ? 'Cursando' : 'Concluído'}</td>
                 <td>
