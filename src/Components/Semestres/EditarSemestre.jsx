@@ -5,6 +5,35 @@ import './CadastroSemestre.css';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
 
+const Modal = ({ title, children, onClose, onConfirm }) => {
+  const modalRef = useRef();
+
+  const handleClickOutside = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      onClose(); // Fecha o modal ao clicar fora dele
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal" >
+        <h3>{title}</h3>
+        <div className="modal-content" ref={modalRef}>{children}
+          <div className="modal-actions">
+            <button onClick={onClose} className="modal-cancel">Cancelar</button>
+            {onConfirm && <button onClick={onConfirm} className="modal-confirm">Confirmar</button>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const EditarSemestre = () => {
   const { id } = useParams(); // Obtém o id da URL
   const navigate = useNavigate();
@@ -14,7 +43,21 @@ const EditarSemestre = () => {
   const [dataFim, setDataFim] = useState('');
   const [padrao, setPadrao] = useState(0);
 
-  const [disciplinas, setProfessorDisciplinas] = useState([]);
+  // Disciplinas do professor no semestre
+  const [professorDisciplinas, setProfessorDisciplinas] = useState([]);
+
+  // Modal
+  const [modalData, setModalData] = useState(null);
+    // Professores a serem selecionados
+    const [usuarios, setUsuarios] = useState([]);
+    // Disciplinas a serem selecionadas
+    const [disciplinas, setDisciplinas] = useState([]);
+
+    const [filtroProfessor, setFiltroProfessor] = useState('');
+    const [filtroDisciplina, setFiltroDisciplina] = useState('');
+    const [professorSelecionado, setProfessorSelecionado] = useState(null);
+    const [disciplinaSelecionada, setDisciplinaSelecionada] = useState(null);
+
 
    const [popup, setPopup] = useState({ show: false, message: "", type: "" });
 
@@ -114,6 +157,78 @@ const EditarSemestre = () => {
     }
   };
 
+  const abrirModalExclusao = (idVinculo) => {
+    setModalData({ tipo: 'excluir', idVinculo });
+  };
+
+  const confirmarExclusao = async () => {
+    const token = localStorage.getItem('token');
+    const idVinculo = modalData.idVinculo;
+
+    try {
+      const res = await fetch(`https://projeto-iii-4.vercel.app/semestre/disciplinas/${idVinculo}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Erro ao excluir disciplina do professor.");
+
+      setProfessorDisciplinas((prev) => prev.filter(a => a.id !== idVinculo)); // Remover o registro do aluno no front
+      setModalData(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const abrirModalAdicionar = async () => {
+    const token = localStorage.getItem('token');
+    const resU = await fetch(`https://projeto-iii-4.vercel.app/usuarios`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const dataU = await resU.json();
+    setUsuarios(dataU.filter(u => u.tipo === 1));
+
+    const resd = await fetch(`https://projeto-iii-4.vercel.app/disciplinas`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const datad = await resd.json();
+    setDisciplinas(Array.isArray(datad) ? datad : [])
+
+    setModalData({ tipo: 'adicionar' });
+  };
+
+  const confirmarAdicao = async () => {
+    const token = localStorage.getItem('token');
+  
+    if (!professorSelecionado || !disciplinaSelecionada) {
+      alert("Selecione um professor e uma disciplina.");
+      return;
+    }
+  
+    try {
+      const res = await fetch(`https://projeto-iii-4.vercel.app/semestre/disciplinas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          id_professor: professorSelecionado,
+          id_disciplina: disciplinaSelecionada,
+          id_semestre: parseInt(id)
+        })
+      });
+  
+      if (!res.ok) throw new Error("Erro ao adicionar vínculo.");
+  
+      setModalData(null);
+      setProfessorSelecionado(null);
+      setDisciplinaSelecionada(null);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+
+
   return (
     <>
       <div className="header-usuarios">
@@ -121,9 +236,11 @@ const EditarSemestre = () => {
       </div>
 
       <div className="tela-usuarios">
+        
           {popup.show && (
               <PopUpTopo message={popup.message} type={popup.type} />
           )}
+
         <div style={{ display: 'flex', gap: '2rem' }} >
           {/* CARD 1: FORMULÁRIO */}
           <form onSubmit={handleSubmit} style={{ flex: 1, background: '#fff', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
@@ -168,7 +285,7 @@ const EditarSemestre = () => {
             {/* CONTEÚDO DAS ABAS */}
             <div>
               <h3>Disciplinas Professores</h3>
-              {disciplinas.length === 0 ? (
+              {professorDisciplinas.length === 0 ? (
                 <p>Nenhuma disciplina vinculada a professores.</p>
               ) : (
                 <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -180,12 +297,13 @@ const EditarSemestre = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {disciplinas.map((disciplina) => (
-                      <tr key={disciplina.id}>
-                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{disciplina.nome_professor}</td>
-                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{disciplina.descricao_disciplina}</td>
+                    {professorDisciplinas.map((professorDisciplina) => (
+                      <tr key={disciplinas.id}>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.nome_professor}</td>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.descricao_disciplina}</td>
                         <td style={{ justifyContent: 'center', display: 'flex' }}>
                           <button 
+                            onClick={() => abrirModalExclusao(professorDisciplina.id)} 
                             className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
                           >
                             <FaTrash size={20}/>
@@ -195,6 +313,7 @@ const EditarSemestre = () => {
                     ))}
                   </tbody>
                   <button 
+                    onClick={abrirModalAdicionar} 
                     className="botao-editar" >
                     <FaPlus size={28} />
                   </button>
@@ -202,6 +321,67 @@ const EditarSemestre = () => {
               )}
             </div>
           </div>
+
+          {modalData?.tipo === 'excluir' && (
+            <Modal
+              title="Remover Aluno da Turma"
+              onClose={() => setModalData(null)}
+              onConfirm={confirmarExclusao}
+            >
+              <p>Você realmente deseja remover a disciplina deste professor?</p>
+            </Modal>
+          )}
+
+          {modalData?.tipo === 'adicionar' && (
+           <Modal
+            title="Adicionar disciplina ao professor"
+            onClose={() => setModalData(null)}
+            onConfirm={confirmarAdicao}
+          >
+
+            <h3>Adicionar disciplina ao professor</h3>
+              <label>Buscar Professor:</label>
+              <input
+                type="text"
+                value={filtroProfessor}
+                onChange={(e) => setFiltroProfessor(e.target.value)}
+                placeholder="Digite o nome do professor"
+              />
+
+              <select
+                value={professorSelecionado || ''}
+                onChange={(e) => setProfessorSelecionado(parseInt(e.target.value))}
+              >
+                <option value="">Selecione um professor</option>
+                {usuarios
+                  .filter((u) => u.nome.toLowerCase().includes(filtroProfessor.toLowerCase()))
+                  .map((u) => (
+                    <option key={u.id} value={u.id}>{u.nome}</option>
+                  ))}
+              </select>
+
+              <label>Buscar Disciplina:</label>
+              <input
+                type="text"
+                value={filtroDisciplina}
+                onChange={(e) => setFiltroDisciplina(e.target.value)}
+                placeholder="Digite o nome da disciplina"
+              />
+
+              <select
+                value={disciplinaSelecionada || ''}
+                onChange={(e) => setDisciplinaSelecionada(parseInt(e.target.value))}
+              >
+                <option value="">Selecione uma disciplina</option>
+                {disciplinas
+                  .filter((d) => d.descricao.toLowerCase().includes(filtroDisciplina.toLowerCase()))
+                  .map((d) => (
+                    <option key={d.id} value={d.id}>{d.descricao}</option>
+                  ))}
+              </select>
+          </Modal>
+          )}
+
         </div>
       </div>
     </>
