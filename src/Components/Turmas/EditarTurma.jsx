@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import './CadastroTurma.css';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
@@ -25,8 +26,8 @@ const Modal = ({ title, children, onClose, onConfirm }) => {
         <h3>{title}</h3>
         <div className="modal-content" ref={modalRef}>{children}
           <div className="modal-actions">
-            <button onClick={onClose} className="modal-cancel">Cancelar</button>
-            {onConfirm && <button onClick={onConfirm} className="modal-confirm">Confirmar</button>}
+            <button onClick={onClose} className="modal-cancel" style={{ backgroundColor: 'red'}}>Cancelar</button>
+            {onConfirm && <button onClick={onConfirm} className="modal-confirm" style={{ backgroundColor: 'green'}}>Confirmar</button>}
           </div>
         </div>
       </div>
@@ -62,6 +63,10 @@ const EditarTurma = () => {
   // Turma Alunos
   const [usuarios, setUsuarios] = useState([]);
   const [selecionados, setSelecionados] = useState([]);
+
+  const [paginaAtualAluno, setPaginaAtualAluno] = useState(1);
+  const [paginaAtualVinculos, setPaginaAtualVinculos] = useState(1);
+  const itensPorPaginaVinculos = 3;
 
 
   useEffect(() => {
@@ -210,6 +215,12 @@ const EditarTurma = () => {
 
       setAlunos((prev) => prev.filter(a => a.id !== idVinculo)); // Remover o registro do aluno no front
       setModalData(null);
+
+      // Ajustar página se excluir último item da página
+      if ((alunos.length - 1) <= (paginaAtualAluno - 1) * 9 && paginaAtualAluno > 1) {
+        setPaginaAtualAluno(paginaAtualAluno - 1);
+      }
+
     } catch (error) {
       console.error(error);
     }
@@ -235,9 +246,15 @@ const EditarTurma = () => {
           body: JSON.stringify({ id_turma: parseInt(id), id_aluno: idAluno })
         });
       }
-      setModalData(null);
-      setSelecionados([]);
-      window.location.reload();
+
+      const resAtualizado = await fetch(`https://projeto-iii-4.vercel.app/turma/alunos/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const novosAlunos = await resAtualizado.json();
+    setAlunos(novosAlunos);
+
+    setModalData(null);
+    setSelecionados([]);
     } catch (error) {
       console.error(error);
     }
@@ -250,6 +267,22 @@ const EditarTurma = () => {
   const disciplinasFiltradas = filtroSemestre
   ? disciplinas.filter((d) => d.Semestre?.descricao === filtroSemestre)
   : disciplinas;
+
+  // Pagina os usuários ordenados
+  const registrosPorPagina = 3;
+  const totalPaginasAluno = Math.ceil(alunos.length / registrosPorPagina);
+
+  const indiceInicialAluno = (paginaAtualAluno - 1) * registrosPorPagina;
+  const indiceFinalAluno = indiceInicialAluno + registrosPorPagina;
+  const alunosPaginados = alunos.slice(indiceInicialAluno, indiceFinalAluno);
+
+  // Navegação das páginas Alunos
+  const handlePaginaAnteriorAluno = () => {
+    if (paginaAtualAluno > 1) setPaginaAtualAluno(paginaAtualAluno - 1);
+  };
+  const handleProximaPaginaAluno = () => {
+    if (paginaAtualAluno < totalPaginasAluno) setPaginaAtualAluno(paginaAtualAluno + 1);
+  };
 
   return (
     <>
@@ -366,6 +399,25 @@ const EditarTurma = () => {
                         </tr>
                       ))}
                     </tbody>
+                    <div className="paginacao-container">
+
+                      <button
+                        onClick={handlePaginaAnteriorAluno}
+                        className={`botao-paginacao ${paginaAtualAluno === 1 ? 'desabilitado' : ''}`}
+                      >
+                        <FiArrowLeft size={20} />
+                      </button>
+
+                      <span className="paginacao-texto">Página {paginaAtualAluno} de {totalPaginasAluno}</span>
+
+                      <button
+                        onClick={handleProximaPaginaAluno}
+                        className={`botao-paginacao ${paginaAtualAluno === totalPaginasAluno ? 'desabilitado' : ''}`}
+                      >
+                        <FiArrowRight size={20} />
+                      </button>
+
+                    </div>
                     <button onClick={abrirModalAdicionar} className="botao-editar" >
                       <FaPlus size={28} />
                     </button>
