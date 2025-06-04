@@ -104,15 +104,14 @@ const Chamada = () => {
   });
 
 return (
+  
   <div className="tela-usuarios no-scroll">
-    {/* Área do leitor QR code (coloque seu componente aqui) */}
-    <div className="reader-area">
-      {/* Aqui você pode renderizar seu reader / QR code */}
-    </div>
-
-    {/* Header com filtros */}
     <div className="header-usuarios">
       <h2>Chamadas</h2>
+    <div className="reader-area">
+    </div>
+
+    
       <div className="filtros-header">
         <select
           value={filtroMateria}

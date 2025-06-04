@@ -1,7 +1,7 @@
 .home-container {
   display: flex;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: transparent;
 }
 
 .menu-lateral-placeholder {
@@ -12,6 +12,7 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+
 }
 
 .welcome {
@@ -29,15 +30,12 @@
 
 .card {
   flex: 1 1 30%;
-  height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 200px;
+  padding: 1rem;
+  background-color: transparent;
+  box-shadow: none;
 }
+
 
 .lista-chamadas {
   padding: 0;
@@ -83,14 +81,17 @@
 .disciplina {
   flex: 3;
   padding-left: 0.5rem;
-  margin-right: 1rem; /* espaço menor para hora ficar mais perto */
+  margin-right: 0.25rem; /* ainda menor */
+  font-size: 1.2rem;
 }
 
 .hora {
-  flex: 2;
-  text-align: left; /* hora próxima da disciplina */
-  padding-right: 0.5rem;
+  flex: 1.5; /* reduzido para ocupar menos espaço e ficar mais à esquerda */
+  text-align: left;
+  padding-right: 0; /* remove espaçamento direito */
+  font-size: 1.1rem;
 }
+
 
 /* Listras alternadas pra melhorar leitura */
 

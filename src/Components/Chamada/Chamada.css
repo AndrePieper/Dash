@@ -89,21 +89,37 @@
   margin-bottom: 15px;
 }
 
-/* Reader (modal QR code) */
 .reader-container {
   position: fixed;
   top: 120px; /* abaixo do header */
-  right: -100%; /* começa fora da tela à direita */
+  right: -100%; /* escondido fora da tela à direita */
   width: 60vw;
+  max-width: 700px;
   height: calc(100vh - 120px);
   background: white;
-  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
   border-radius: 12px 0 0 12px;
   z-index: 150; /* acima dos cards, abaixo do botão adicionar */
   transition: right 0.4s ease;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
+/* Quando aberto, fica alinhado junto ao menu lateral */
 .reader-container.aberto {
-  right: 250px; /* fica alinhado com o início dos cards (menu lateral 250px) */
+  right: 250px; /* considerando menu lateral de 250px */
+}
+
+
+/* Conteúdo interno do reader */
+.reader-conteudo {
+  background: white;
+  width: 60vw;
+  max-width: 700px;
+  max-height: 80vh;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  overflow-y: auto;
+  position: relative;
 }
