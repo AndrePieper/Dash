@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -42,54 +41,71 @@ const ModaisChamada = ({
     setAbrirModalSelecionarMateria(false);
     setMateriaSelecionada("");
   };
+
   useEffect(() => {
-  const handleKeyDown = (e) => {
-    if (modalQRCodeAberto && e.key === "Escape") {
-      e.preventDefault();
-      abrirConfirmarEncerramento();
-    }
-  };
+    const handleKeyDown = (e) => {
+      if (modalQRCodeAberto && e.key === "Escape") {
+        e.preventDefault();
+        abrirConfirmarEncerramento();
+      }
+    };
 
-  document.addEventListener("keydown", handleKeyDown);
-  return () => document.removeEventListener("keydown", handleKeyDown);
-}, [modalQRCodeAberto]);
-
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [modalQRCodeAberto]);
 
   const confirmarMateriaSelecionada = () => {
     if (!tokenDecodificado || !materiaSelecionada) return;
 
-    const dataHoraInicio = new Date().toISOString();
-    const chamadaData = {
-      id_professor: tokenDecodificado.id,
-      id_disciplina: materiaSelecionada.id_disciplina,
-      data_hora_inicio: dataHoraInicio,
-    };
+    if (!navigator.geolocation) {
+      alert("Geolocalização não suportada pelo navegador.");
+      return;
+    }
 
-    fetch("https://projeto-iii-4.vercel.app/chamadas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
-      body: JSON.stringify(chamadaData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Erro ao iniciar a chamada");
-        return res.json();
-      })
-      .then((data) => {
-        fecharModalMatérias();
-        const qrData = {
-          id: data.id,
-          id_professor: chamadaData.id_professor,
-          id_disciplina: chamadaData.id_disciplina,
-          data_hora_inicio: chamadaData.data_hora_inicio,
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const dataHoraInicio = new Date().toISOString();
+        const chamadaData = {
+          id_professor: tokenDecodificado.id,
+          id_disciplina: materiaSelecionada.id_disciplina,
+          data_hora_inicio: dataHoraInicio,
+          latitude,
+          longitude,
         };
-        setQRCodeData(qrData);
-        setIdChamadaCriada(data.id);
-        setModalQRCodeAberto(true);
-      })
-      .catch(() => {});
+
+        fetch("https://projeto-iii-4.vercel.app/chamadas", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
+          body: JSON.stringify(chamadaData),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Erro ao iniciar a chamada");
+            return res.json();
+          })
+          .then((data) => {
+            fecharModalMatérias();
+            const qrData = {
+              id: data.id,
+              id_professor: chamadaData.id_professor,
+              id_disciplina: chamadaData.id_disciplina,
+              data_hora_inicio: chamadaData.data_hora_inicio,
+              latitude,
+              longitude,
+            };
+            setQRCodeData(qrData);
+            setIdChamadaCriada(data.id);
+            setModalQRCodeAberto(true);
+          })
+          .catch(() => {});
+      },
+      (error) => {
+        alert("Erro ao obter localização: " + error.message);
+      }
+    );
   };
 
   const abrirConfirmarEncerramento = () => setAbrirModalConfirmarEncerramento(true);
@@ -128,27 +144,42 @@ const ModaisChamada = ({
   const confirmarChamada = () => {
     if (!tokenDecodificado || !chamadaSelecionada) return;
 
-    const dataHoraInicio = new Date().toISOString();
-    const chamadaData = {
-      id_professor: tokenDecodificado.id,
-      id_disciplina: chamadaSelecionada.id_disciplina,
-      data_hora_inicio: dataHoraInicio,
-    };
+    if (!navigator.geolocation) {
+      alert("Geolocalização não suportada pelo navegador.");
+      return;
+    }
 
-    fetch("https://projeto-iii-4.vercel.app/chamadas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const dataHoraInicio = new Date().toISOString();
+        const chamadaData = {
+          id_professor: tokenDecodificado.id,
+          id_disciplina: chamadaSelecionada.id_disciplina,
+          data_hora_inicio: dataHoraInicio,
+          latitude: latitude,
+          longitude: longitude,
+        };
+
+        fetch("https://projeto-iii-4.vercel.app/chamadas", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
+          body: JSON.stringify(chamadaData),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Erro ao iniciar a chamada");
+            return res.json();
+          })
+          .then(fecharConfirmacao)
+          .catch(() => {});
       },
-      body: JSON.stringify(chamadaData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Erro ao iniciar a chamada");
-        return res.json();
-      })
-      .then(fecharConfirmacao)
-      .catch(() => {});
+      (error) => {
+        alert("Erro ao obter localização: " + error.message);
+      }
+    );
   };
 
   return (
@@ -176,49 +207,43 @@ const ModaisChamada = ({
             </FormControl>
           )}
         </DialogContent>
-  <DialogActions>
-
-  <Button onClick={fecharModalMatérias} className="btn-vermelho">
-    Cancelar
-  </Button>
-
-   <Button 
-   onClick={confirmarMateriaSelecionada} 
-   className="btn-verde">
-    Iniciar Chamada
-  </Button>
-
-</DialogActions>
-
+        <DialogActions>
+          <Button onClick={fecharModalMatérias} className="btn-vermelho">
+            Cancelar
+          </Button>
+          <Button onClick={confirmarMateriaSelecionada} className="btn-verde">
+            Iniciar Chamada
+          </Button>
+        </DialogActions>
       </Dialog>
 
-     <Dialog
-  open={modalQRCodeAberto}
-  onClose={() => setModalQRCodeAberto(false)}
-  maxWidth="md"
-  fullWidth
-  disableEscapeKeyDown  
->
-  <DialogTitle>QR Code da Chamada</DialogTitle>
-  <DialogContent dividers>
-    <div className="qr-modal-content">
-      <div className="qr-instructions">
-        <Typography variant="body1">Acesse o seu aplicativo</Typography>
-        <Typography variant="body1">Realize Login com o seu email e senha cadastrados</Typography>
-        <Typography variant="body1">Selecione a opção de “Registrar”</Typography>
-        <Typography variant="body1">Centralize o QRCode na sua tela até que a presença seja registrada</Typography>
-      </div>
-      <div className="qr-code">
-        {qrCodeData && <QRCodeCanvas value={JSON.stringify(qrCodeData)} />}
-      </div>
-    </div>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={abrirConfirmarEncerramento} className="btn-verde" variant="contained">
-      Encerrar Chamada
-    </Button>
-  </DialogActions>
-</Dialog>
+      <Dialog
+        open={modalQRCodeAberto}
+        onClose={() => setModalQRCodeAberto(false)}
+        maxWidth="md"
+        fullWidth
+        disableEscapeKeyDown
+      >
+        <DialogTitle>QR Code da Chamada</DialogTitle>
+        <DialogContent dividers>
+          <div className="qr-modal-content">
+            <div className="qr-instructions">
+              <Typography variant="body1">Acesse o seu aplicativo</Typography>
+              <Typography variant="body1">Realize Login com o seu email e senha cadastrados</Typography>
+              <Typography variant="body1">Selecione a opção de “Registrar”</Typography>
+              <Typography variant="body1">Centralize o QRCode na sua tela até que a presença seja registrada</Typography>
+            </div>
+            <div className="qr-code">
+              {qrCodeData && <QRCodeCanvas value={JSON.stringify(qrCodeData)} />}
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={abrirConfirmarEncerramento} className="btn-verde" variant="contained">
+            Encerrar Chamada
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={abrirModalConfirmarEncerramento} onClose={cancelarEncerramento}>
         <DialogTitle>Confirmar Encerramento</DialogTitle>
@@ -226,8 +251,12 @@ const ModaisChamada = ({
           <Typography>Deseja mesmo encerrar a chamada?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelarEncerramento} className="btn-vermelho">Cancelar</Button>
-          <Button onClick={confirmarEncerramento} className="btn-verde" variant="contained">Confirmar</Button>
+          <Button onClick={cancelarEncerramento} className="btn-vermelho">
+            Cancelar
+          </Button>
+          <Button onClick={confirmarEncerramento} className="btn-verde" variant="contained">
+            Confirmar
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -239,8 +268,12 @@ const ModaisChamada = ({
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={fecharConfirmacao} className="btn-vermelho">Cancelar</Button>
-          <Button onClick={confirmarChamada} className="btn-verde" variant="contained">Confirmar</Button>
+          <Button onClick={fecharConfirmacao} className="btn-vermelho">
+            Cancelar
+          </Button>
+          <Button onClick={confirmarChamada} className="btn-verde" variant="contained">
+            Confirmar
+          </Button>
         </DialogActions>
       </Dialog>
     </>
