@@ -157,8 +157,8 @@ const ModaisChamada = ({
           id_professor: tokenDecodificado.id,
           id_disciplina: chamadaSelecionada.id_disciplina,
           data_hora_inicio: dataHoraInicio,
-          latitude: latitude,
-          longitude: longitude,
+          lat_professor: latitude,
+          long_professor: longitude,
         };
 
         fetch("https://projeto-iii-4.vercel.app/chamadas", {
