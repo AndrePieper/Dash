@@ -340,8 +340,8 @@ const EditarTurma = () => {
           </form>
     
           {/* CARD 2: GESTÃO DE VÍNCULOS */}
-          <div style={{ flex: 1, background: '#f9f9f9', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+          <div style={{ flex: 1, background: '#f9f9f9', padding: '5px 1rem 5px 1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
+            <div style={{ display: 'flex', gap: '1rem' }}>
               <button
                 onClick={() => setAbaSelecionada('alunos')}
                 style={{
@@ -351,6 +351,7 @@ const EditarTurma = () => {
                   padding: '0.5rem 1rem',
                   borderRadius: '4px',
                   cursor: 'pointer',
+                  margin: '10px 0px'
                 }}
               >
                 Alunos
@@ -364,6 +365,7 @@ const EditarTurma = () => {
                   padding: '0.5rem 1rem',
                   borderRadius: '4px',
                   cursor: 'pointer',
+                  margin: '10px 0px'
                 }}
               >
                 Disciplinas
@@ -373,7 +375,11 @@ const EditarTurma = () => {
             {/* CONTEÚDO DAS ABAS */}
             {abaSelecionada === 'alunos' && (
               <div>
-                <h3>Alunos Vinculados</h3>
+                <h3
+                  style={{
+                  margin: '00px 0px 15px 0px'
+                }}
+                >Alunos Vinculados</h3>
                 {alunos.length === 0 ? (
                   <p>Nenhum aluno vinculado à turma.</p>
                 ) : (
@@ -385,7 +391,7 @@ const EditarTurma = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {alunos.map((aluno) => (
+                      {alunosPaginados.map((aluno) => (
                         <tr key={aluno.id}>
                           <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{aluno.Usuario?.nome}</td>
                           <td style={{ justifyContent: 'center', display: 'flex' }}>
@@ -399,30 +405,35 @@ const EditarTurma = () => {
                         </tr>
                       ))}
                     </tbody>
-                    <div className="paginacao-container">
 
-                      <button
-                        onClick={handlePaginaAnteriorAluno}
-                        className={`botao-paginacao ${paginaAtualAluno === 1 ? 'desabilitado' : ''}`}
-                      >
-                        <FiArrowLeft size={20} />
-                      </button>
-
-                      <span className="paginacao-texto">Página {paginaAtualAluno} de {totalPaginasAluno}</span>
-
-                      <button
-                        onClick={handleProximaPaginaAluno}
-                        className={`botao-paginacao ${paginaAtualAluno === totalPaginasAluno ? 'desabilitado' : ''}`}
-                      >
-                        <FiArrowRight size={20} />
-                      </button>
-
-                    </div>
-                    <button onClick={abrirModalAdicionar} className="botao-editar" >
-                      <FaPlus size={28} />
-                    </button>
                   </table>
                 )}
+                    <div className="rodape-card">
+                      <div className="paginacao-container">
+
+                        <button
+                          onClick={handlePaginaAnteriorAluno}
+                          className={`botao-paginacao ${paginaAtualAluno === 1 ? 'desabilitado' : ''}`}
+                        >
+                          <FiArrowLeft size={20} />
+                        </button>
+
+                        <span className="paginacao-texto">Página {paginaAtualAluno} de {totalPaginasAluno}</span>
+
+                        <button
+                          onClick={handleProximaPaginaAluno}
+                          className={`botao-paginacao ${paginaAtualAluno === totalPaginasAluno ? 'desabilitado' : ''}`}
+                        >
+                          <FiArrowRight size={20} />
+                        </button>
+
+                      </div>
+                      <div className="adicionar-vinculo">
+                        <button onClick={abrirModalAdicionar} className="botao-editar" >
+                          <FaPlus size={28} />
+                        </button>
+                      </div>
+                    </div>
               </div>
             )}
     

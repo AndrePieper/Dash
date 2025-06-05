@@ -176,10 +176,35 @@
   border-radius: 10px;
   text-align: center;
 }
+
 .paginacao-container {
-  margin-top: 15px;
   text-align: center;
   user-select: none;
+}
+
+.rodape-card {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.adicionar-vinculo {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+.adicionar-vinculo button {
+  /* padding: 6px 16px; */
+  height: 36px;
+  margin: 0 10px;
+  background-color: #4CAF50; /* verde padrão */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .botao-paginacao {
