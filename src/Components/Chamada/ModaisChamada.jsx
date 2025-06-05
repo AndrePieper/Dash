@@ -74,6 +74,8 @@ const ModaisChamada = ({
           longitude,
         };
 
+        console.log("Enviando POST para /chamadas com:", JSON.stringify(chamadaData, null, 2));
+
         fetch("https://projeto-iii-4.vercel.app/chamadas", {
           method: "POST",
           headers: {
@@ -93,8 +95,8 @@ const ModaisChamada = ({
               id_professor: chamadaData.id_professor,
               id_disciplina: chamadaData.id_disciplina,
               data_hora_inicio: chamadaData.data_hora_inicio,
-              latitude,
-              longitude,
+              lat_professor: latitude,
+              long_professor: longitude,
             };
             setQRCodeData(qrData);
             setIdChamadaCriada(data.id);
@@ -116,16 +118,20 @@ const ModaisChamada = ({
 
     const dataHoraFinal = new Date().toISOString();
 
+    const encerramentoData = {
+      id: idChamadaCriada,
+      data_hora_final: dataHoraFinal,
+    };
+
+    console.log("Enviando PUT para /chamadas/finalizar com:", JSON.stringify(encerramentoData, null, 2));
+
     fetch("https://projeto-iii-4.vercel.app/chamadas/finalizar", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem("token"),
       },
-      body: JSON.stringify({
-        id: idChamadaCriada,
-        data_hora_final: dataHoraFinal,
-      }),
+      body: JSON.stringify(encerramentoData),
     })
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao encerrar chamada");
@@ -161,6 +167,8 @@ const ModaisChamada = ({
           long_professor: longitude,
         };
 
+        console.log("Enviando POST para /chamadas com:", JSON.stringify(chamadaData, null, 2));
+
         fetch("https://projeto-iii-4.vercel.app/chamadas", {
           method: "POST",
           headers: {
@@ -177,7 +185,7 @@ const ModaisChamada = ({
           .catch(() => {});
       },
       (error) => {
-        alert("Erro ao obter localização: " + error.message);
+        console.log("Erro ao obter localização: " + error.message);
       }
     );
   };
