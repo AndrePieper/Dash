@@ -64,9 +64,12 @@ const EditarTurma = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [selecionados, setSelecionados] = useState([]);
 
+  // Turma Disciplinas
+  const [todasDisciplinas, setTodasDisciplinas] = useState([]);
+  const [disciplinasSelecionadas, setDisciplinasSelecionadas] = useState([]);
+
   const [paginaAtualAluno, setPaginaAtualAluno] = useState(1);
-  const [paginaAtualVinculos, setPaginaAtualVinculos] = useState(1);
-  const itensPorPaginaVinculos = 3;
+  const [paginaAtualDisciplina, setPaginaAtualDisciplina] = useState(1);
 
 
   useEffect(() => {
@@ -225,41 +228,83 @@ const EditarTurma = () => {
       console.error(error);
     }
   };
+  // Modal controle Alunos
+    const abrirModalAdicionar = async () => {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`https://projeto-iii-4.vercel.app/usuarios`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setUsuarios(data.filter(u => u.tipo === 0));
+      setModalData({ tipo: 'adicionar' });
+    };
 
-  const abrirModalAdicionar = async () => {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`https://projeto-iii-4.vercel.app/usuarios`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    setUsuarios(data.filter(u => u.tipo === 0));
-    setModalData({ tipo: 'adicionar' });
-  };
+    // Adicionar vinculo Alnuos
+    const confirmarAdicao = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        for (let idAluno of selecionados) {
+          await fetch(`https://projeto-iii-4.vercel.app/turma/alunos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ id_turma: parseInt(id), id_aluno: idAluno })
+          });
+        }
 
-  const confirmarAdicao = async () => {
-    const token = localStorage.getItem('token');
-    try {
-      for (let idAluno of selecionados) {
-        await fetch(`https://projeto-iii-4.vercel.app/turma/alunos`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ id_turma: parseInt(id), id_aluno: idAluno })
-        });
+        const resAtualizado = await fetch(`https://projeto-iii-4.vercel.app/turma/alunos/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const novosAlunos = await resAtualizado.json();
+      setAlunos(novosAlunos);
+
+      setModalData(null);
+      setSelecionados([]);
+      } catch (error) {
+        console.error(error);
       }
+    };
 
-      const resAtualizado = await fetch(`https://projeto-iii-4.vercel.app/turma/alunos/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const novosAlunos = await resAtualizado.json();
-    setAlunos(novosAlunos);
+  // Modal Controle Disciplinas
+    const abrirModalAdicionarDisciplina = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch('https://projeto-iii-4.vercel.app/disciplinas', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+    
+        setTodasDisciplinas(data);
+        setModalData({ tipo: 'adicionarDisciplina' });
+      } catch (error) {
+        console.error("Erro ao buscar disciplinas disponíveis:", error);
+      }
+    };
 
-    setModalData(null);
-    setSelecionados([]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+    const confirmarAdicaoDisciplina = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        for (let idDisciplina of disciplinasSelecionadas) {
+          await fetch('https://projeto-iii-4.vercel.app/turma/disciplinas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ id_turma: parseInt(id), id_disciplina: idDisciplina })
+          });
+        }
+    
+        // Atualiza lista
+        const resAtualizado = await fetch(`https://projeto-iii-4.vercel.app/turma/disciplinas/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const novasDisciplinas = await resAtualizado.json();
+        setDisciplinas(novasDisciplinas);
+    
+        setModalData(null);
+        setDisciplinasSelecionadas([]);
+      } catch (error) {
+        console.error("Erro ao adicionar disciplinas:", error);
+      }
+    };
+  
   const alunosFiltrados = usuarios.filter(u => u.nome.toLowerCase().includes(filtroNome.toLowerCase()));
 
   const semestresDisponiveis = [...new Set(disciplinas.map((d) => d.Semestre?.descricao))];
@@ -271,18 +316,30 @@ const EditarTurma = () => {
   // Pagina os usuários ordenados
   const registrosPorPagina = 3;
   const totalPaginasAluno = Math.ceil(alunos.length / registrosPorPagina);
-
   const indiceInicialAluno = (paginaAtualAluno - 1) * registrosPorPagina;
   const indiceFinalAluno = indiceInicialAluno + registrosPorPagina;
   const alunosPaginados = alunos.slice(indiceInicialAluno, indiceFinalAluno);
+    // Navegação das páginas Alunos
+    const handlePaginaAnteriorAluno = () => {
+      if (paginaAtualAluno > 1) setPaginaAtualAluno(paginaAtualAluno - 1);
+    };
+    const handleProximaPaginaAluno = () => {
+      if (paginaAtualAluno < totalPaginasAluno) setPaginaAtualAluno(paginaAtualAluno + 1);
+    };
 
-  // Navegação das páginas Alunos
-  const handlePaginaAnteriorAluno = () => {
-    if (paginaAtualAluno > 1) setPaginaAtualAluno(paginaAtualAluno - 1);
-  };
-  const handleProximaPaginaAluno = () => {
-    if (paginaAtualAluno < totalPaginasAluno) setPaginaAtualAluno(paginaAtualAluno + 1);
-  };
+  const totalPaginasDisciplina = Math.ceil(disciplinasFiltradas.length / registrosPorPagina);
+  const indiceInicialDisciplina = (paginaAtualDisciplina - 1) * registrosPorPagina;
+  const indiceFinalDisciplina = indiceInicialDisciplina + registrosPorPagina;
+  const disciplinasPaginadas = disciplinasFiltradas.slice(indiceInicialDisciplina, indiceFinalDisciplina);
+    // Navegação das páginas Disciplina
+    const handlePaginaAnteriorDisciplina = () => {
+      if (paginaAtualDisciplina > 1) setPaginaAtualDisciplina(paginaAtualDisciplina - 1);
+    };
+    const handleProximaPaginaDisciplina = () => {
+      if (paginaAtualDisciplina < totalPaginasDisciplina) setPaginaAtualDisciplina(paginaAtualDisciplina + 1);
+    };
+
+
 
   return (
     <>
@@ -408,32 +465,32 @@ const EditarTurma = () => {
 
                   </table>
                 )}
-                    <div className="rodape-card">
-                      <div className="paginacao-container">
+                <div className="rodape-card">
+                  <div className="paginacao-container">
 
-                        <button
-                          onClick={handlePaginaAnteriorAluno}
-                          className={`botao-paginacao ${paginaAtualAluno === 1 ? 'desabilitado' : ''}`}
-                        >
-                          <FiArrowLeft size={20} />
-                        </button>
+                    <button
+                      onClick={handlePaginaAnteriorAluno}
+                      className={`botao-paginacao ${paginaAtualAluno === 1 ? 'desabilitado' : ''}`}
+                    >
+                      <FiArrowLeft size={20} />
+                    </button>
 
-                        <span className="paginacao-texto">Página {paginaAtualAluno} de {totalPaginasAluno}</span>
+                    <span className="paginacao-texto">Página {paginaAtualAluno} de {totalPaginasAluno}</span>
 
-                        <button
-                          onClick={handleProximaPaginaAluno}
-                          className={`botao-paginacao ${paginaAtualAluno === totalPaginasAluno ? 'desabilitado' : ''}`}
-                        >
-                          <FiArrowRight size={20} />
-                        </button>
+                    <button
+                      onClick={handleProximaPaginaAluno}
+                      className={`botao-paginacao ${paginaAtualAluno === totalPaginasAluno ? 'desabilitado' : ''}`}
+                    >
+                      <FiArrowRight size={20} />
+                    </button>
 
-                      </div>
-                      <div className="adicionar-vinculo">
-                        <button onClick={abrirModalAdicionar} className="botao-editar" >
-                          <FaPlus size={28} />
-                        </button>
-                      </div>
-                    </div>
+                  </div>
+                  <div className="adicionar-vinculo">
+                    <button onClick={abrirModalAdicionar} className="botao-editar" >
+                      <FaPlus size={28} />
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
     
@@ -470,7 +527,7 @@ const EditarTurma = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {disciplinasFiltradas.map((item) => (
+                      {disciplinasPaginadas.map((item) => (
                         <tr key={item.id}>
                           <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Disciplina?.descricao || '—'}</td>
                           <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{item.Semestre?.descricao || '—'}</td>
@@ -484,12 +541,35 @@ const EditarTurma = () => {
                         </tr>
                       ))}
                     </tbody>
-                    <button className="botao-editar" >
-                      <FaPlus size={28} />
-                    </button>
                   </table>
                 </>
               )}
+              <div className="rodape-card">
+                  <div className="paginacao-container">
+
+                    <button
+                      onClick={handlePaginaAnteriorDisciplina}
+                      className={`botao-paginacao ${paginaAtualDisciplina === 1 ? 'desabilitado' : ''}`}
+                    >
+                      <FiArrowLeft size={20} />
+                    </button>
+
+                    <span className="paginacao-texto">Página {paginaAtualDisciplina } de {totalPaginasDisciplina}</span>
+
+                    <button
+                      onClick={handleProximaPaginaDisciplina}
+                      className={`botao-paginacao ${paginaAtualDisciplina === totalPaginasDisciplina ? 'desabilitado' : ''}`}
+                    >
+                      <FiArrowRight size={20} />
+                    </button>
+
+                  </div>
+                  <div className="adicionar-vinculo">
+                    <button onClick={abrirModalAdicionarDisciplina} className="botao-editar" >
+                      <FaPlus size={28} />
+                    </button>
+                  </div>
+                </div>
             </div>
             )}
           </div>
@@ -539,6 +619,48 @@ const EditarTurma = () => {
             </div>
           </Modal>
         )}
+
+        {modalData && modalData.tipo === 'adicionarDisciplina' && (
+          <Modal
+            title="Adicionar disciplinas à turma"
+            onClose={() => setModalData(null)}
+            onConfirm={confirmarAdicaoDisciplina}
+          >
+            <h3>Adicionar disciplinas à turma</h3>
+            <input
+              type="text"
+              placeholder="Buscar por nome"
+              value={filtroNome}
+              onChange={e => setFiltroNome(e.target.value)}
+            />
+            <div className="lista-disciplinas-disponiveis">
+              
+              {todasDisciplinas
+                .filter(d => d.descricao.toLowerCase().includes(filtroNome.toLowerCase()))
+                .map((disciplina) => (
+                  <label key={disciplina.id} style={{ display: 'flex', padding: '5px' }}>
+                    <input
+                      type="checkbox"
+                      checked={disciplinasSelecionadas.includes(disciplina.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setDisciplinasSelecionadas((prev) => [...prev, disciplina.id]);
+                        } else {
+                          setDisciplinasSelecionadas((prev) =>
+                            prev.filter((id) => id !== disciplina.id)
+                          );
+                        }
+                      }}
+                      style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
+                    />
+                    {disciplina.descricao}
+                  </label>
+                ))
+              }
+            </div>
+          </Modal>
+        )}
+
       </div>
     </>
   );
