@@ -1,68 +1,40 @@
-/* Área principal, sem scroll e com padding */
-.tela-usuarios.no-scroll {
-  margin-left: 250px;
-  padding: 25px;
-  height: 100vh; /* Garante altura total da tela */
-  box-sizing: border-box;
-  overflow: hidden; /* Impede qualquer rolagem */
+.grid-cards-large {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 30px;
 }
 
-/* Reutilizando cabeçalho de usuários */
-.header-usuarios {
-  margin-top: 20px;
-  margin-left: 250px;
-  width: calc(100% - 250px);
+.card-materia-large {
+  background-color: white;
+  border-radius: 15px;
+  padding: 30px 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(to right, #009c3b, #00c853);
-  color: white;
-  padding: 15px 20px;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
-  box-sizing: border-box;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 15px;
+  word-wrap: break-word;
+  min-height: 180px;
+  transition: transform 0.2s ease;
 }
 
-/* Tabela básica formatada */
-.tabela-usuarios {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  table-layout: fixed;
-  overflow-wrap: break-word; /* Quebra o texto longo */
+.card-materia-large:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 
-.tabela-usuarios th,
-.tabela-usuarios td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 200px; /* Evita que células fiquem largas demais */
+.card-materia-large h2 {
+  margin: 0 0 15px 0;
+  color: #000000;
+  font-size: 1.8rem;
 }
 
-.tabela-usuarios th {
-  background-color: #e0e0e0;
-  user-select: none;
+.card-materia-large p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
 }
 
-.botao-adicionar {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #009232;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 15px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.botao-adicionar:hover {
-  background-color: #006c24;
+.card-materia-large p strong {
+  color: #04130a;
 }

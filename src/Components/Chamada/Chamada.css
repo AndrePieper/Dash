@@ -1,5 +1,5 @@
 .tela-chamadas {
-  margin-left: 250px; /* espaço para menu lateral fixo */
+  margin-left: 250px;
   padding: 20px 30px;
   background-color: #f5f5f5;
   min-height: 100vh;
@@ -11,16 +11,15 @@
 
 .header-usuarios {
   margin-top: 20px;
-  width: calc(100% - 250px); /* leva em conta o menu lateral */
-  margin-left: 250px;
+  margin-left: 0;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: linear-gradient(to right, #009c3b, #00c853);
   color: white;
   padding: 15px 20px;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
+  border-radius: 12px;
   box-sizing: border-box;
   flex-wrap: wrap;
   gap: 15px;
@@ -39,7 +38,7 @@
   border: 1px solid #ccc;
   background-color: #f9f9f9;
 }
-
+/*
 .lista-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -57,14 +56,13 @@
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  /* removido transform e transição para não mexer ao hover */
 }
 
 .cardTexto {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   color: #2e7d32;
-}
+}*/
 
 .botao-adicionar {
   position: fixed;
@@ -78,7 +76,7 @@
   cursor: pointer;
   font-size: 24px;
   transition: background-color 0.2s ease;
-  z-index: 160; /* acima do reader */
+  z-index: 160;
 }
 
 .botao-adicionar:hover {
@@ -91,30 +89,26 @@
 
 .reader-container {
   position: fixed;
-  top: 120px; /* abaixo do header */
-  right: -100%; /* escondido fora da tela à direita */
+  top: 120px;
+  right: -100%;
   width: 60vw;
   max-width: 700px;
   height: calc(100vh - 120px);
   background: white;
   box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
   border-radius: 12px 0 0 12px;
-  z-index: 150; /* acima dos cards, abaixo do botão adicionar */
+  z-index: 150;
   transition: right 0.4s ease;
   overflow-y: auto;
 }
 
-/* Quando aberto, fica alinhado junto ao menu lateral */
 .reader-container.aberto {
-  right: 250px; /* considerando menu lateral de 250px */
+  right: 250px;
 }
 
-
-/* Conteúdo interno do reader */
 .reader-conteudo {
   background: white;
-  width: 60vw;
-  max-width: 700px;
+  width: 100%;
   max-height: 80vh;
   padding: 20px;
   border-radius: 12px;
@@ -122,4 +116,25 @@
   box-sizing: border-box;
   overflow-y: auto;
   position: relative;
+}
+.tabela-container {
+  margin-left: 275px; 
+  margin-right: 25px;
+  width: auto; 
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: auto;
+  overflow-wrap: break-word;
+}
+
+
+.tabela-usuarios th,
+.tabela-usuarios td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* aqui */
+  max-width: 200px; 
 }

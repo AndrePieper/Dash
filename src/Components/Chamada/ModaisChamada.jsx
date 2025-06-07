@@ -34,6 +34,7 @@ const ModaisChamada = ({
   qrCodeData,
   idChamadaCriada,
   onChamadaCriada,
+  bloqueiaEdicaoMateria = false,
 }) => {
   const [abrirModalConfirmarEncerramento, setAbrirModalConfirmarEncerramento] = useState(false);
   const [qrCodeAtualizado, setQrCodeAtualizado] = useState(null);
@@ -41,7 +42,9 @@ const ModaisChamada = ({
 
   const fecharModalMatérias = () => {
     setAbrirModalSelecionarMateria(false);
-    setMateriaSelecionada("");
+    if (!bloqueiaEdicaoMateria) {
+      setMateriaSelecionada("");
+    }
   };
 
   useEffect(() => {
@@ -74,52 +77,50 @@ const ModaisChamada = ({
     return () => clearInterval(interval);
   }, [modalQRCodeAberto, qrCodeData, localizacao]);
 
-const confirmarMateriaSelecionada = () => {
-  if (!tokenDecodificado || !materiaSelecionada) return;
+  const confirmarMateriaSelecionada = () => {
+    if (!tokenDecodificado || !materiaSelecionada) return;
 
-  if (!navigator.geolocation) {
-    alert("Geolocalização não suportada pelo navegador.");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      const dataHoraInicio = new Date().toISOString();
-      const chamadaData = {
-        id_professor: tokenDecodificado.id,
-        id_disciplina: materiaSelecionada.id_disciplina,
-        data_hora_inicio: dataHoraInicio,
-        // REMOVIDO lat_professor e long_professor do POST
-      };
-
-      fetch("https://projeto-iii-4.vercel.app/chamadas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token"),
-        },
-        body: JSON.stringify(chamadaData),
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Erro ao iniciar a chamada");
-          return res.json();
-        })
-        .then((data) => {
-          fecharModalMatérias();
-          setQRCodeData({ id: data.id });
-          setIdChamadaCriada(data.id);
-          // Guardar localização para o QR Code, não para o POST
-          setLocalizacao({ lat: latitude, long: longitude });
-          setModalQRCodeAberto(true);
-        })
-        .catch(() => {});
-    },
-    (error) => {
-      alert("Erro ao obter localização: " + error.message);
+    if (!navigator.geolocation) {
+      alert("Geolocalização não suportada pelo navegador.");
+      return;
     }
-  );
-};
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const dataHoraInicio = new Date().toISOString();
+        const chamadaData = {
+          id_professor: tokenDecodificado.id,
+          id_disciplina: materiaSelecionada.id_disciplina,
+          data_hora_inicio: dataHoraInicio,
+        };
+
+        fetch("https://projeto-iii-4.vercel.app/chamadas", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
+          body: JSON.stringify(chamadaData),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Erro ao iniciar a chamada");
+            return res.json();
+          })
+          .then((data) => {
+            fecharModalMatérias();
+            setQRCodeData({ id: data.id });
+            setIdChamadaCriada(data.id);
+            setLocalizacao({ lat: latitude, long: longitude });
+            setModalQRCodeAberto(true);
+          })
+          .catch(() => {});
+      },
+      (error) => {
+        alert("Erro ao obter localização: " + error.message);
+      }
+    );
+  };
 
   const abrirConfirmarEncerramento = () => setAbrirModalConfirmarEncerramento(true);
   const cancelarEncerramento = () => setAbrirModalConfirmarEncerramento(false);
@@ -176,8 +177,6 @@ const confirmarMateriaSelecionada = () => {
           long_professor: longitude,
         };
 
-        console.log("Enviando POST para /chamadas com:", JSON.stringify(chamadaData, null, 2));
-
         fetch("https://projeto-iii-4.vercel.app/chamadas", {
           method: "POST",
           headers: {
@@ -207,7 +206,7 @@ const confirmarMateriaSelecionada = () => {
           {carregandoMaterias ? (
             <CircularProgress />
           ) : (
-            <FormControl fullWidth>
+            <FormControl fullWidth disabled={bloqueiaEdicaoMateria}>
               <InputLabel id="select-materia-label">Matéria</InputLabel>
               <Select
                 labelId="select-materia-label"
@@ -234,35 +233,33 @@ const confirmarMateriaSelecionada = () => {
         </DialogActions>
       </Dialog>
 
-        <Dialog
-          open={modalQRCodeAberto}
-          onClose={(event, reason) => {
-            if (reason === "backdropClick" || reason === "escapeKeyDown") {
-              return;
-            }
-            setModalQRCodeAberto(false);
-          }}
-          maxWidth="md"
-          fullWidth
-          disableEscapeKeyDown
-        >
+      <Dialog
+        open={modalQRCodeAberto}
+        onClose={(event, reason) => {
+          if (reason === "backdropClick" || reason === "escapeKeyDown") {
+            return;
+          }
+          setModalQRCodeAberto(false);
+        }}
+        maxWidth="md"
+        fullWidth
+        disableEscapeKeyDown
+      >
         <DialogTitle>QR Code da Chamada</DialogTitle>
         <DialogContent dividers>
           <div className="qr-modal-content">
-            <div className="qr-instructions">
             <div className="qr-instructions">
               <Typography variant="body1">① Acesse o seu aplicativo.</Typography>
               <Typography variant="body1">② Realize login com seu e-mail e senha cadastrados.</Typography>
               <Typography variant="body1">③ Selecione a opção “Registrar”.</Typography>
               <Typography variant="body1">④ Centralize o QR Code na sua tela até registrar a presença.</Typography>
             </div>
-            </div>
             <div className="qr-code">
               {qrCodeAtualizado && (
                 <QRCodeCanvas
                   value={JSON.stringify(qrCodeAtualizado)}
                   size={256}
-                  level="H"  
+                  level="H"
                   includeMargin={true}
                 />
               )}
