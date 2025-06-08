@@ -450,8 +450,8 @@ const EditarTurma = () => {
                     <tbody>
                       {alunosPaginados.map((aluno) => (
                         <tr key={aluno.id}>
-                          <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{aluno.Usuario?.nome}</td>
-                          <td style={{ justifyContent: 'center', display: 'flex' }}>
+                          <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }} className="dado-vinculo">{aluno.Usuario?.nome}</td>
+                          <td className="button-remover">
                             <button 
                               onClick={() => abrirModalExclusao(aluno.id)} 
                               className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
@@ -466,7 +466,7 @@ const EditarTurma = () => {
                   </table>
                 )}
                 <div className="rodape-card">
-                  <div className="paginacao-container">
+                  <div className="paginacao-container-vinculos">
 
                     <button
                       onClick={handlePaginaAnteriorAluno}
@@ -545,7 +545,7 @@ const EditarTurma = () => {
                 </>
               )}
               <div className="rodape-card">
-                  <div className="paginacao-container">
+                  <div className="paginacao-container-vinculos">
 
                     <button
                       onClick={handlePaginaAnteriorDisciplina}
@@ -577,7 +577,6 @@ const EditarTurma = () => {
 
         {modalData?.tipo === 'excluir' && (
           <Modal
-            title="Remover Aluno da Turma"
             onClose={() => setModalData(null)}
             onConfirm={confirmarExclusao}
           >
@@ -587,7 +586,6 @@ const EditarTurma = () => {
 
         {modalData && modalData.tipo === 'adicionar' && (
           <Modal
-            title="Adicionar alunos à turma"
             onClose={() => setModalData(null)}
             onConfirm={confirmarAdicao}
           >
@@ -622,7 +620,6 @@ const EditarTurma = () => {
 
         {modalData && modalData.tipo === 'adicionarDisciplina' && (
           <Modal
-            title="Adicionar disciplinas à turma"
             onClose={() => setModalData(null)}
             onConfirm={confirmarAdicaoDisciplina}
           >

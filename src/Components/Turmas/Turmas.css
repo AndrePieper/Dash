@@ -1,5 +1,4 @@
-/* Estilo dos botões de editar e excluir */
-.btn-editar, .btn-excluir {
+/* .btn-editar, .btn-excluir {
     background-color: white;
     border: 2px solid #ccc;
     border-radius: 4px;
@@ -18,13 +17,11 @@
     color: white;
   }
   
-  /* Mantendo o restante do seu CSS original */
-  
   .tela-turmas {
     padding: 2rem;
     background-color: #ffffff;
     position: relative;
-    margin-left: 250px; /* Largura do menu lateral */
+    margin-left: 250px;
     min-height: 100vh;
   }
   
@@ -82,4 +79,4 @@
   .botao-adicionar:hover {
     background-color: #00b341;
   }
-  
+   */

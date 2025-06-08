@@ -1,4 +1,4 @@
-.tela-cadastro-disciplina {
+/* .tela-cadastro-disciplina {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,11 +45,11 @@ input, select {
 
 input:focus, select:focus {
   outline: none;
-  border-color: #28a745; /* Verde */
+  border-color: #28a745;
 }
 
 button {
-  background-color: #28a745; /* Verde */
+  background-color: #28a745;
   color: white;
   padding: 12px;
   font-size: 16px;
@@ -62,4 +62,4 @@ button {
 
 button:hover {
   background-color: #1e7e34;
-}
+} */

@@ -1,12 +1,11 @@
-/* Estilo da tela de cadastro de turma, para manter o padrão de outras páginas */
-
+/* 
 .tela-cadastro-turma {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background-color: #f4f4f4; /* Cor de fundo mais suave, semelhante ao restante do app */
-    min-height: 100vh; /* Garante que a tela ocupe toda a altura disponível */
+    background-color: #f4f4f4;
+    min-height: 100vh;
   }
   
   .tela-cadastro-turma h2 {
@@ -69,7 +68,6 @@
     background-color: #0056b3;
   }
   
-  /* Estilo para o menu lateral, que já está sendo aplicado na tela de turmas */
   .header-turmas {
     display: flex;
     justify-content: space-between;
@@ -142,4 +140,4 @@
     border-radius: 8px;
     max-width: 500px;
     width: 100%;
-  }
+  } */

@@ -120,46 +120,47 @@ const EditarDisciplina = () => {
       <div className="tela-usuarios">
         <div className="container-form">
           <form onSubmit={handleSubmit}>
-              <label htmlFor="descricao">Descrição:</label>
-              <input
-                type="text"
-                id="descricao"
-                value={descricao}
-                onChange={e => setDescricao(e.target.value)}
-                required
-              />
-              <label htmlFor="curso">Curso:</label>
-              <select
-                id="curso"
-                value={curso}
-                onChange={e => setCurso(e.target.value)}
-                required
-              >
-                {cursos.map(cur => (
-                  <option key={cur.id} value={cur.id}>{cur.descricao}</option>
-                ))}
-              </select>
-              <label htmlFor="cargaHorario">Carga Horária:</label>
-              <input
-                type="number"
-                id="cargaHorario"
-                value={cargaHorario}
-                onChange={e => setCargaHorario(e.target.value)}
-                required
-                placeholder="Digite a carga horária"
-                min="30"
-              />
-              <label htmlFor="status">Status:</label>
-              <select
-                id="status"
-                value={status}
-                onChange={e => setStatus(e.target.value)}
-                required
-              >
-                <option value="">Selecione o Status</option>
-                <option value={0}>Ativa</option>
-                <option value={1}>Inativa</option>
-              </select>
+            <label htmlFor="descricao">Descrição:</label>
+            <input
+              type="text"
+              id="descricao"
+              value={descricao}
+              onChange={e => setDescricao(e.target.value)}
+              required
+            />
+            <label htmlFor="curso">Curso:</label>
+            <select
+              id="curso"
+              value={curso}
+              onChange={e => setCurso(e.target.value)}
+              required
+            >
+              {cursos.map(cur => (
+                <option key={cur.id} value={cur.id}>{cur.descricao}</option>
+              ))}
+            </select>
+            <label htmlFor="cargaHorario">Carga Horária:</label>
+            <input
+              type="number"
+              id="cargaHorario"
+              value={cargaHorario}
+              onChange={e => setCargaHorario(e.target.value)}
+              required
+              placeholder="Digite a carga horária"
+              min="30"
+            />
+            <label htmlFor="status">Status:</label>
+            <select
+              id="status"
+              value={status}
+              onChange={e => setStatus(e.target.value)}
+              required
+            >
+              <option value="">Selecione o Status</option>
+              <option value={0}>Ativa</option>
+              <option value={1}>Inativa</option>
+            </select>
+            <br/>
             <button type="submit">Salvar Alterações</button>
           </form>
         </div>

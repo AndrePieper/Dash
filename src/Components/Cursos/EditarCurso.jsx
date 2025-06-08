@@ -111,15 +111,16 @@ const EditarCurso = () => {
         <div className="tela-usuarios">
           <div className="container-form">
             <form onSubmit={handleSubmit}>
-                <label>Nome do Curso:</label>
-                <input value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
-                <label>Quantidade de Semestres:</label>
-                <input type="number" value={qtdSemestres} onChange={(e) => setQtdSemestres(e.target.value)} required />
-                <label>Status:</label>
-                <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                  <option value={0}>Ativo</option>
-                  <option value={1}>Inativo</option>
-                </select>
+              <label>Nome do Curso:</label>
+              <input value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
+              <label>Quantidade de Semestres:</label>
+              <input type="number" value={qtdSemestres} onChange={(e) => setQtdSemestres(e.target.value)} required />
+              <label>Status:</label>
+              <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value={0}>Ativo</option>
+                <option value={1}>Inativo</option>
+              </select>
+              <br/>
               <button type="submit">Salvar Alterações</button>
             </form>
           </div>

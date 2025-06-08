@@ -188,6 +188,7 @@ const EditarUsuario = () => {
             <option value={2}>Administrador</option>
           </select>
 
+          <br/>
           <button type="submit">Salvar Alterações</button>
         </form>
       </div>

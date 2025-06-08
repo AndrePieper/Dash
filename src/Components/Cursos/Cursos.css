@@ -1,4 +1,4 @@
-.modal {
+/* .modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -19,47 +19,44 @@
     width: 300px;
   }
   
-  .modal button {
-    margin: 10px;
-    padding: 10px;
+  
+  .input-filtro,
+  .select-filtro {
+    padding: 8px 12px;
     font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .modal button:first-child {
-    background-color: green;
-    color: white;
-  }
-  
-  .modal button:last-child {
-    background-color: red;
-    color: white;
-  }
-  
-  .modal button:hover {
-    opacity: 0.8;
-  }
+    border-radius: 6px;
+    border: none;
+    min-width: 180px;
+    box-sizing: border-box;
+    outline: none;
+    }
+    
+    .input-filtro {
+      flex-grow: 1;
+      max-width: 280px;
+    }
+      
+    .select-filtro {
+      max-width: 180px;
+      }
+      
+      .modal button:first-child {
+        background-color: green;
+        color: white;
+      }
+      */
+      
+    .modal button:last-child {
+      background-color: red;
+      color: white;
+    }
+    .modal button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-/* Estilos básicos para inputs e selects de filtro */
-.input-filtro,
-.select-filtro {
-  padding: 8px 12px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: none;
-  min-width: 180px;
-  box-sizing: border-box;
-  outline: none;
-}
-
-/* Input de filtro ocupa mais espaço possível */
-.input-filtro {
-  flex-grow: 1;
-  max-width: 280px;
-}
-
-/* Select de filtro com largura fixa */
-.select-filtro {
-  max-width: 180px;
-}
-  
+    .modal button:hover {
+      opacity: 0.8;
+    }

@@ -245,6 +245,7 @@ const EditarSemestre = () => {
         <div style={{ display: 'flex', gap: '2rem' }} >
           {/* CARD 1: FORMULÁRIO */}
           <form onSubmit={handleSubmit} style={{ flex: 1, background: '#fff', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
+            <div>
               <label htmlFor="descricao">Descrição:</label>
               <input
                 type="text"
@@ -253,6 +254,8 @@ const EditarSemestre = () => {
                 onChange={(e) => setDescricao(e.target.value)}
                 required
               />
+            </div>
+            <div>
               <label htmlFor="dataInicio">Data de Início:</label>
               <input
                 type="date"
@@ -261,6 +264,8 @@ const EditarSemestre = () => {
                 onChange={(e) => setDataInicio(e.target.value)}
                 required
               />
+            </div>
+            <div>
               <label htmlFor="dataFim">Data de Fim:</label>
               <input
                 type="date"
@@ -269,6 +274,8 @@ const EditarSemestre = () => {
                 onChange={(e) => setDataFim(e.target.value)}
                 required
               />
+            </div>
+            <div>
               <label htmlFor="padrao">Padrão:</label>
               <select
                 id="padrao"
@@ -278,6 +285,7 @@ const EditarSemestre = () => {
                 <option value={0}>Sim</option>
                 <option value={1}>Não</option>
               </select>
+            </div>
             <button type="submit">Salvar Alterações</button>
           </form>
 
@@ -333,7 +341,6 @@ const EditarSemestre = () => {
 
           {modalData?.tipo === 'excluir' && (
             <Modal
-              title="Remover Aluno da Turma"
               onClose={() => setModalData(null)}
               onConfirm={confirmarExclusao}
             >
@@ -343,7 +350,6 @@ const EditarSemestre = () => {
 
           {modalData?.tipo === 'adicionar' && (
            <Modal
-            title="Adicionar disciplina ao professor"
             onClose={() => setModalData(null)}
             onConfirm={confirmarAdicao}
           >

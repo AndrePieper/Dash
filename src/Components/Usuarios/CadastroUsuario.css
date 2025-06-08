@@ -33,7 +33,7 @@
   justify-content: center;
   margin-top: 20px;
   padding: 0 10px;
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   background: #e2e2e2;
 }
 
@@ -45,16 +45,14 @@
   max-width: 900px;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 2px 20px;
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
 }
 
 .container-form label {
   font-weight: bold;
   margin-bottom: 0px;
   text-align: left;
-  /* grid-column: span 2; */
 }
 
 .container-form input,
@@ -64,17 +62,17 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   outline: none;
-  box-sizing: border-box;
-  grid-column: span 2;
+  /* box-sizing: border-box; */
+  /* grid-column: span 2; */
   margin-bottom: 3px;
 }
 
 .container-form button[type="submit"] {
-  grid-column: 2;
-  justify-self: end;
+  width: 100%;
+  justify-self: center;
   margin-top: 5px;
   padding: 10px;
-  background-color: #009232;
+  /* background-color: #009232; */
   color: white;
   font-size: 15px;
   font-weight: bold;
@@ -82,4 +80,15 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+}
+
+
+
+/* MODAL INCLUSÃO DE VINCULO TURMA*/
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
 }

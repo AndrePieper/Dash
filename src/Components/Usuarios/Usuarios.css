@@ -185,6 +185,11 @@ h1, h2, h3, div, p, input, option, label {
 }
 
 .paginacao-container {
+  margin-top: 10px;
+  text-align: center;
+  user-select: none;
+}
+.paginacao-container-vinculos {
   text-align: center;
   user-select: none;
 }

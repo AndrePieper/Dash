@@ -1,4 +1,4 @@
-.tela-turmas {
+/* .tela-turmas {
   padding: 20px;
 }
 
@@ -21,36 +21,6 @@
   text-align: left;
 }
 
-.botao-adicionar {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #009232;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 15px;
-  cursor: pointer;
-}
-
-.botao-editar {
-  background-color: green;
-  color: white;
-  padding: 5px 10px;
-  font-size: 14px;
-  border: none;
-  margin-right: 5px;
-  cursor: pointer;
-}
-
-.botao-excluir {
-  background-color: red;
-  color: white;
-  padding: 5px 10px;
-  font-size: 14px;
-  border: none;
-  cursor: pointer;
-}
 
 .modal {
   position: fixed;
@@ -93,4 +63,35 @@
 
 .modal button:hover {
   opacity: 0.8;
+} */
+
+.botao-adicionar {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #009232;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 15px;
+  cursor: pointer;
+}
+
+.botao-editar {
+  background-color: green;
+  color: white;
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.botao-excluir {
+  background-color: red;
+  color: white;
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
 }

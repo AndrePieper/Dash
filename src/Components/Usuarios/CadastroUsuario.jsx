@@ -61,64 +61,64 @@ const CadastroUsuario = () => {
         <h2>Cadastro de Entidades</h2>
       </div>
 
-      <div className="tela-usuarios">
-        <div className="container-form">
-
         {popup.show && (
             <PopUpTopo message={popup.message} type={popup.type} />
         )}
 
-        <form onSubmit={handleSubmit}>
-        <label>Nome</label>
-          <input
-            type="text"
-            placeholder="Nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value )}
-            required
-          />
+      <div className="tela-usuarios">
+        <div className="container-form">
 
-          <label>CPF</label>
-          <input
-            type="text"
-            value={cpf}
-            onChange={(e) => setCPF(e.target.value )}
-          />
-
-          <label>RA</label>
-          <input
-            type="text"
-            value={ra}
-            onChange={(e) => setRA(e.target.value )}
-          />
-
-          <label>Email</label>
-          <input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value )}
-          />
-          
-          <label>Senha</label>
-          <input
-            type="password"
-            placeholder="Senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-          />
-
-          <label>Tipo</label>
-          <select value={tipo} onChange={(e) => setTipo(e.target.value )}>
-          <option value="">Selecione o tipo</option>
-          <option value={0}>Aluno</option>
-          <option value={1}>Professor</option>
-          <option value={2}>Admin</option>
-          </select>
-          <button type="submit">Cadastrar</button>
-        </form>
+          <form onSubmit={handleSubmit}>
+              <label>Tipo</label>
+              <select 
+              id="tipo"
+              value={tipo} 
+              onChange={(e) => setTipo(e.target.value )}
+              >
+              <option value="">Selecione o tipo</option>
+              <option value={0}>Aluno</option>
+              <option value={1}>Professor</option>
+              <option value={2}>Admin</option>
+              </select>
+              <label>Nome</label>
+              <input
+                type="text"
+                placeholder="Nome"
+                value={nome}
+                onChange={(e) => setNome(e.target.value )}
+                required
+              />
+              <label>CPF</label>
+              <input
+                type="text"
+                value={cpf}
+                onChange={(e) => setCPF(e.target.value )}
+              />
+              <label>RA</label>
+              <input
+                type="text"
+                value={ra}
+                onChange={(e) => setRA(e.target.value )}
+              />
+              <label>Email</label>
+              <input
+                type="email"
+                placeholder="E-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value )}
+              />
+              <label>Senha</label>
+              <input
+                type="password"
+                placeholder="Senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+              />
+              <br/>
+            <button type="submit">Cadastrar</button>
+          </form>
+        </div>
       </div>
-    </div>
     </>
   );
 };
