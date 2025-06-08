@@ -206,7 +206,7 @@ const Turmas = () => {
         <table className="tabela-usuarios">
           <thead>
             <tr>
-              <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }}>
+              <th onClick={() => handleOrdenar('id')} style={{ cursor: 'pointer' }} className='th-codigo'>
                 Código {ordenarPor === 'id' ? (ordemAscendente ? '▲' : '▼') : ''}
               </th>
               <th onClick={() => handleOrdenar('semestre_curso')} style={{ cursor: 'pointer' }}>

@@ -234,5 +234,10 @@
 }
 
 .th-acoes {
-  width: 10%;
+  /* width: 10%; */
+  width: 100px;
+}
+.th-codigo {
+  /* width: 7%; */
+  width: 70px;
 }

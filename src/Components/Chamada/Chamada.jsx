@@ -171,7 +171,7 @@ const Chamada = () => {
           <table className="tabela-usuarios">
             <thead>
               <tr>
-                <th>ID</th>
+                <th className='th-codigo'>Código</th>
                 <th>Descrição</th>
                 <th onClick={toggleOrdenacao} style={{ cursor: "pointer" }}>
                   Data {ordenacao === "asc" ? "▲" : "▼"}
