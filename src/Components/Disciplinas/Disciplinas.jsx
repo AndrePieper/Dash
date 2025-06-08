@@ -220,7 +220,7 @@ const Disciplinas = () => {
             </th>
             <th>Curso</th>
             <th>Status</th>
-            <th>Ações</th>
+            <th className='th-acoes'>Ações</th>
             </tr>
           </thead>
           <tbody>

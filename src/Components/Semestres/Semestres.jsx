@@ -180,7 +180,7 @@ const Semestres = () => {
               <th>Data Inicial</th>
               <th>Data Final</th>
               <th>Padrão</th>
-              <th>Ações</th>
+              <th className='th-acoes'>Ações</th>
             </tr>
           </thead>
           <tbody>

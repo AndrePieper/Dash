@@ -211,7 +211,7 @@ const Usuarios = () => {
               <th onClick={() => handleOrdenar('tipo')} style={{ cursor: 'pointer' }}>
                 Tipo {ordenarPor === 'tipo' ? (ordemAscendente ? '▲' : '▼') : ''}
               </th>
-              <th>Ações</th>
+              <th className='th-acoes'>Ações</th>
             </tr>
           </thead>
           <tbody>
