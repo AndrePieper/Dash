@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Commissioner:wght@100..900&display=swap');
+
 .home-container {
   display: flex;
   height: 100vh;
   background-color: #f5f5f5;
+  font-family: "Commissioner", sans-serif;
 }
 
 .menu-lateral-placeholder {

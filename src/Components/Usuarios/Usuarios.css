@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Commissioner:wght@100..900&display=swap');
+
 /* Container principal da área de usuários com espaço para menu lateral */
 .tela-usuarios {
   margin-left: 250px;
@@ -5,6 +7,11 @@
   height: auto;
   box-sizing: border-box;
   overflow-x: auto;
+  font-family: "Commissioner", sans-serif;
+}
+
+h1, h2, h3, div, p, input, option, label {
+  font-family: "Commissioner", sans-serif;
 }
 
 /* Cabeçalho com título e filtros, estilo com gradiente e espaçamento */

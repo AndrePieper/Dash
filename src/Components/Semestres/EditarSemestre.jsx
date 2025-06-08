@@ -4,6 +4,7 @@ import { FaPlus, FaTrash } from 'react-icons/fa';
 import './CadastroSemestre.css';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
+import { green } from '@mui/material/colors';
 
 const Modal = ({ title, children, onClose, onConfirm }) => {
   const modalRef = useRef();
@@ -286,7 +287,15 @@ const EditarSemestre = () => {
             <div>
               <h3>Disciplinas Professores</h3>
               {professorDisciplinas.length === 0 ? (
-                <p>Nenhuma disciplina vinculada a professores.</p>
+                <div>
+                  <p>Nenhuma disciplina vinculada a professores.</p>
+                  <button 
+                  onClick={abrirModalAdicionar} 
+                  className="botao-editar" >
+                  <FaPlus size={28} />
+                </button>
+                </div>
+                
               ) : (
                 <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
