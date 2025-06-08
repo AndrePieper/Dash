@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { decodeJwt } from "jose";
-import { FaPlus, FaPen } from "react-icons/fa";
+import { FaPlus, FaSearch } from "react-icons/fa";
 import "./Chamada.css";
 import ModaisChamada from "./ModaisChamada";
 import PopUpTopo from "../PopUp/PopUpTopo";
@@ -199,7 +199,7 @@ const Chamada = () => {
                         })
                       }
                     >
-                      <FaPen />
+                      <FaSearch />
                     </button>
                   </td>
                 </tr>
