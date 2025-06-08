@@ -187,8 +187,16 @@ const Chamada = () => {
                   <td>{chamada.id}</td>
                   <td>{chamada.descricao}</td>
                   <td>{new Date(chamada.data_hora_inicio).toLocaleDateString()}</td>
-                  <td>{new Date(chamada.data_hora_inicio).toLocaleTimeString()}</td>
-                  <td>{new Date(chamada.data_hora_final).toLocaleTimeString()}</td>
+                  <td>{new Date(chamada.data_hora_inicio).toLocaleTimeString([], 
+                      { hour: '2-digit', minute: '2-digit' })}
+                  </td>
+                  <td>
+                    {/* {new Date(chamada.data_hora_final).toLocaleTimeString()} */}
+                    {chamada.data_hora_final ? new Date(chamada.data_hora_final).toLocaleTimeString([], 
+                      { hour: '2-digit', minute: '2-digit' })
+                      : ''
+                    }
+                  </td>
                   <td>
                     <button
                       className="botao-editar"

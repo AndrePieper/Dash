@@ -168,21 +168,8 @@ const Home = () => {
             className="botao-adicionar"
             onClick={abrirModalMatérias}
             title="Nova Chamada"
-            style={{
-              backgroundColor: "#2e7d32",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              padding: "8px 12px",
-              cursor: "pointer",
-              fontSize: "16px",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
           >
             <FaPlus />
-            Nova Chamada
           </button>
         </Box>
 

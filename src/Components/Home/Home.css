@@ -86,7 +86,7 @@
 }
 
 .hora {
-  flex: 1.5; /* reduzido para ocupar menos espaço e ficar mais à esquerda */
+  flex: 4;  /*reduzido para ocupar menos espaço e ficar mais à esquerda */
   text-align: left;
   padding-right: 0; /* remove espaçamento direito */
   font-size: 1.1rem;
