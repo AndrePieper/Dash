@@ -44,12 +44,12 @@
         background-color: green;
         color: white;
       }
-      */
       
     .modal button:last-child {
       background-color: red;
       color: white;
     }
+      */
     .modal button {
       margin: 10px;
       padding: 10px;

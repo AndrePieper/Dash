@@ -1,14 +1,51 @@
+:root {
+  /* INTERFACE */
+  --header-01: #009C3B;  /* HEADER EM DEGRADE */
+  --header-02: #00C752;
+
+  --aba-selecionada-01: #27B556; /* ABA SELECIONADA EM DEGRADE */
+  --aba-selecionada-02: #1F8D44;
+
+  --interface-background: #e2e2e2;
+
+  --cards-background: #fff;
+  --cards-shadow: #0000001a;
+  
+  --font-01: #fff; /*FONT CLARA*/
+  --font-02: #000; /*FONT ESCURA*/
+  --font-03: #757575; /* FONT CINZA - FILTROS HEADER*/
+
+  /* BOTÕES */
+  --botao-adicionar: #009232; /*TODOS OS BOTÕES DE ADICIONAR REGISTRO*/
+  --botao-adicionar-hover: #00B341;
+  --botao-adicionar-shadow: #00000033;
+
+  --botao-salvar-cadastrar: ; /*TODOS OS BOTÕES PARA SALVAR CADASTRO/ALTERAÇÕES*/
+  --botao-salvar-cadastrar-hover: ;
+
+  --botao-excluir-registro: #bb0000; /*TODOS OS BOTÕES DE EXCLUIR*/
+  --botao-excluir-registro-hover: #8B0000;
+
+  --botao-paginacao: #4CAF50; /*TODOS OS BOTÕES DE PAGINAÇÃO*/
+  --botao-paginacao-hover: #45A049;
+  --botao-paginacao-desabilitado: #a5d6a7;
+
+  --aba-desativo: #4e4e4e;
+  --aba-ativo: #009232;
+
+}
+
 /* Container principal da área de turmas */
-.tela-turmas {
+/* .tela-turmas {
   margin-left: 250px;
   padding: 25px;
   height: auto;
   box-sizing: border-box;
   background: white;
-}
+} */
 
 /* Cabeçalho padronizado com base no header-usuarios */
-.header-turmas {
+/* .header-turmas {
   margin-top: 20px;
   margin-left: 250px;
   width: calc(100% - 250px);
@@ -25,7 +62,7 @@
   gap: 15px;
   font-size: 20px;
   font-weight: bold;
-}
+} */
 
 /* Container de formulário de cadastro de turma */
 .container-form {
@@ -91,4 +128,15 @@
   border-radius: 8px;
   max-width: 500px;
   width: 100%;
+}
+
+.modal-confirm {
+  background-color: green;
+}
+.modal-cancel {
+  background-color: var(--botao-excluir-registro);
+  transition: 0.2s ease;
+}
+.modal-cancel:hover{
+  background-color: var(--botao-excluir-registro-hover);
 }

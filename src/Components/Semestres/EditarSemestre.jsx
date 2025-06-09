@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import './CadastroSemestre.css';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
@@ -58,6 +59,8 @@ const EditarSemestre = () => {
     const [filtroDisciplina, setFiltroDisciplina] = useState('');
     const [professorSelecionado, setProfessorSelecionado] = useState(null);
     const [disciplinaSelecionada, setDisciplinaSelecionada] = useState(null);
+
+    const [paginaAtual, setPaginaAtual] = useState(1);
 
 
    const [popup, setPopup] = useState({ show: false, message: "", type: "" });
@@ -227,7 +230,18 @@ const EditarSemestre = () => {
     }
   };
 
-
+  const registrosPorPagina = 3;
+  const totalPaginas = Math.ceil(professorDisciplinas.length / registrosPorPagina);
+  const indiceInicial = (paginaAtual - 1) * registrosPorPagina;
+  const indiceFinal = indiceInicial + registrosPorPagina;
+  const vinculosPaginados = professorDisciplinas.slice(indiceInicial, indiceFinal);
+    // Navegação das páginas Disciplina
+    const handlePaginaAnterior = () => {
+      if (paginaAtual > 1) setPaginaAtual(paginaAtual - 1);
+    };
+    const handleProximaPagina = () => {
+      if (paginaAtual < totalPaginas) setPaginaAtual(paginaAtual + 1);
+    };
 
 
   return (
@@ -295,15 +309,7 @@ const EditarSemestre = () => {
             <div>
               <h3>Disciplinas Professores</h3>
               {professorDisciplinas.length === 0 ? (
-                <div>
-                  <p>Nenhuma disciplina vinculada a professores.</p>
-                  <button 
-                  onClick={abrirModalAdicionar} 
-                  className="botao-editar" >
-                  <FaPlus size={28} />
-                </button>
-                </div>
-                
+                <p>Nenhuma disciplina vinculada a professores.</p>
               ) : (
                 <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
@@ -314,7 +320,7 @@ const EditarSemestre = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {professorDisciplinas.map((professorDisciplina) => (
+                    {vinculosPaginados.map((professorDisciplina) => (
                       <tr key={disciplinas.id}>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.nome_professor}</td>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.descricao_disciplina}</td>
@@ -329,13 +335,35 @@ const EditarSemestre = () => {
                       </tr>
                     ))}
                   </tbody>
-                  <button 
-                    onClick={abrirModalAdicionar} 
-                    className="botao-editar" >
-                    <FaPlus size={28} />
-                  </button>
+
                 </table>
               )}
+              <div className="rodape-card">
+                <div className="paginacao-container-vinculos">
+
+                  <button
+                    onClick={handlePaginaAnterior}
+                    className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+                  >
+                    <FiArrowLeft size={20} />
+                  </button>
+
+                  <span className="paginacao-texto">Página {paginaAtual } de {totalPaginas}</span>
+
+                  <button
+                    onClick={handleProximaPagina}
+                    className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+                  >
+                    <FiArrowRight size={20} />
+                  </button>
+
+                </div>
+                <div className="adicionar-vinculo">
+                  <button onClick={abrirModalAdicionar} className="botao-editar" >
+                    <FaPlus size={28} />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 

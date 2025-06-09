@@ -545,31 +545,31 @@ const EditarTurma = () => {
                 </>
               )}
               <div className="rodape-card">
-                  <div className="paginacao-container-vinculos">
+                <div className="paginacao-container-vinculos">
 
-                    <button
-                      onClick={handlePaginaAnteriorDisciplina}
-                      className={`botao-paginacao ${paginaAtualDisciplina === 1 ? 'desabilitado' : ''}`}
-                    >
-                      <FiArrowLeft size={20} />
-                    </button>
+                  <button
+                    onClick={handlePaginaAnteriorDisciplina}
+                    className={`botao-paginacao ${paginaAtualDisciplina === 1 ? 'desabilitado' : ''}`}
+                  >
+                    <FiArrowLeft size={20} />
+                  </button>
 
-                    <span className="paginacao-texto">Página {paginaAtualDisciplina } de {totalPaginasDisciplina}</span>
+                  <span className="paginacao-texto">Página {paginaAtualDisciplina } de {totalPaginasDisciplina}</span>
 
-                    <button
-                      onClick={handleProximaPaginaDisciplina}
-                      className={`botao-paginacao ${paginaAtualDisciplina === totalPaginasDisciplina ? 'desabilitado' : ''}`}
-                    >
-                      <FiArrowRight size={20} />
-                    </button>
+                  <button
+                    onClick={handleProximaPaginaDisciplina}
+                    className={`botao-paginacao ${paginaAtualDisciplina === totalPaginasDisciplina ? 'desabilitado' : ''}`}
+                  >
+                    <FiArrowRight size={20} />
+                  </button>
 
-                  </div>
-                  <div className="adicionar-vinculo">
-                    <button onClick={abrirModalAdicionarDisciplina} className="botao-editar" >
-                      <FaPlus size={28} />
-                    </button>
-                  </div>
                 </div>
+                <div className="adicionar-vinculo">
+                  <button onClick={abrirModalAdicionarDisciplina} className="botao-editar" >
+                    <FaPlus size={28} />
+                  </button>
+                </div>
+              </div>
             </div>
             )}
           </div>
