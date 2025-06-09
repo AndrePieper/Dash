@@ -38,7 +38,7 @@
   border: 1px solid #ccc;
   background-color: #f9f9f9;
 }
-/*
+
 .lista-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -62,7 +62,7 @@
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   color: #2e7d32;
-}*/
+} 
 
 .botao-adicionar {
   position: fixed;

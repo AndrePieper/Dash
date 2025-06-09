@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ModaisChamada from '../Chamada/ModaisChamada'; // importe o modal corretamente
+import ModaisChamada from '../Chamada/ModaisChamada';
 
 const Materias = () => {
   const [materias, setMaterias] = useState([]);
@@ -13,13 +13,18 @@ const Materias = () => {
       console.error("ID do professor não encontrado no localStorage.");
       return;
     }
+
     fetch(`https://projeto-iii-4.vercel.app/semestre/professor/?id_professor=${idProfessor}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setMaterias(data);
-        else console.error("Resposta inesperada da API:", data);
+        console.log("Dados recebidos:", data); // DEBUG
+        if (Array.isArray(data)) {
+          setMaterias(data);
+        } else {
+          console.error("Resposta inesperada da API:", data);
+        }
       })
       .catch(err => console.error('Erro ao buscar semestres:', err));
   }, [idProfessor, token]);
@@ -43,12 +48,11 @@ const Materias = () => {
       <div className="tela-usuarios no-scroll">
         {materias.length > 0 ? (
           <div className="grid-cards-large">
-            {materias.slice(0, 6).map((m, idx) => (
+            {materias.map((m, idx) => (
               <div
                 key={`${m.id_disciplina}-card-${idx}`}
                 className="card-materia-large"
                 onClick={() => abrirModalComMateria(m)}
-                style={{ cursor: 'pointer' }}
               >
                 <h2>{m.descricao_disciplina}</h2>
                 <p><strong>Carga Horária:</strong> {m.carga_horaria}</p>
@@ -69,7 +73,6 @@ const Materias = () => {
         materias={materias}
         materiaSelecionada={materiaSelecionada}
         setMateriaSelecionada={setMateriaSelecionada}
-   
       />
     </>
   );

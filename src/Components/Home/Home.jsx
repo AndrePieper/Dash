@@ -12,7 +12,6 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { FaPlus } from "react-icons/fa";
 import ModaisChamada from "../Chamada/ModaisChamada"; // ajuste o caminho se precisar
 import "./Home.css";
 
@@ -153,24 +152,6 @@ const Home = () => {
               </BarChart>
             </ResponsiveContainer>
           </Box>
-        </Box>
-
-        {/* Botão de adicionar igual ao da tela Chamada */}
-        <Box
-          sx={{
-            marginTop: 3,
-            marginBottom: 1,
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <button
-            className="botao-adicionar"
-            onClick={abrirModalMatérias}
-            title="Nova Chamada"
-          >
-            <FaPlus />
-          </button>
         </Box>
 
         <Box className="lista-chamadas">

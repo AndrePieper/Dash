@@ -14,23 +14,18 @@ const Chamada = () => {
   const [materias, setMaterias] = useState([]);
   const [carregandoMaterias, setCarregandoMaterias] = useState(false);
   const [tokenDecodificado, setTokenDecodificado] = useState(null);
-
   const [abrirModalSelecionarMateria, setAbrirModalSelecionarMateria] = useState(false);
   const [abrirModalConfirmacao, setAbrirModalConfirmacao] = useState(false);
   const [modalQRCodeAberto, setModalQRCodeAberto] = useState(false);
-
   const [materiaSelecionada, setMateriaSelecionada] = useState("");
   const [qrCodeData, setQRCodeData] = useState(null);
   const [idChamadaCriada, setIdChamadaCriada] = useState(null);
   const [chamadaSelecionada, setChamadaSelecionada] = useState(null);
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
-
-  // NOVO: paginação e ordenação
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
-  const [ordenacao, setOrdenacao] = useState("desc"); // "asc" ou "desc"
 
-  const limitePorPagina = 9;
+  const limitePorPagina = 1; 
 
   const buscarMaterias = () => {
     setCarregandoMaterias(true);
@@ -58,21 +53,20 @@ const Chamada = () => {
     }
   };
 
-  // BUSCA CHAMADAS COM PAGINAÇÃO E ORDENAÇÃO
-  const buscarChamadas = (pagina = paginaAtual, ordem = ordenacao) => {
+  const buscarChamadas = (pagina = paginaAtual) => {
     const token = localStorage.getItem("token");
 
     try {
       const decoded = decodeJwt(token);
       setTokenDecodificado(decoded);
       fetch(
-        `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${decoded.id}&page=${pagina}&limit=${limitePorPagina}&sort=data_hora_inicio&order=${ordem}`,
+        `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${decoded.id}&page=${pagina}&limit=${limitePorPagina}&sort=data_hora_inicio&order=desc`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       )
         .then((res) => {
-          const totalItems = res.headers.get("X-Total-Count"); // se backend enviar
+          const totalItems = res.headers.get("X-Total-Count");
           if (totalItems) {
             setTotalPaginas(Math.ceil(totalItems / limitePorPagina));
           }
@@ -81,7 +75,6 @@ const Chamada = () => {
         .then((data) => {
           setChamadas(data);
           setPaginaAtual(pagina);
-          setOrdenacao(ordem);
         })
         .catch((err) => {
           console.error("Erro ao buscar chamadas: ", err);
@@ -97,7 +90,6 @@ const Chamada = () => {
     buscarMaterias();
   }, []);
 
-  // FILTRAGEM LOCAL DE CHAMADAS NA PAGINA ATUAL
   const chamadasFiltradas = chamadas.filter((chamada) => {
     const chamadaData = new Date(chamada.data_hora_inicio).toISOString().split("T")[0];
     const filtraPorMateria = filtroMateria
@@ -107,23 +99,15 @@ const Chamada = () => {
     return filtraPorMateria && filtraPorData;
   });
 
-  // HANDLE CLICK CABEÇALHO PARA ALTERAR ORDEM
-  const toggleOrdenacao = () => {
-    const novaOrdenacao = ordenacao === "asc" ? "desc" : "asc";
-    buscarChamadas(1, novaOrdenacao); // volta pra página 1 ao ordenar
-  };
-
-  // PAGINAÇÃO - avançar
   const irParaProximaPagina = () => {
     if (paginaAtual < totalPaginas) {
-      buscarChamadas(paginaAtual + 1, ordenacao);
+      buscarChamadas(paginaAtual + 1);
     }
   };
 
-  // PAGINAÇÃO - voltar
   const irParaPaginaAnterior = () => {
     if (paginaAtual > 1) {
-      buscarChamadas(paginaAtual - 1, ordenacao);
+      buscarChamadas(paginaAtual - 1);
     }
   };
 
@@ -173,9 +157,7 @@ const Chamada = () => {
               <tr>
                 <th className='th-codigo'>Código</th>
                 <th>Descrição</th>
-                <th onClick={toggleOrdenacao} style={{ cursor: "pointer" }}>
-                  Data {ordenacao === "asc" ? "▲" : "▼"}
-                </th>
+                <th>Data</th> {/* Removido o onClick e cursor pointer */}
                 <th>Início</th>
                 <th>Encerramento</th>
                 <th className='th-acoes'>Ações</th>
@@ -187,15 +169,19 @@ const Chamada = () => {
                   <td>{chamada.id}</td>
                   <td>{chamada.descricao}</td>
                   <td>{new Date(chamada.data_hora_inicio).toLocaleDateString()}</td>
-                  <td>{new Date(chamada.data_hora_inicio).toLocaleTimeString([], 
-                      { hour: '2-digit', minute: '2-digit' })}
+                  <td>
+                    {new Date(chamada.data_hora_inicio).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </td>
                   <td>
-                    {/* {new Date(chamada.data_hora_final).toLocaleTimeString()} */}
-                    {chamada.data_hora_final ? new Date(chamada.data_hora_final).toLocaleTimeString([], 
-                      { hour: '2-digit', minute: '2-digit' })
-                      : ''
-                    }
+                    {chamada.data_hora_final
+                      ? new Date(chamada.data_hora_final).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : ""}
                   </td>
                   <td>
                     <button
@@ -217,7 +203,14 @@ const Chamada = () => {
         )}
 
         {/* PAGINAÇÃO */}
-        <div style={{ marginTop: 15, display: "flex", justifyContent: "center", gap: 15 }}>
+        <div
+          style={{
+            marginTop: 15,
+            display: "flex",
+            justifyContent: "center",
+            gap: 15,
+          }}
+        >
           <button onClick={irParaPaginaAnterior} disabled={paginaAtual === 1}>
             Anterior
           </button>
