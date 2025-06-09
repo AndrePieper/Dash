@@ -75,25 +75,22 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #000; /* texto preto */
+  color: #000; 
 }
 
 .disciplina {
   flex: 3;
   padding-left: 0.5rem;
-  margin-right: 0.25rem; /* ainda menor */
+  margin-right: 0.25rem; 
   font-size: 1.2rem;
 }
 
 .hora {
-  flex: 4;  /*reduzido para ocupar menos espaço e ficar mais à esquerda */
+  flex: 4; 
   text-align: left;
-  padding-right: 0; /* remove espaçamento direito */
+  padding-right: 0; 
   font-size: 1.1rem;
 }
-
-
-/* Listras alternadas pra melhorar leitura */
 
 .linha-par {
   background-color: transparent;
