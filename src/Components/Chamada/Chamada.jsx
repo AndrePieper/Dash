@@ -231,14 +231,16 @@ const Chamada = () => {
         )}
 
         {/* PAGINAÇÃO */}
-        <div
+        {/* <div
           style={{
             marginTop: 15,
             display: "flex",
             justifyContent: "center",
             gap: 15,
           }}
-        >
+        > */}
+        
+        <div className="paginacao-container">
           <button 
           onClick={irParaPaginaAnterior} //disabled={paginaAtual === 1}
           className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
