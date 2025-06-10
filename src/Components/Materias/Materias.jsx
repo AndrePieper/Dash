@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import ModaisChamada from '../Chamada/ModaisChamada';
+import {
+  Box,
+  Typography,
+} from "@mui/material";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 
 const Materias = () => {
   const [materias, setMaterias] = useState([]);
@@ -45,7 +58,7 @@ const Materias = () => {
         <h2>Matérias</h2>
       </div>
 
-      <div className="tela-usuarios no-scroll">
+      {/* <div className="tela-usuarios no-scroll">
         {materias.length > 0 ? (
           <div className="grid-cards-large">
             {materias.map((m, idx) => (
@@ -65,7 +78,7 @@ const Materias = () => {
             Nenhuma matéria encontrada.
           </p>
         )}
-      </div>
+      </div> */}
 
       <ModaisChamada
         abrirModalSelecionarMateria={modalAberto}
@@ -74,17 +87,24 @@ const Materias = () => {
         materiaSelecionada={materiaSelecionada}
         setMateriaSelecionada={setMateriaSelecionada}
       />
-    {/* <Box className="home-container">
+    <Box className="home-container">
       <Box className="menu-lateral-placeholder" />
       <Box className="home-content">
-        <Typography variant="h4" className="welcome">
-          Olá, {nome}!
-        </Typography>
-
         <Box className="cards-container">
-          <Box className="card">
-            <Typography variant="subtitle1">Aulas por Dia</Typography>
-            <ResponsiveContainer width="100%" height="100%">
+            {materias.map((m, idx) => (
+              <Box className="card">
+              <div
+                key={`${m.id_disciplina}-card-${idx}`}
+                className="card-materia-large"
+                onClick={() => abrirModalComMateria(m)}
+              >
+                <h2>{m.descricao_disciplina}</h2>
+                <p><strong>Carga Horária:</strong> {m.carga_horaria}</p>
+                <p><strong>Semestre:</strong> {m.descricao_semestre}</p>
+              </div>
+              </Box>
+            ))}
+            {/* <ResponsiveContainer width="100%" height="100%">
               <BarChart data={agrupado.porDia}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -92,37 +112,10 @@ const Materias = () => {
                 <Tooltip />
                 <Bar dataKey="total" fill="#2e7d32" />
               </BarChart>
-            </ResponsiveContainer>
-          </Box>
-
-          <Box className="card">
-            <Typography variant="subtitle1">Aulas por Mês</Typography>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={agrupado.porMes}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="total" fill="#2e7d32" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Box>
-
-          <Box className="card">
-            <Typography variant="subtitle1">Aulas por Matéria</Typography>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={agrupado.porMateria}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="total" fill="#2e7d32" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Box>
+            </ResponsiveContainer> */}
         </Box>
       </Box>
-    </Box> */}
+    </Box>
     </>
 
   );

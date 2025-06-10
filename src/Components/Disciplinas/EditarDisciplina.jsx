@@ -46,6 +46,7 @@ const EditarDisciplina = () => {
           setDescricao(data.descricao);
           setStatus(data.status.toString());
           setCargaHorario(data.carga_horario);
+          setCurso(data.id_curso.toString());
         })
         .catch((err) => {
           console.error('Erro ao buscar disciplinas: ', err)
@@ -68,7 +69,7 @@ const EditarDisciplina = () => {
       id: parseInt(id),
       descricao,
       id_curso: parseInt(curso),
-      carga_horario,
+      carga_horario: parseInt(cargaHorario),
       status: parseInt(status),
     };
 
