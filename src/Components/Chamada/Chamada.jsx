@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { decodeJwt } from "jose";
 import { FaPlus, FaSearch } from "react-icons/fa";
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import "./Chamada.css";
 import ModaisChamada from "./ModaisChamada";
 import PopUpTopo from "../PopUp/PopUpTopo";
@@ -22,30 +23,30 @@ const Chamada = () => {
   const [idChamadaCriada, setIdChamadaCriada] = useState(null);
   const [chamadaSelecionada, setChamadaSelecionada] = useState(null);
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const [totalPaginas, setTotalPaginas] = useState(1);
+  // const [totalPaginas, setTotalPaginas] = useState(1);
 
-  const limitePorPagina = 1; 
-
+  
   const buscarMaterias = () => {
     setCarregandoMaterias(true);
     const token = localStorage.getItem("token");
-
+    
     try {
       const decoded = decodeJwt(token);
       fetch(`https://projeto-iii-4.vercel.app/semestre/professor/?id_professor=${decoded.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then((res) => res.json())
-        .then((data) => {
-          setMaterias(data);
-          setCarregandoMaterias(false);
-        })
-        .catch((err) => {
-          console.error("Erro ao buscar matérias: ", err);
-          setPopup({ show: true, message: "Erro ao buscar matérias", type: "error" });
-          setCarregandoMaterias(false);
-        });
+      .then((res) => res.json())
+      .then((data) => {
+        setMaterias(data);
+        setCarregandoMaterias(false);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar matérias: ", err);
+        setPopup({ show: true, message: "Erro ao buscar matérias", type: "error" });
+        setCarregandoMaterias(false);
+      });
     } catch (err) {
       console.error("Erro ao decodificar o token.");
       setPopup({ show: true, message: "Erro ao decodificar token", type: "error" });
@@ -53,9 +54,19 @@ const Chamada = () => {
     }
   };
 
+  let limitePorPagina; 
+  if (screen.height >= 769 && screen.height <= 1079) {
+    limitePorPagina = 7
+  } else if (screen.height >= 1079 && screen.height <= 1300) {
+    limitePorPagina = 9
+  } else if (screen.height < 769){
+    limitePorPagina = 5
+  }
+  
+
   const buscarChamadas = (pagina = paginaAtual) => {
     const token = localStorage.getItem("token");
-
+    
     try {
       const decoded = decodeJwt(token);
       setTokenDecodificado(decoded);
@@ -65,50 +76,64 @@ const Chamada = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       )
-        .then((res) => {
-          const totalItems = res.headers.get("X-Total-Count");
-          if (totalItems) {
-            setTotalPaginas(Math.ceil(totalItems / limitePorPagina));
-          }
-          return res.json();
-        })
-        .then((data) => {
-          setChamadas(data);
-          setPaginaAtual(pagina);
-        })
-        .catch((err) => {
-          console.error("Erro ao buscar chamadas: ", err);
-          setPopup({ show: true, message: "Erro ao buscar chamadas", type: "error" });
-        });
+      .then((res) => {
+        // const totalItems = res.headers.get("X-Total-Count");
+        // if (totalItems) {
+        //   setTotalPaginas(Math.ceil(totalItems / limitePorPagina));
+        // }
+        if (!res.ok) {
+          if (res.status === 404) return [];
+          throw new Error("Erro ao buscar chamadas.");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setChamadas(data);
+        // setPaginaAtual(pagina);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar chamadas: ", err);
+        setPopup({ show: true, message: "Erro ao buscar chamadas", type: "error" });
+        setChamadas([])
+      });
+
     } catch (err) {
       setPopup({ show: true, message: "Token inválido", type: "error" });
     }
   };
-
+  
   useEffect(() => {
     buscarChamadas();
     buscarMaterias();
   }, []);
-
+  
   const chamadasFiltradas = chamadas.filter((chamada) => {
     const chamadaData = new Date(chamada.data_hora_inicio).toISOString().split("T")[0];
     const filtraPorMateria = filtroMateria
-      ? chamada.descricao.toLowerCase().includes(filtroMateria.toLowerCase())
+    ? chamada.descricao.toLowerCase().includes(filtroMateria.toLowerCase())
       : true;
     const filtraPorData = filtroData ? chamadaData === filtroData : true;
     return filtraPorMateria && filtraPorData;
   });
 
-  const irParaProximaPagina = () => {
-    if (paginaAtual < totalPaginas) {
-      buscarChamadas(paginaAtual + 1);
-    }
-  };
+  const totalPaginas = Math.ceil(chamadasFiltradas.length / limitePorPagina);
+  const indiceInicial = (paginaAtual - 1) * limitePorPagina;
+  const indiceFinal = indiceInicial + limitePorPagina;
+  const chamadasPaginados = chamadasFiltradas.slice(indiceInicial, indiceFinal);
 
-  const irParaPaginaAnterior = () => {
-    if (paginaAtual > 1) {
-      buscarChamadas(paginaAtual - 1);
-    }
+
+  const irParaProximaPagina = () => {
+    if (paginaAtual < totalPaginas) setPaginaAtual(paginaAtual + 1);
+    // if (paginaAtual < totalPaginas) {
+      //   buscarChamadas(paginaAtual + 1);
+      // }
+    };
+    
+    const irParaPaginaAnterior = () => {
+    if (paginaAtual > 1) setPaginaAtual(paginaAtual - 1);
+    // if (paginaAtual > 1) {
+    //   buscarChamadas(paginaAtual - 1);
+    // }
   };
 
   return (
@@ -164,7 +189,8 @@ const Chamada = () => {
               </tr>
             </thead>
             <tbody>
-              {chamadasFiltradas.map((chamada) => (
+              {/* {chamadasFiltradas.map((chamada) => ( */}
+              {chamadasPaginados.map((chamada) => ( 
                 <tr key={chamada.id}>
                   <td>{chamada.id}</td>
                   <td>{chamada.descricao}</td>
@@ -211,15 +237,22 @@ const Chamada = () => {
             gap: 15,
           }}
         >
-          <button onClick={irParaPaginaAnterior} disabled={paginaAtual === 1}>
-            Anterior
+          <button 
+          onClick={irParaPaginaAnterior} //disabled={paginaAtual === 1}
+          className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+          >
+            <FiArrowLeft size={20} />
           </button>
-          <span>
+          <span className="paginacao-texto">
             Página {paginaAtual} de {totalPaginas}
           </span>
-          <button onClick={irParaProximaPagina} disabled={paginaAtual === totalPaginas}>
-            Próxima
+          <button 
+          onClick={irParaProximaPagina} disabled={paginaAtual === totalPaginas}
+          className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+          >
+            <FiArrowRight size={20} />
           </button>
+
         </div>
       </div>
 

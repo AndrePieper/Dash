@@ -74,7 +74,57 @@ const Materias = () => {
         materiaSelecionada={materiaSelecionada}
         setMateriaSelecionada={setMateriaSelecionada}
       />
+    {/* <Box className="home-container">
+      <Box className="menu-lateral-placeholder" />
+      <Box className="home-content">
+        <Typography variant="h4" className="welcome">
+          Olá, {nome}!
+        </Typography>
+
+        <Box className="cards-container">
+          <Box className="card">
+            <Typography variant="subtitle1">Aulas por Dia</Typography>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={agrupado.porDia}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="total" fill="#2e7d32" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Box>
+
+          <Box className="card">
+            <Typography variant="subtitle1">Aulas por Mês</Typography>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={agrupado.porMes}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="total" fill="#2e7d32" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Box>
+
+          <Box className="card">
+            <Typography variant="subtitle1">Aulas por Matéria</Typography>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={agrupado.porMateria}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="total" fill="#2e7d32" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Box>
+        </Box>
+      </Box>
+    </Box> */}
     </>
+
   );
 };
 
