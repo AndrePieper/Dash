@@ -57,8 +57,10 @@ const Chamada = () => {
   let limitePorPagina; 
   if (screen.height >= 769 && screen.height <= 1079) {
     limitePorPagina = 7
-  } else if (screen.height >= 1079 && screen.height <= 1300) {
+  } else if (screen.height >= 1079 && screen.height <= 1200) {
     limitePorPagina = 9
+  } else if (screen.height > 1200) {
+    limitePorPagina = 10
   } else if (screen.height < 769){
     limitePorPagina = 5
   }
