@@ -92,6 +92,13 @@
   font-size: 1.1rem;
 }
 
+.professor {
+  flex: 2;
+  text-align: left;
+  padding-right: 0.5rem;
+  margin-right: 0.25rem; 
+}
+
 .linha-par {
   background-color: transparent;
 }

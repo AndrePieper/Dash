@@ -17,6 +17,7 @@ import "./Home.css";
 const Home = () => {
   const [nome, setNome] = useState("");
   const [chamadas, setChamadas] = useState([]);
+   const [info, setInfo] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -34,7 +35,10 @@ const Home = () => {
           }
         )
           .then((res) => res.json())
-          .then((data) => setChamadas(data.slice(0, 10)))
+          .then((data) => {
+            setChamadas(data.slice(0, 10));
+            setInfo(data.slice(0, 10000))
+          })
           .catch((err) =>
             console.error("Erro ao buscar chamadas:", err)
           );
@@ -45,11 +49,11 @@ const Home = () => {
   }, []);
 
   const agruparChamadas = (chamadas) => {
-    const porDia = {};
+     const porDia = {};
     const porMes = {};
     const porMateria = {};
 
-    chamadas.forEach((c) => {
+    info.forEach((c) => {
       const data = new Date(c.data_hora_inicio);
       const diaSemana = data.toLocaleDateString("pt-BR", {
         weekday: "short",
@@ -67,14 +71,30 @@ const Home = () => {
     const toDataArray = (obj) =>
       Object.entries(obj).map(([name, total]) => ({ name, total }));
 
+    // Define a ordem dos dias manualmente
+    const ordemDias = ["dom.", "seg.", "ter.", "qua.", "qui.", "sex.", "sáb."]; 
+
+    const porDiaOrdenado = ordemDias
+      .filter((dia) => porDia[dia] !== undefined)
+      .map((dia) => ({ name: dia, total: porDia[dia] }));
+
+      // Ordem manual dos meses
+    const ordemMeses = [
+        "jan.", "fev.", "mar.", "abr.", "mai.", "jun.",
+        "jul.", "ago.", "set.", "out.", "nov.", "dez."
+    ];
+    const porMesOrdenado = ordemMeses
+        .filter(mes => porMes[mes] !== undefined)
+        .map(mes => ({ name: mes, total: porMes[mes] }));
+
     return {
-      porDia: toDataArray(porDia),
-      porMes: toDataArray(porMes),
+      porDia: porDiaOrdenado,
+      porMes: porMesOrdenado,
       porMateria: toDataArray(porMateria),
     };
   };
 
-  const agrupado = agruparChamadas(chamadas);
+  const agrupado = agruparChamadas(info);
 
   return (
     <Box className="home-container">
@@ -132,6 +152,7 @@ const Home = () => {
 
           <Box className="tabela-chamadas">
             <Box className="linha tabela-cabecalho">
+              <Box className="coluna professor">Professor</Box>
               <Box className="coluna disciplina">Disciplina</Box>
               <Box className="coluna hora">Hora</Box>
             </Box>
@@ -143,6 +164,9 @@ const Home = () => {
                 }`}
                 key={index}
               >
+                <Box className="coluna professor">
+                  {chamada.nome || "—"}
+                </Box>
                 <Box className="coluna disciplina">
                   {chamada.descricao || "—"}
                 </Box>

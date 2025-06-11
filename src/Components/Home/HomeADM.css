@@ -75,25 +75,26 @@
   border-bottom: 2px solid #000000;
   color: #000000;
 }
-
+/*
 .coluna {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #000; /* texto preto */
+  color: #000;
 }
 
-.disciplina {
+ .disciplina {
   flex: 3;
   padding-left: 0.5rem;
-  margin-right: 1rem; /* espaço menor para hora ficar mais perto */
+  margin-right: 1rem; 
 }
 
 .hora {
   flex: 2;
-  text-align: left; /* hora próxima da disciplina */
+  text-align: left; 
   padding-right: 0.5rem;
-}
+} */
+
 
 /* Listras alternadas pra melhorar leitura */
 

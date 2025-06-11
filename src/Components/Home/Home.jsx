@@ -108,9 +108,18 @@ const Home = () => {
       .filter((dia) => porDia[dia] !== undefined)
       .map((dia) => ({ name: dia, total: porDia[dia] }));
 
+      // Ordem manual dos meses
+    const ordemMeses = [
+        "jan.", "fev.", "mar.", "abr.", "mai.", "jun.",
+        "jul.", "ago.", "set.", "out.", "nov.", "dez."
+    ];
+    const porMesOrdenado = ordemMeses
+        .filter(mes => porMes[mes] !== undefined)
+        .map(mes => ({ name: mes, total: porMes[mes] }));
+
     return {
       porDia: porDiaOrdenado,
-      porMes: toDataArray(porMes),
+      porMes: porMesOrdenado,
       porMateria: toDataArray(porMateria),
     };
   };
