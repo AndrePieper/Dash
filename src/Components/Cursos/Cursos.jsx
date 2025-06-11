@@ -127,12 +127,21 @@ const Cursos = () => {
     }, [cursosFiltrados, ordenarPor, ordemAscendente]);
 
     // Pagina os usuários ordenados
-    const registrosPorPagina = 9;
+    let registrosPorPagina; 
+    if (screen.height >= 769 && screen.height <= 1079) {
+      registrosPorPagina = 7
+    } else if (screen.height >= 1079 && screen.height <= 1200) {
+      registrosPorPagina = 9
+    } else if (screen.height > 1200) {
+      registrosPorPagina = 10
+    } else if (screen.height < 769){
+      registrosPorPagina = 5
+    }
+
     const totalPaginas = Math.ceil(cursosOrdenados.length / registrosPorPagina);
-
-
-    // Limita os cursos que cabem na tela (sem paginação)
-    const cursosVisiveis = cursosOrdenados.slice(0, 15);
+    const indiceInicial = (paginaAtual - 1) * registrosPorPagina;
+    const indiceFinal = indiceInicial + registrosPorPagina;
+    const cursosPaginados = cursosOrdenados.slice(indiceInicial, indiceFinal);
 
     // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
     const handleOrdenar = (campo) => {
@@ -199,8 +208,7 @@ const Cursos = () => {
             </tr>
           </thead>
           <tbody>
-            {cursosVisiveis.length > 0 ? (
-              cursosVisiveis.map((curso) => (
+            {cursosPaginados.map((curso) => (
                 <tr key={curso.id}>
                   <td>{curso.id}</td>
                   <td>{curso.descricao}</td>
@@ -219,12 +227,7 @@ const Cursos = () => {
                     </button>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" style={{ textAlign: 'center' }}>Nenhum curso encontrado.</td>
-              </tr>
-            )}
+              ))}
           </tbody>
         </table>
 

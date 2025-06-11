@@ -127,8 +127,21 @@ const Usuarios = () => {
   }, [usuariosFiltrados, ordenarPor, ordemAscendente]);
 
   // Pagina os usuários ordenados
-  const registrosPorPagina = 9;
+  let registrosPorPagina; 
+  if (screen.height >= 769 && screen.height <= 1079) {
+    registrosPorPagina = 7
+  } else if (screen.height >= 1079 && screen.height <= 1200) {
+    registrosPorPagina = 9
+  } else if (screen.height > 1200) {
+    registrosPorPagina = 10
+  } else if (screen.height < 769){
+    registrosPorPagina = 5
+  }
+
   const totalPaginas = Math.ceil(usuariosOrdenados.length / registrosPorPagina);
+  const indiceInicial = (paginaAtual - 1) * registrosPorPagina;
+  const indiceFinal = indiceInicial + registrosPorPagina;
+  const usuariosPaginados = usuariosOrdenados.slice(indiceInicial, indiceFinal);
 
   // Limita os usuários exibidos à página atual
   const usuariosVisiveis = usuariosOrdenados.slice(
@@ -215,34 +228,28 @@ const Usuarios = () => {
             </tr>
           </thead>
           <tbody>
-            {usuariosVisiveis.length > 0 ? (
-              usuariosVisiveis.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.nome}</td>
-                  <td>{user.email}</td>
-                  <td>{tipoUsuarioTexto(user.tipo)}</td>
-                  <td>
-                    <button
-                      className="botao-editar"
-                      onClick={() => handleEditarUsuario(user.id)}
-                    >
-                      <FaPen size={16} />
-                    </button>
-                    <button
-                      className="botao-excluir"
-                      onClick={() => handleExcluirUsuario(user.id)}
-                    >
-                      <FaTrash size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" style={{ textAlign: 'center' }}>Nenhum usuário encontrado.</td>
+            {usuariosPaginados.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.nome}</td>
+                <td>{user.email}</td>
+                <td>{tipoUsuarioTexto(user.tipo)}</td>
+                <td>
+                  <button
+                    className="botao-editar"
+                    onClick={() => handleEditarUsuario(user.id)}
+                  >
+                    <FaPen size={16} />
+                  </button>
+                  <button
+                    className="botao-excluir"
+                    onClick={() => handleExcluirUsuario(user.id)}
+                  >
+                    <FaTrash size={16} />
+                  </button>
+                </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
 

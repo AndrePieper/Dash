@@ -145,12 +145,22 @@ const Turmas = () => {
     });
   }, [turmasFiltrados, ordenarPor, ordemAscendente]);
 
-  // Limita os disciplinas que cabem na tela (sem paginação)
-  const turmasVisiveis = turmasOrdenados.slice(0, 15);
-
   // Pagina os usuários ordenados
-  const registrosPorPagina = 9;
+  let registrosPorPagina; 
+  if (screen.height >= 769 && screen.height <= 1079) {
+    registrosPorPagina = 7
+  } else if (screen.height >= 1079 && screen.height <= 1200) {
+    registrosPorPagina = 9
+  } else if (screen.height > 1200) {
+    registrosPorPagina = 10
+  } else if (screen.height < 769){
+    registrosPorPagina = 5
+  }
+
   const totalPaginas = Math.ceil(turmasOrdenados.length / registrosPorPagina);
+  const indiceInicial = (paginaAtual - 1) * registrosPorPagina;
+  const indiceFinal = indiceInicial + registrosPorPagina;
+  const turmasPaginadas = turmasOrdenados.slice(indiceInicial, indiceFinal);
 
   // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
   const handleOrdenar = (campo) => {
@@ -220,7 +230,7 @@ const Turmas = () => {
             </tr>
           </thead>
           <tbody>
-            {turmasVisiveis.map((t) => (
+            {turmasPaginadas.map((t) => (
               <tr key={t.id}>
                 <td>{t.id}</td>
                 <td>{t.semestre_curso}º Semestre</td>

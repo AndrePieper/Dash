@@ -142,12 +142,22 @@ const Disciplinas = () => {
     }, [disciplinasFiltrados, ordenarPor, ordemAscendente]);
 
     // Pagina os usuários ordenados
-    const registrosPorPagina = 9;
+    let registrosPorPagina; 
+    if (screen.height >= 769 && screen.height <= 1079) {
+      registrosPorPagina = 7
+    } else if (screen.height >= 1079 && screen.height <= 1200) {
+      registrosPorPagina = 9
+    } else if (screen.height > 1200) {
+      registrosPorPagina = 10
+    } else if (screen.height < 769){
+      registrosPorPagina = 5
+    }
+  
     const totalPaginas = Math.ceil(disciplinasOrdenados.length / registrosPorPagina);
+    const indiceInicial = (paginaAtual - 1) * registrosPorPagina;
+    const indiceFinal = indiceInicial + registrosPorPagina;
+    const disciplinasPaginadas = disciplinasOrdenados.slice(indiceInicial, indiceFinal);
 
-
-    // Limita os disciplinas que cabem na tela (sem paginação)
-    const disciplinasVisiveis = disciplinasOrdenados.slice(0, 15);
 
     // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
     const handleOrdenar = (campo) => {
@@ -224,7 +234,7 @@ const Disciplinas = () => {
             </tr>
           </thead>
           <tbody>
-            {disciplinasVisiveis.map((d) => (
+            {disciplinasPaginadas.map((d) => (
               <tr key={d.id}>
                 <td>{d.id}</td>
                 <td>{d.descricao}</td>

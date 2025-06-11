@@ -132,11 +132,21 @@ const Semestres = () => {
   }, [semestres, ordenarPor, ordemAscendente]);
 
   // Pagina os usuários ordenados
-  const registrosPorPagina = 9;
-  const totalPaginas = Math.ceil(semestresOrdenados.length / registrosPorPagina);
+  let registrosPorPagina; 
+  if (screen.height >= 769 && screen.height <= 1079) {
+    registrosPorPagina = 7
+  } else if (screen.height >= 1079 && screen.height <= 1200) {
+    registrosPorPagina = 9
+  } else if (screen.height > 1200) {
+    registrosPorPagina = 10
+  } else if (screen.height < 769){
+    registrosPorPagina = 5
+  }
 
-  // Limita os usuários que cabem na tela (sem paginação)
-  const semestresVisiveis = semestresOrdenados.slice(0, 15);
+  const totalPaginas = Math.ceil(semestresOrdenados.length / registrosPorPagina);
+  const indiceInicial = (paginaAtual - 1) * registrosPorPagina;
+  const indiceFinal = indiceInicial + registrosPorPagina;
+  const semestresPaginados = semestresOrdenados.slice(indiceInicial, indiceFinal);
 
   // Atualiza ordem de ordenação ao clicar no cabeçalho da tabela
   const handleOrdenar = (campo) => {
@@ -184,7 +194,7 @@ const Semestres = () => {
             </tr>
           </thead>
           <tbody>
-            {semestresVisiveis.map((sem) => (
+            {semestresPaginados.map((sem) => (
               <tr key={sem.id}>
                 <td>{sem.id}</td>
                 <td>{sem.descricao}</td>
