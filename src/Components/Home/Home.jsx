@@ -18,6 +18,7 @@ import "./Home.css";
 const Home = () => {
   const [nome, setNome] = useState("");
   const [chamadas, setChamadas] = useState([]);
+  const [info, setInfo] = useState([]);
 
   // Estados e funções para modal e matérias
   const [abrirModalSelecionarMateria, setAbrirModalSelecionarMateria] = useState(false);
@@ -63,7 +64,11 @@ const Home = () => {
           }
         )
           .then((res) => res.json())
-          .then((data) => setChamadas(data.slice(0, 10)))
+          .then((data) => {
+            setChamadas(data.slice(0, 10));
+            setInfo(data.slice(0, 10000))
+          }
+          )
           .catch((err) =>
             console.error("Erro ao buscar chamadas:", err)
           );
@@ -73,12 +78,12 @@ const Home = () => {
     }
   }, []);
 
-  const agruparChamadas = (chamadas) => {
+  const agruparChamadas = (info) => {
     const porDia = {};
     const porMes = {};
     const porMateria = {};
 
-    chamadas.forEach((c) => {
+    info.forEach((c) => {
       const data = new Date(c.data_hora_inicio);
       const diaSemana = data.toLocaleDateString("pt-BR", {
         weekday: "short",
@@ -96,14 +101,21 @@ const Home = () => {
     const toDataArray = (obj) =>
       Object.entries(obj).map(([name, total]) => ({ name, total }));
 
+    // Define a ordem dos dias manualmente
+    const ordemDias = ["dom.", "seg.", "ter.", "qua.", "qui.", "sex.", "sáb."]; 
+
+    const porDiaOrdenado = ordemDias
+      .filter((dia) => porDia[dia] !== undefined)
+      .map((dia) => ({ name: dia, total: porDia[dia] }));
+
     return {
-      porDia: toDataArray(porDia),
+      porDia: porDiaOrdenado,
       porMes: toDataArray(porMes),
       porMateria: toDataArray(porMateria),
     };
   };
 
-  const agrupado = agruparChamadas(chamadas);
+  const agrupado = agruparChamadas(info);
 
   return (
     <Box className="home-container">
@@ -145,7 +157,7 @@ const Home = () => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={agrupado.porMateria}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis dataKey="name" tickFormatter={(value) => agrupado.porMateria.findIndex(item => item.name === value)}/>;
                 <YAxis allowDecimals={false} />
                 <Tooltip />
                 <Bar dataKey="total" fill="#2e7d32" />
