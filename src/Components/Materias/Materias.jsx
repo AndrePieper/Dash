@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ModaisChamada from '../Chamada/ModaisChamada';
-import {
-  Box,
-  Typography,
-} from "@mui/material";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
+import { Box } from "@mui/material";
+
 
 const Materias = () => {
   const [materias, setMaterias] = useState([]);
@@ -32,7 +21,6 @@ const Materias = () => {
     })
       .then(res => res.json())
       .then(data => {
-        console.log("Dados recebidos:", data); // DEBUG
         if (Array.isArray(data)) {
           setMaterias(data);
         } else {
