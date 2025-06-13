@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@mui/material";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   Drawer,
@@ -23,13 +24,12 @@ import logo from "/src/assets/grupo-fasipe.png";
 const Layout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const tipoUsuario = localStorage.getItem("tipo"); // "1" = professor, "2" = admin
+  const tipoUsuario = localStorage.getItem("tipo"); 
 
   if (pathname === "/" || pathname === "/login") {
     return <Outlet />;
   }
 
-  // Menus por tipo de usuário
   const menuItemsProfessor = [
     { text: "Chamadas", icon: <HistoryIcon />, route: "/chamada" },
     { text: "Matérias", icon: <MenuBookIcon />, route: "/materias" },
@@ -62,33 +62,43 @@ const Layout = () => {
         </div>
 
         <List>
-          {tipoUsuario === "1" && (
-            <ListItemButton
-              onClick={() => navigate("/home")}
-              className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
-            >
-              <ListItemIcon className="menu-icon">
-                <DashboardIcon />
-              </ListItemIcon>
-              <ListItemText primary="Início" />
-            </ListItemButton>
-          )}
+  {tipoUsuario === "1" && (
+    <ListItemButton
+      onClick={() => navigate("/home")}
+      className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
+    >
+      <ListItemIcon className="menu-icon">
+        <DashboardIcon />
+      </ListItemIcon>
+      <ListItemText primary="Início" />
+    </ListItemButton>
+  )}
 
-          {menuItems.map((item) => {
-            // const isSelected = pathname === item.route; - Antes
-            const isSelected = pathname.startsWith(item.route);
-            return (
-              <ListItemButton
-                key={item.text}
-                onClick={() => navigate(item.route)}
-                className={`menu-item ${isSelected ? "selected" : ""}`}
-              >
-                <ListItemIcon className="menu-icon">{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            );
-          })}
-        </List>
+  {menuItems.map((item) => {
+    const isSelected = pathname.startsWith(item.route);
+    return (
+      <ListItemButton
+        key={item.text}
+        onClick={() => navigate(item.route)}
+        className={`menu-item ${isSelected ? "selected" : ""}`}
+      >
+        <ListItemIcon className="menu-icon">{item.icon}</ListItemIcon>
+        <ListItemText primary={item.text} />
+      </ListItemButton>
+    );
+  })}
+</List>
+<Button
+  onClick={() => navigate("/login")}
+  style={{
+    opacity: 0,
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    zIndex: -1, 
+  }}
+>
+</Button>
       </Drawer>
 
       <main className="conteudo-principal">
