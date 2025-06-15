@@ -63,6 +63,7 @@ const Turmas = () => {
 
   const handleEditarTurma = (id) => {
     // Navegar para a tela de edição de turma
+    localStorage.setItem('id_turma', id);
     navigate(`/turmas/editarturma/${id}`);
   };
 

@@ -78,49 +78,56 @@ const ModaisChamada = ({
   }, [modalQRCodeAberto, qrCodeData, localizacao]);
 
   const confirmarMateriaSelecionada = () => {
-    if (!tokenDecodificado || !materiaSelecionada) return;
+  if (!tokenDecodificado || !materiaSelecionada) return;
 
-    if (!navigator.geolocation) {
-      alert("Geolocalização não suportada pelo navegador.");
-      return;
-    }
+  if (!navigator.geolocation) {
+    alert("Geolocalização não suportada pelo navegador.");
+    return;
+  }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const dataHoraInicio = new Date().toISOString();
-        const chamadaData = {
-          id_professor: tokenDecodificado.id,
-          id_disciplina: materiaSelecionada.id_disciplina,
-          data_hora_inicio: dataHoraInicio,
-        };
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      const dataHoraInicio = new Date().toISOString();
+      const chamadaData = {
+        id_professor: tokenDecodificado.id,
+        id_disciplina: materiaSelecionada.id_disciplina,
+        data_hora_inicio: dataHoraInicio,
+      };
 
-        fetch("https://projeto-iii-4.vercel.app/chamadas", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("token"),
-          },
-          body: JSON.stringify(chamadaData),
+      console.log("Dados enviados na chamada:", {
+        ...chamadaData,
+        lat: latitude,
+        long: longitude,
+      });
+
+      fetch("https://projeto-iii-4.vercel.app/chamadas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
+        body: JSON.stringify(chamadaData),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Erro ao iniciar a chamada");
+          return res.json();
         })
-          .then((res) => {
-            if (!res.ok) throw new Error("Erro ao iniciar a chamada");
-            return res.json();
-          })
-          .then((data) => {
-            fecharModalMatérias();
-            setQRCodeData({ id: data.id });
-            setIdChamadaCriada(data.id);
-            setLocalizacao({ lat: latitude, long: longitude });
-            setModalQRCodeAberto(true);
-          })
-          .catch(() => {});
-      },
-      (error) => {
-        alert("Erro ao obter localização: " + error.message);
-      }
-    );
-  };
+        .then((data) => {
+          fecharModalMatérias();
+          setQRCodeData({ id: data.id });
+          setIdChamadaCriada(data.id);
+          setLocalizacao({ lat: latitude, long: longitude });
+          setModalQRCodeAberto(true);
+        })
+        .catch(() => {});
+    },
+    (error) => {
+      alert("Erro ao obter localização: " + error.message);
+    }
+  );
+};
+
 
   const abrirConfirmarEncerramento = () => setAbrirModalConfirmarEncerramento(true);
   const cancelarEncerramento = () => setAbrirModalConfirmarEncerramento(false);
@@ -209,17 +216,21 @@ const ModaisChamada = ({
             <FormControl fullWidth disabled={bloqueiaEdicaoMateria}>
               <InputLabel id="select-materia-label">Matéria</InputLabel>
               <Select
-                labelId="select-materia-label"
-                value={materiaSelecionada}
-                onChange={(e) => setMateriaSelecionada(e.target.value)}
-                label="Matéria"
-              >
-                {materias.map((materia) => (
-                  <MenuItem key={materia.id_disciplina} value={materia}>
-                    {materia.descricao_disciplina}
-                  </MenuItem>
-                ))}
-              </Select>
+  labelId="select-materia-label"
+  value={materiaSelecionada?.id_disciplina || ""}
+  onChange={(e) => {
+    const materia = materias.find((m) => m.id_disciplina === e.target.value);
+    setMateriaSelecionada(materia);
+  }}
+  label="Matéria"
+>
+  {materias.map((materia) => (
+    <MenuItem key={materia.id_disciplina} value={materia.id_disciplina}>
+      {materia.descricao_disciplina}
+    </MenuItem>
+  ))}
+</Select>
+
             </FormControl>
           )}
         </DialogContent>
