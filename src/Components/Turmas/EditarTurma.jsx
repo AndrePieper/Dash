@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaDownload } from 'react-icons/fa';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 //import ImportarExcel from './ImportarExcel';
 import { processarExcel } from "./ImportarExcel";
@@ -438,108 +438,88 @@ const EditarTurma = () => {
 
             </div>
           {/* CONTEÚDO DAS ABAS */}
-{abaSelecionada === 'alunos' && (
-  <div>
-    <h3 style={{ margin: '00px 0px 15px 0px' }}>Alunos Vinculados</h3>
-    {alunos.length === 0 ? (
-      <p>Nenhum aluno vinculado à turma.</p>
-    ) : (
-      <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Nome</th>
-            <th style={{ width: '15%' }}>Remover</th>
-          </tr>
-        </thead>
-        <tbody>
-          {alunosPaginados.map((aluno) => (
-            <tr key={aluno.id}>
-              <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }} className="dado-vinculo">{aluno.Usuario?.nome}</td>
-              <td className="button-remover">
-                <button
-                  onClick={() => abrirModalExclusao(aluno.id)}
-                  className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
-                >
-                  <FaTrash size={20} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    )}
-    <div className="rodape-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-      <div className="paginacao-container-vinculos">
-        <button
-          onClick={handlePaginaAnteriorAluno}
-          className={`botao-paginacao ${paginaAtualAluno === 1 ? 'desabilitado' : ''}`}
-        >
-          <FiArrowLeft size={20} />
-        </button>
+            {abaSelecionada === 'alunos' && (
+              <div>
+                <h3 style={{ margin: '00px 0px 15px 0px' }}>Alunos Vinculados</h3>
+                {alunos.length === 0 ? (
+                  <p>Nenhum aluno vinculado à turma.</p>
+                ) : (
+                  <table className="tabela-usuarios" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Nome</th>
+                        <th style={{ width: '15%' }}>Remover</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {alunosPaginados.map((aluno) => (
+                        <tr key={aluno.id}>
+                          <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }} className="dado-vinculo">{aluno.Usuario?.nome}</td>
+                          <td className="button-remover">
+                            <button
+                              onClick={() => abrirModalExclusao(aluno.id)}
+                              className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                            >
+                              <FaTrash size={20} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+                <div className="rodape-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                  <div className="paginacao-container-vinculos">
+                    <button
+                      onClick={handlePaginaAnteriorAluno}
+                      className={`botao-paginacao ${paginaAtualAluno === 1 ? 'desabilitado' : ''}`}
+                    >
+                      <FiArrowLeft size={20} />
+                    </button>
 
-        <span className="paginacao-texto">Página {paginaAtualAluno} de {totalPaginasAluno}</span>
+                    <span className="paginacao-texto">Página {paginaAtualAluno} de {totalPaginasAluno}</span>
 
-        <button
-          onClick={handleProximaPaginaAluno}
-          className={`botao-paginacao ${paginaAtualAluno === totalPaginasAluno ? 'desabilitado' : ''}`}
-        >
-          <FiArrowRight size={20} />
-        </button>
-      </div>
+                    <button
+                      onClick={handleProximaPaginaAluno}
+                      className={`botao-paginacao ${paginaAtualAluno === totalPaginasAluno ? 'desabilitado' : ''}`}
+                    >
+                      <FiArrowRight size={20} />
+                    </button>
+                  </div>
 
-      <div className="adicionar-vinculo" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-        <button onClick={abrirModalAdicionar} className="botao-editar" title="Adicionar aluno">
-          <FaPlus size={28} />
-        </button>
+                  <div className="adicionar-vinculo" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <button onClick={abrirModalAdicionar} className="botao-editar" title="Adicionar aluno">
+                      <FaPlus size={28} />
+                    </button>
 
-        <a
-         href="/modelo.xlsx"
-          download
-          style={{
-            backgroundColor: '#007bff',
-            color: 'white',
-            padding: '8px 12px',
-            borderRadius: '4px',
-            textDecoration: 'none',
-            fontSize: '14px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center'
-          }}
-        >
-          Baixar Modelo
-        </a>
+                    <a
+                      title="Baixar Modelo Excel Padrão"
+                      href="/modelo.xlsx"
+                      download
+                      className="baixar-modelo"
+                    >
+                      <FaDownload size={20} />
+                    </a>
 
-        <div
-          onDrop={(e) => {
-            e.preventDefault();
-            const file = e.dataTransfer.files[0];
-            if (file && file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-              ImportarExcel(file);
-            } else {
-              alert('Por favor, envie um arquivo Excel (.xlsx)');
-            }
-          }}
-          onDragOver={(e) => e.preventDefault()}
-          style={{
-            border: '2px dashed #aaa',
-            padding: '8px 12px',
-            borderRadius: '4px',
-            fontSize: '14px',
-            color: '#333',
-            backgroundColor: '#f5f5f5',
-            cursor: 'pointer',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center'
-          }}
-        >
-          Arraste o Excel aqui
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+                    <div
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const file = e.dataTransfer.files[0];
+                        if (file && file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                          ImportarExcel(file);
+                        } else {
+                          alert('Por favor, envie um arquivo Excel (.xlsx)');
+                        }
+                      }}
+                      onDragOver={(e) => e.preventDefault()}
+                      className="importar-excel"
+                    >
+                      Arraste o Excel aqui
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {abaSelecionada === 'disciplinas' && (
               <div>
@@ -645,25 +625,24 @@ const EditarTurma = () => {
               onChange={e => setFiltroNome(e.target.value)}
             />
             <div className="lista-alunos-disponiveis">
-  {alunosFiltrados.map(aluno => (
-    <label key={aluno.id} style={{ display: 'flex', padding: '5px' }}>
-      <input
-        type="checkbox"
-        checked={selecionados.includes(aluno.id)}
-        onChange={(e) =>
-          setSelecionados((prev) =>
-            e.target.checked
-              ? [...prev, aluno.id]
-              : prev.filter((id) => id !== aluno.id)
-          )
-        }
-        style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
-      />
-      {aluno.nome}
-    </label>
-  ))}
-</div>
-
+              {alunosFiltrados.map(aluno => (
+                <label key={aluno.id} style={{ display: 'flex', padding: '5px' }}>
+                  <input
+                    type="checkbox"
+                    checked={selecionados.includes(aluno.id)}
+                    onChange={(e) =>
+                      setSelecionados((prev) =>
+                        e.target.checked
+                          ? [...prev, aluno.id]
+                          : prev.filter((id) => id !== aluno.id)
+                      )
+                    }
+                    style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
+                  />
+                  {aluno.nome}
+                </label>
+              ))}
+            </div>
           </Modal>
         )}
 
@@ -706,11 +685,9 @@ const EditarTurma = () => {
             </div>
           </Modal>
         )}
-
       </div>
     </>
   );
-
 };
 
 export default EditarTurma;

@@ -78,13 +78,22 @@ const ModaisChamada = ({
   }, [modalQRCodeAberto, qrCodeData, localizacao]);
 
   const confirmarMateriaSelecionada = () => {
-  if (!tokenDecodificado || !materiaSelecionada) return;
+  if (!tokenDecodificado) {
+    console.log("SEM TOKEN: ")
+    console.log(tokenDecodificado)
+    return;
+  }
+
+  if (!materiaSelecionada) {
+    console.log("SEM MATÉRIA: ")
+    console.log(materiaSelecionada)
+    return;
+  }
 
   if (!navigator.geolocation) {
     alert("Geolocalização não suportada pelo navegador.");
     return;
   }
-
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const { latitude, longitude } = position.coords;
@@ -216,20 +225,20 @@ const ModaisChamada = ({
             <FormControl fullWidth disabled={bloqueiaEdicaoMateria}>
               <InputLabel id="select-materia-label">Matéria</InputLabel>
               <Select
-  labelId="select-materia-label"
-  value={materiaSelecionada?.id_disciplina || ""}
-  onChange={(e) => {
-    const materia = materias.find((m) => m.id_disciplina === e.target.value);
-    setMateriaSelecionada(materia);
-  }}
-  label="Matéria"
->
-  {materias.map((materia) => (
-    <MenuItem key={materia.id_disciplina} value={materia.id_disciplina}>
-      {materia.descricao_disciplina}
-    </MenuItem>
-  ))}
-</Select>
+                labelId="select-materia-label"
+                value={materiaSelecionada?.id_disciplina || ""}
+                onChange={(e) => {
+                  const materia = materias.find((m) => m.id_disciplina === e.target.value);
+                  setMateriaSelecionada(materia);
+                }}
+                label="Matéria"
+              >
+                {materias.map((materia) => (
+                  <MenuItem key={materia.id_disciplina} value={materia.id_disciplina}>
+                    {materia.descricao_disciplina}
+                  </MenuItem>
+                ))}
+              </Select>
 
             </FormControl>
           )}
@@ -299,7 +308,7 @@ const ModaisChamada = ({
         </DialogActions>
       </Dialog>
 
-      <Dialog open={abrirModalConfirmacao} onClose={fecharConfirmacao}>
+      {/* <Dialog open={abrirModalConfirmacao} onClose={fecharConfirmacao}>
         <DialogTitle>Confirmar Início da Chamada</DialogTitle>
         <DialogContent dividers>
           <Typography>
@@ -314,7 +323,7 @@ const ModaisChamada = ({
             Confirmar
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };

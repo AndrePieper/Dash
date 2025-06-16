@@ -48,11 +48,22 @@ const EditarChamada = () => {
   const [nomeProfessor, setNomeProfessor] = useState(null);
 
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const itensPorPagina = 10;
-  const totalPaginas = Math.ceil(alunosPresentes.length / itensPorPagina);
+
+  let registrosPorPagina; 
+  if (screen.height >= 769 && screen.height <= 1079) {
+    registrosPorPagina = 7
+  } else if (screen.height >= 1079 && screen.height <= 1200) {
+    registrosPorPagina = 9
+  } else if (screen.height > 1200) {
+    registrosPorPagina = 10
+  } else if (screen.height < 769){
+    registrosPorPagina = 5
+  }
+
+  const totalPaginas = Math.ceil(alunosPresentes.length / registrosPorPagina);
   const alunosPaginados = alunosPresentes.slice(
-    (paginaAtual - 1) * itensPorPagina,
-    paginaAtual * itensPorPagina
+    (paginaAtual - 1) * registrosPorPagina,
+    paginaAtual * registrosPorPagina
   );
 
   const token = localStorage.getItem("token");
@@ -357,7 +368,12 @@ const imprimirChamada = () => {
           <div key={aluno.id_aluno}>
             <ListItem>
               <Box display="flex" justifyContent="space-between" width="100%">
-                <Typography>{aluno.Aluno.nome}</Typography>
+                
+                <Typography
+                  style={{ width: '300px' }}
+                >
+                  {aluno.Aluno.nome}
+                </Typography>
                 <Typography
                   style={{ width: 100, textAlign: "center" }}
                   color={aluno.status === 1 ? "green" : "gray"}
