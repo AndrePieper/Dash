@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import ModaisChamada from "../Chamada/ModaisChamada"; // ajuste o caminho se precisar
+import ModaisChamada from "../Chamada/ModaisChamada"; 
 import "./Home.css";
 
 const Home = () => {
@@ -48,35 +48,36 @@ const Home = () => {
       .catch(() => setCarregandoMaterias(false));
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const idProfessor = localStorage.getItem("id_professor");
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  const idProfessor = localStorage.getItem("id_professor");
 
-    if (token && idProfessor) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setNome(payload.nome || "Usuário");
+  if (token && idProfessor) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const nomeProfessor = payload.nome || "Usuário";
+      setNome(nomeProfessor);
 
-        fetch(
-          `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${idProfessor}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            setChamadas(data.slice(0, 10));
-            setInfo(data.slice(0, 10000))
-          }
-          )
-          .catch((err) =>
-            console.error("Erro ao buscar chamadas:", err)
-          );
-      } catch (e) {
-        console.error("Erro ao decodificar token:", e);
-      }
+      localStorage.setItem("nome_professor", nomeProfessor);
+
+      fetch(
+        `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${idProfessor}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setChamadas(data.slice(0, 10));
+          setInfo(data.slice(0, 10000));
+        })
+        .catch((err) => console.error("Erro ao buscar chamadas:", err));
+    } catch (e) {
+      console.error("Erro ao decodificar token:", e);
     }
-  }, []);
+  }
+}, []);
+
 
   const agruparChamadas = (info) => {
     const porDia = {};
