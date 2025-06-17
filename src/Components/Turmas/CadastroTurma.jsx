@@ -122,11 +122,10 @@ const CadastroTurma = () => {
               id="status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              required
             >
-              <option value="">Selecione o Status</option>
+              {/* <option value="">Selecione o Status</option> */}
               <option value="0">Cursando</option>
-              <option value="1">Concluído</option>
+              {/* <option value="1">Concluído</option> */}
             </select>
           </div>
           <button type="submit">Cadastrar</button>
