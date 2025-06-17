@@ -17,7 +17,8 @@ import "./Home.css";
 const Home = () => {
   const [nome, setNome] = useState("");
   const [chamadas, setChamadas] = useState([]);
-   const [info, setInfo] = useState([]);
+  const [semestre, setSemestre] = useState([]);
+  const [info, setInfo] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,7 +38,8 @@ const Home = () => {
           .then((res) => res.json())
           .then((data) => {
             setChamadas(data.slice(0, 10));
-            setInfo(data.slice(0, 10000))
+            setInfo(data.slice(0, 10000));
+            setSemestre(data.map(d => d.descricao_semestre));
           })
           .catch((err) =>
             console.error("Erro ao buscar chamadas:", err)
@@ -100,9 +102,18 @@ const Home = () => {
     <Box className="home-container">
       <Box className="menu-lateral-placeholder" />
       <Box className="home-content">
-        <Typography variant="h4" className="welcome">
+        {/* <Typography variant="h4" className="welcome">
           Olá, {nome}!
-        </Typography>
+        </Typography> */}
+         <Box className="cabecalho-home">
+            <Typography variant="h4" className="welcome">
+              Olá, {nome}!
+            </Typography>
+  
+            <Typography variant="h5" className="semestre-padrao">
+              Semestre: {semestre[0]}
+            </Typography>
+          </Box>
 
         <Box className="cards-container">
           <Box className="card">
