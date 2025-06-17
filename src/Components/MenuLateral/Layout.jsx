@@ -1,6 +1,7 @@
-import React from "react";
-import { Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import LogoutIcon from "@mui/icons-material/Logout";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"; // IMPORTADO ícone de flecha
 import {
   Drawer,
   List,
@@ -24,7 +25,28 @@ import logo from "/src/assets/grupo-fasipe.png";
 const Layout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const tipoUsuario = localStorage.getItem("tipo"); 
+  const tipoUsuario = localStorage.getItem("tipo");
+
+  const [collapsed, setCollapsed] = useState(false);
+
+  // Função para alternar o menu lateral
+  const toggleDrawer = () => {
+    setCollapsed((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setCollapsed(true);
+      } else {
+        setCollapsed(false);
+      }
+    };
+
+    handleResize(); 
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (pathname === "/" || pathname === "/login") {
     return <Outlet />;
@@ -45,8 +67,11 @@ const Layout = () => {
   ];
 
   const menuItems =
-    tipoUsuario === "1" ? menuItemsProfessor :
-    tipoUsuario === "2" ? menuItemsAdm : [];
+    tipoUsuario === "1"
+      ? menuItemsProfessor
+      : tipoUsuario === "2"
+      ? menuItemsAdm
+      : [];
 
   return (
     <div className="dashboard-container">
@@ -54,51 +79,62 @@ const Layout = () => {
         variant="permanent"
         anchor="left"
         PaperProps={{
-          className: "drawer-custom",
+          className: `drawer-custom ${collapsed ? "collapsed" : ""}`,
+          style: {
+            width: collapsed ? 72 : 240,
+          },
         }}
       >
-        <div className="menu-logo">
-          <img src={logo} alt="Grupo Fasipe" />
+        <div className="menu-logo" onClick={toggleDrawer} style={{ cursor: "pointer" }}>
+          {collapsed ? (
+            <ArrowForwardIosIcon className="menu-toggle-icon" />
+          ) : (
+            <img src={logo} alt="Grupo Fasipe" />
+          )}
         </div>
 
         <List>
-  {tipoUsuario === "1" && (
-    <ListItemButton
-      onClick={() => navigate("/home")}
-      className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
-    >
-      <ListItemIcon className="menu-icon">
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Início" />
-    </ListItemButton>
-  )}
+          {tipoUsuario === "1" && (
+            <ListItemButton
+              onClick={() => navigate("/home")}
+              className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
+            >
+              <ListItemIcon className="menu-icon">
+                <DashboardIcon />
+              </ListItemIcon>
+              {!collapsed && <ListItemText primary="Início" />}
+            </ListItemButton>
+          )}
 
-  {menuItems.map((item) => {
-    const isSelected = pathname.startsWith(item.route);
-    return (
-      <ListItemButton
-        key={item.text}
-        onClick={() => navigate(item.route)}
-        className={`menu-item ${isSelected ? "selected" : ""}`}
-      >
-        <ListItemIcon className="menu-icon">{item.icon}</ListItemIcon>
-        <ListItemText primary={item.text} />
-      </ListItemButton>
-    );
-  })}
-</List>
-<Button
-  onClick={() => navigate("/login")}
-  style={{
-    opacity: 0,
-    position: "absolute",
-    bottom: 10,
-    left: 10,
-    zIndex: -1, 
-  }}
->
-</Button>
+          {menuItems.map((item) => {
+            const isSelected = pathname.startsWith(item.route);
+            return (
+              <ListItemButton
+                key={item.text}
+                onClick={() => navigate(item.route)}
+                className={`menu-item ${isSelected ? "selected" : ""}`}
+              >
+                <ListItemIcon className="menu-icon">{item.icon}</ListItemIcon>
+                {!collapsed && <ListItemText primary={item.text} />}
+              </ListItemButton>
+            );
+          })}
+        </List>
+
+        <div style={{ marginTop: "auto" }}>
+          <ListItemButton
+            onClick={() => {
+              localStorage.clear();
+              navigate("/login");
+            }}
+            className="menu-item"
+          >
+            <ListItemIcon className="menu-icon">
+              <LogoutIcon />
+            </ListItemIcon>
+            {!collapsed && <ListItemText primary="Sair" />}
+          </ListItemButton>
+        </div>
       </Drawer>
 
       <main className="conteudo-principal">

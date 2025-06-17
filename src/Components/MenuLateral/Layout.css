@@ -4,36 +4,62 @@ html {
 
 .dashboard-container {
   display: flex;
-   height: 98vh;
+  height: 98vh;
   background-color: #f4f4f4;
 }
 
 .drawer-custom {
   background-color: #4E4E4E !important;
   color: white !important;
+  transition: width 0.3s ease;
+  overflow-x: hidden;
   width: 240px;
-  /* border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px; */
+}
+
+.drawer-custom.collapsed {
+  width: 60px !important;
+  overflow-x: hidden;
 }
 
 .menu-logo {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 120px;
+  height: 100px; 
   border-bottom: 1px solid white;
   padding: 8px;
   background-color: #4E4E4E;
+  transition: height 0.3s;
+}
+
+.drawer-custom.collapsed .menu-logo {
+  height: 80px; 
 }
 
 .menu-logo img {
-  max-height: 100%;
+  max-height: 70px;
   max-width: 100%;
   object-fit: contain;
+  transition: max-height 0.3s;
 }
 
+.drawer-custom.collapsed .menu-logo img {
+  max-height: 40px; 
+}
+
+.menu-toggle-icon {
+  color: white;
+  font-size: 28px;
+}
+
+
+.drawer-custom.collapsed .menu-toggle-icon {
+  display: block;
+}
+
+
 .menu-item {
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, padding-left 0.2s;
 }
 
 .menu-item:hover {
@@ -59,6 +85,7 @@ html {
   flex-grow: 1;
   background-color: #e2e2e2;
   height: 99vh;
-  overflow-y: hidden; 
-  box-sizing: border-box;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  padding: 16px;
 }
