@@ -12,7 +12,12 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+}
 
+.cabecalho-home {
+  display: flex;
+  /* align-items: center; */
+  justify-content: space-between;
 }
 
 .welcome {

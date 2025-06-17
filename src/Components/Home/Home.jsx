@@ -17,6 +17,7 @@ import "./Home.css";
 
 const Home = () => {
   const [nome, setNome] = useState("");
+  const [semestre, setSemestre] = useState([]);
   const [chamadas, setChamadas] = useState([]);
   const [info, setInfo] = useState([]);
 
@@ -68,7 +69,9 @@ useEffect(() => {
       )
         .then((res) => res.json())
         .then((data) => {
+          console.log("data")
           setChamadas(data.slice(0, 10));
+          setSemestre(data.map(d => d.descricao_semestre))
           setInfo(data.slice(0, 20000));
         })
         .catch((err) => console.error("Erro ao buscar chamadas:", err));
@@ -92,7 +95,7 @@ useEffect(() => {
       const mes = data.toLocaleDateString("pt-BR", {
         month: "short",
       });
-      const materia = c.descricao || "—";
+      const materia = c.descricao_disciplina || "—";
 
       porDia[diaSemana] = (porDia[diaSemana] || 0) + 1;
       porMes[mes] = (porMes[mes] || 0) + 1;
@@ -131,9 +134,15 @@ useEffect(() => {
     <Box className="home-container">
       <Box className="menu-lateral-placeholder" />
       <Box className="home-content">
-        <Typography variant="h4" className="welcome">
-          Olá, {nome}!
-        </Typography>
+        <Box className="cabecalho-home">
+          <Typography variant="h4" className="welcome">
+            Olá, {nome}!
+          </Typography>
+
+          <Typography variant="h5" className="semestre-padrao">
+            Semestre: {semestre[0]}
+          </Typography>
+        </Box>
 
         <Box className="cards-container">
           <Box className="card">
@@ -195,7 +204,7 @@ useEffect(() => {
                 key={index}
               >
                 <Box className="coluna disciplina">
-                  {chamada.descricao || "—"}
+                  {chamada.descricao_disciplina || "—"}
                 </Box>
                 <Box className="coluna hora">
                   {new Date(
