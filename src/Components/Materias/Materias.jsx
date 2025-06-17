@@ -6,6 +6,8 @@ import { decodeJwt } from "jose";
 
 const Materias = () => {
   const [materias, setMaterias] = useState([]);
+  const [semestre, setSemestre] = useState([]);
+
   const [modalAberto, setModalAberto] = useState(false);
   const [materiaSelecionada, setMateriaSelecionada] = useState([]);
 
@@ -29,6 +31,7 @@ const Materias = () => {
       .then(data => {
         if (Array.isArray(data)) {
           setMaterias(data);
+          setSemestre(data.map(d => d.descricao_semestre));
         } else {
           console.error("Resposta inesperada da API:", data);
         }
@@ -51,7 +54,7 @@ const Materias = () => {
   return (
     <>
       <div className="header-usuarios">
-        <h2>Matérias</h2>
+        <h2>Matérias - {semestre}</h2>
       </div>
 
       <ModaisChamada

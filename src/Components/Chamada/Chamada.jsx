@@ -13,6 +13,8 @@ const Chamada = () => {
   const [filtroMateria, setFiltroMateria] = useState("");
   const [filtroData, setFiltroData] = useState("");
   const [materias, setMaterias] = useState([]);
+  const [semestre, setSemestre] = useState([]);
+
   const [carregandoMaterias, setCarregandoMaterias] = useState(false);
   const [tokenDecodificado, setTokenDecodificado] = useState(null);
   const [abrirModalSelecionarMateria, setAbrirModalSelecionarMateria] = useState(false);
@@ -73,7 +75,7 @@ const Chamada = () => {
       const decoded = decodeJwt(token);
       setTokenDecodificado(decoded);
       fetch(
-        `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${decoded.id}&page=${pagina}&limit=${limitePorPagina}&sort=data_hora_inicio&order=desc`,
+        `https://projeto-iii-4.vercel.app/chamadas/professor/?id_professor=${decoded.id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -91,6 +93,7 @@ const Chamada = () => {
       })
       .then((data) => {
         setChamadas(data);
+        setSemestre(data.map(d => d.descricao_semestre));
         // setPaginaAtual(pagina);
       })
       .catch((err) => {
@@ -112,7 +115,7 @@ const Chamada = () => {
   const chamadasFiltradas = chamadas.filter((chamada) => {
     const chamadaData = new Date(chamada.data_hora_inicio).toISOString().split("T")[0];
     const filtraPorMateria = filtroMateria
-    ? chamada.descricao.toLowerCase().includes(filtroMateria.toLowerCase())
+    ? chamada.descricao_disciplina.toLowerCase().includes(filtroMateria.toLowerCase())
       : true;
     const filtraPorData = filtroData ? chamadaData === filtroData : true;
     return filtraPorMateria && filtraPorData;
@@ -141,7 +144,7 @@ const Chamada = () => {
   return (
     <div className="container-pagina">
       <div className="header-usuarios">
-        <h2>Chamadas</h2>
+        <h2>Chamadas - {semestre}</h2>
         <div className="reader-area">
           <div className="filtros-header">
             <select
@@ -195,7 +198,7 @@ const Chamada = () => {
               {chamadasPaginados.map((chamada) => ( 
                 <tr key={chamada.id}>
                   <td>{chamada.id}</td>
-                  <td>{chamada.descricao}</td>
+                  <td>{chamada.descricao_disciplina}</td>
                   <td>{new Date(chamada.data_hora_inicio).toLocaleDateString()}</td>
                   <td>
                     {new Date(chamada.data_hora_inicio).toLocaleTimeString([], {
