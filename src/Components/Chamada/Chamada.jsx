@@ -17,6 +17,7 @@ const Chamada = () => {
 
   const [carregandoMaterias, setCarregandoMaterias] = useState(false);
   const [tokenDecodificado, setTokenDecodificado] = useState(null);
+
   const [abrirModalSelecionarMateria, setAbrirModalSelecionarMateria] = useState(false);
   const [abrirModalConfirmacao, setAbrirModalConfirmacao] = useState(false);
   const [modalQRCodeAberto, setModalQRCodeAberto] = useState(false);
@@ -41,7 +42,7 @@ const Chamada = () => {
       })
       .then((res) => res.json())
       .then((data) => {
-        console.log("RECEBIDO EM materias:", data);
+        // console.log("RECEBIDO EM materias:", data);
         setMaterias(Array.isArray(data) ? data : []);
         setCarregandoMaterias(false);
       })
@@ -96,7 +97,7 @@ const Chamada = () => {
       })
       .then((data) => {
         setChamadas(data);
-        setSemestre(data.map(d => d.descricao_semestre));
+        // setSemestre(data.map(d => d.descricao_semestre));
         // setPaginaAtual(pagina);
       })
       .catch((err) => {
@@ -109,10 +110,32 @@ const Chamada = () => {
       setPopup({ show: true, message: "Token inválido", type: "error" });
     }
   };
+
+   const buscarSemestre = () => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      fetch(`https://projeto-iii-4.vercel.app/semestres/padrao/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        setSemestre(data)
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar matérias: ", err);
+        setTimeout(() => setPopup({ show: true, message: "Erro ao buscar matérias", type: "error" }), 2000);
+      });
+    } catch (err) {
+      console.error("Erro ao decodificar o token.");
+      setTimeout(() => setPopup({ show: true, message: "Erro ao decodificar token", type: "error" }), 2000);
+    }
+  };
   
   useEffect(() => {
     buscarChamadas();
     buscarMaterias();
+    buscarSemestre()
   }, []);
   
   const chamadasFiltradas = chamadas.filter((chamada) => {
@@ -147,7 +170,7 @@ const Chamada = () => {
   return (
     <div className="container-pagina">
       <div className="header-usuarios">
-        <h2>Chamadas - {semestre[0]}</h2>
+        <h2>Chamadas - {semestre.descricao}</h2>
         <div className="reader-area">
           <div className="filtros-header">
             <select

@@ -18,6 +18,28 @@ const Materias = () => {
   const token = localStorage.getItem("token");
   const idProfessor = localStorage.getItem("id_professor");
 
+  const buscarSemestre = () => {
+    // const token = localStorage.getItem("token");
+    
+    try {
+      fetch(`https://projeto-iii-4.vercel.app/semestres/padrao/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        setSemestre(data)
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar matérias: ", err);
+        setPopup({ show: true, message: "Erro ao buscar matérias", type: "error" });
+        
+      });
+    } catch (err) {
+      console.error("Erro ao decodificar o token.");
+      setPopup({ show: true, message: "Erro ao decodificar token", type: "error" });
+    }
+  };
+
   useEffect(() => {
     if (!idProfessor) {
       console.error("ID do professor não encontrado no localStorage.");
@@ -31,12 +53,13 @@ const Materias = () => {
       .then(data => {
         if (Array.isArray(data)) {
           setMaterias(data);
-          setSemestre(data.map(d => d.descricao_semestre));
         } else {
           console.error("Resposta inesperada da API:", data);
         }
       })
       .catch(err => console.error('Erro ao buscar semestres:', err));
+
+      buscarSemestre();
   }, [idProfessor, token]);
 
   const tokenDecodificado = token ? decodeJwt(token) : null; 
@@ -54,7 +77,7 @@ const Materias = () => {
   return (
     <>
       <div className="header-usuarios">
-        <h2>Matérias - {semestre[0]}</h2>
+        <h2>Matérias - {semestre.descricao}</h2>
       </div>
 
       <ModaisChamada

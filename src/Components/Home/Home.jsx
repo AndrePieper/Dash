@@ -48,6 +48,27 @@ const Home = () => {
       })
       .catch(() => setCarregandoMaterias(false));
   };
+  
+  const buscarSemestre = () => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      fetch(`https://projeto-iii-4.vercel.app/semestres/padrao/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        setSemestre(data)
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar matérias: ", err);
+        setTimeout(() => setPopup({ show: true, message: "Erro ao buscar matérias", type: "error" }), 2000);
+      });
+    } catch (err) {
+      console.error("Erro ao decodificar o token.");
+      setTimeout(() => setPopup({ show: true, message: "Erro ao decodificar token", type: "error" }), 2000);
+    }
+  };
 
 useEffect(() => {
   const token = localStorage.getItem("token");
@@ -71,7 +92,6 @@ useEffect(() => {
         .then((data) => {
           console.log("data")
           setChamadas(data.slice(0, 10));
-          setSemestre(data.map(d => d.descricao_semestre))
           setInfo(data.slice(0, 20000));
         })
         .catch((err) => console.error("Erro ao buscar chamadas:", err));
@@ -79,6 +99,8 @@ useEffect(() => {
       console.error("Erro ao decodificar token:", e);
     }
   }
+
+  buscarSemestre();
 }, []);
 
 
@@ -140,7 +162,7 @@ useEffect(() => {
           </Typography>
 
           <Typography variant="h5" className="semestre-padrao">
-            Semestre: {semestre[0]}
+            Semestre: {semestre.descricao}
           </Typography>
         </Box>
 

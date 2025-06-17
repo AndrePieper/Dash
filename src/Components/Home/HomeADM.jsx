@@ -20,6 +20,27 @@ const Home = () => {
   const [semestre, setSemestre] = useState([]);
   const [info, setInfo] = useState([]);
 
+  const buscarSemestre = () => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      fetch(`https://projeto-iii-4.vercel.app/semestres/padrao/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        setSemestre(data)
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar matérias: ", err);
+        setTimeout(() => setPopup({ show: true, message: "Erro ao buscar matérias", type: "error" }), 2000);
+      });
+    } catch (err) {
+      console.error("Erro ao decodificar o token.");
+      setTimeout(() => setPopup({ show: true, message: "Erro ao decodificar token", type: "error" }), 2000);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const idProfessor = localStorage.getItem("id_professor");
@@ -48,10 +69,12 @@ const Home = () => {
         console.error("Erro ao decodificar token:", e);
       }
     }
+
+    buscarSemestre();
   }, []);
 
   const agruparChamadas = (chamadas) => {
-     const porDia = {};
+    const porDia = {};
     const porMes = {};
     const porMateria = {};
 
@@ -98,7 +121,6 @@ const Home = () => {
 
   const agrupado = agruparChamadas(info);
 
-  console.log(semestre)
 
   return (
     <Box className="home-container">
@@ -113,7 +135,7 @@ const Home = () => {
             </Typography>
   
             <Typography variant="h5" className="semestre-padrao">
-              Semestre: {semestre[0]}
+              Semestre: {semestre.descricao}
             </Typography>
           </Box>
 
