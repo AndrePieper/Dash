@@ -41,16 +41,19 @@ const Chamada = () => {
       })
       .then((res) => res.json())
       .then((data) => {
-        setMaterias(data);
+        console.log("RECEBIDO EM materias:", data);
+        setMaterias(Array.isArray(data) ? data : []);
         setCarregandoMaterias(false);
       })
       .catch((err) => {
         console.error("Erro ao buscar matérias: ", err);
         setPopup({ show: true, message: "Erro ao buscar matérias", type: "error" });
         setCarregandoMaterias(false);
+        setMaterias([]);
       });
     } catch (err) {
       console.error("Erro ao decodificar o token.");
+      setMaterias([]);
       setPopup({ show: true, message: "Erro ao decodificar token", type: "error" });
       setCarregandoMaterias(false);
     }
@@ -142,46 +145,6 @@ const Chamada = () => {
   };
 
   return (
-    // {chamadas.length === 0 ? (
-    //   <div className="container-pagina">
-    //     <div className="header-usuarios">
-    //       <h2>Chamadas - {semestre}</h2>
-    //       <div className="reader-area">
-    //         <div className="filtros-header">
-    //           <select
-    //             value={filtroMateria}
-    //             onChange={(e) => setFiltroMateria(e.target.value)}
-    //             aria-label="Filtro por matéria"
-    //           >
-    //             <option value="">Todas as matérias</option>
-    //             {materias.map((m, index) => (
-    //               <option key={m.id || index} value={m.descricao_disciplina || ""}>
-    //                 {m.descricao_disciplina || `Matéria ${index}`}
-    //               </option>
-    //             ))}
-    //           </select>
-    //           <input
-    //             type="date"
-    //             value={filtroData}
-    //             onChange={(e) => setFiltroData(e.target.value)}
-    //             aria-label="Filtro por data"
-    //           />
-    //           <button
-    //             className="botao-adicionar"
-    //             onClick={() => setAbrirModalSelecionarMateria(true)}
-    //             title="Nova Chamada"
-    //           >
-    //             <FaPlus />
-    //           </button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //     {popup.show && <PopUpTopo message={popup.message} type={popup.type} />}
-    //     <div className="tabela-container">
-        
-    //     </div>
-    //   </div>
-    // ) : ( )};
     <div className="container-pagina">
       <div className="header-usuarios">
         <h2>Chamadas - {semestre[0]}</h2>
@@ -193,11 +156,15 @@ const Chamada = () => {
               aria-label="Filtro por matéria"
             >
               <option value="">Todas as matérias</option>
-              {materias.map((m, index) => (
-                <option key={m.id || index} value={m.descricao_disciplina || ""}>
-                  {m.descricao_disciplina || `Matéria ${index}`}
-                </option>
-              ))}
+              {materias.length === 0 ? ( 
+                <option value="">Todas as matérias</option>
+              ) : ( 
+                materias.map((m, index) => (
+                  <option key={m.id || index} value={m.descricao_disciplina || ""}>
+                    {m.descricao_disciplina || `Matéria ${index}`}
+                  </option>
+                ))
+              )}
             </select>
             <input
               type="date"

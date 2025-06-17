@@ -223,11 +223,24 @@ const ModaisChamada = ({
                 }}
                 label="Matéria"
               >
-                {materias.map((materia) => (
+                
+                {/* {materias.map((materia) => (
                   <MenuItem key={materia.id_disciplina} value={materia.id_disciplina}>
                     {materia.descricao_disciplina}
                   </MenuItem>
-                ))}
+                ))} */}
+
+                {materias.length === 0 ? ( 
+                  <MenuItem key={"Sem-Materia"} value={"Sem-Materia"}>
+                    Sem matéria
+                  </MenuItem>
+                ) : ( 
+                  materias.map((materia) => (
+                    <MenuItem key={materia.id_disciplina} value={materia.id_disciplina}>
+                      {materia.descricao_disciplina}
+                    </MenuItem>
+                  ))
+                )}
               </Select>
 
             </FormControl>
