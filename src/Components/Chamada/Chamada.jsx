@@ -184,7 +184,7 @@ const Chamada = () => {
     // ) : ( )};
     <div className="container-pagina">
       <div className="header-usuarios">
-        <h2>Chamadas - {semestre}</h2>
+        <h2>Chamadas - {semestre[0]}</h2>
         <div className="reader-area">
           <div className="filtros-header">
             <select
