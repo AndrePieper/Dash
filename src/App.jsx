@@ -28,7 +28,7 @@ import CadastroTurma from './Components/Turmas/CadastroTurma';
 import EditarTurma from './Components/Turmas/EditarTurma';
 
 import Semestres from './Components/Semestres/Semestres';
-import CadastroSemestre from './Components/Semestres/cadastroSemestre';
+import CadastroSemestre from './Components/Semestres/CadastroSemestre';
 import EditarSemestre from './Components/Semestres/EditarSemestre';
 
 const App = () => {
