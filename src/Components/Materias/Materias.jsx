@@ -54,7 +54,7 @@ const Materias = () => {
   return (
     <>
       <div className="header-usuarios">
-        <h2>Matérias - {semestre}</h2>
+        <h2>Matérias - {semestre[0]}</h2>
       </div>
 
       <ModaisChamada

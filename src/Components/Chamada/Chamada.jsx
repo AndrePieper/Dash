@@ -142,6 +142,46 @@ const Chamada = () => {
   };
 
   return (
+    // {chamadas.length === 0 ? (
+    //   <div className="container-pagina">
+    //     <div className="header-usuarios">
+    //       <h2>Chamadas - {semestre}</h2>
+    //       <div className="reader-area">
+    //         <div className="filtros-header">
+    //           <select
+    //             value={filtroMateria}
+    //             onChange={(e) => setFiltroMateria(e.target.value)}
+    //             aria-label="Filtro por matéria"
+    //           >
+    //             <option value="">Todas as matérias</option>
+    //             {materias.map((m, index) => (
+    //               <option key={m.id || index} value={m.descricao_disciplina || ""}>
+    //                 {m.descricao_disciplina || `Matéria ${index}`}
+    //               </option>
+    //             ))}
+    //           </select>
+    //           <input
+    //             type="date"
+    //             value={filtroData}
+    //             onChange={(e) => setFiltroData(e.target.value)}
+    //             aria-label="Filtro por data"
+    //           />
+    //           <button
+    //             className="botao-adicionar"
+    //             onClick={() => setAbrirModalSelecionarMateria(true)}
+    //             title="Nova Chamada"
+    //           >
+    //             <FaPlus />
+    //           </button>
+    //         </div>
+    //       </div>
+    //     </div>
+    //     {popup.show && <PopUpTopo message={popup.message} type={popup.type} />}
+    //     <div className="tabela-container">
+        
+    //     </div>
+    //   </div>
+    // ) : ( )};
     <div className="container-pagina">
       <div className="header-usuarios">
         <h2>Chamadas - {semestre}</h2>
