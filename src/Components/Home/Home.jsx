@@ -69,7 +69,7 @@ useEffect(() => {
         .then((res) => res.json())
         .then((data) => {
           setChamadas(data.slice(0, 10));
-          setInfo(data.slice(0, 10000));
+          setInfo(data.slice(0, 20000));
         })
         .catch((err) => console.error("Erro ao buscar chamadas:", err));
     } catch (e) {

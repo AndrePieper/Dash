@@ -231,6 +231,8 @@ h1, h2, h3, div, p, input, option, label {
   transition: background-color 0.3s ease;
 }
 
+
+
 .botao-paginacao:hover:not(.desabilitado) {
   background-color: #45a049;
 }

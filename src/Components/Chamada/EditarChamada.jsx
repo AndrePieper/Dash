@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
+import { FaPlus, FaTrash, FaPrint } from "react-icons/fa";
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import {
   Typography,
   Button,
@@ -12,7 +14,6 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import { Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logo from "/src/assets/grupo-fasipe.png";
@@ -389,7 +390,7 @@ const imprimirChamada = () => {
                       setModalRemocaoOpen(true);
                     }}
                   >
-                    <DeleteIcon />
+                    <FaTrash />
                   </IconButton>
                 )}
               </Box>
@@ -399,46 +400,48 @@ const imprimirChamada = () => {
         ))}
       </List>
 
-      <Box display="flex" justifyContent="center" mt={2} gap={2}>
-        <Button
-          variant="outlined"
-          disabled={paginaAtual === 1}
-          onClick={() => setPaginaAtual(paginaAtual - 1)}
-        >
-          Anterior
-        </Button>
-        <Typography style={{ display: "flex", alignItems: "center" }}>
-          Página {paginaAtual} de {totalPaginas}
-        </Typography>
-        <Button
-          variant="outlined"
-          disabled={paginaAtual === totalPaginas}
-          onClick={() => setPaginaAtual(paginaAtual + 1)}
-        >
-          Próxima
-        </Button>
-      </Box>
+      <div className="paginacao-container">
+      
+        
 
-      <Button
-        variant="contained"
-        color="success"
-        startIcon={<AddIcon />}
-        style={{ marginTop: "20px" }}
-        onClick={abrirModal}
-      >
-        Adicionar Aluno
-      </Button>
-      {/* Botão só habilita se nomeProfessor estiver carregado */}
-      <Button
-        variant="outlined"
-        color="primary"
-        style={{ marginTop: "10px", marginLeft: "10px" }}
-        onClick={imprimirChamada}
-        disabled={!nomeProfessor}
-        title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
-      >
-        Imprimir Chamada
-      </Button>
+        <button
+          onClick={() => setPaginaAtual(paginaAtual - 1)}
+          disabled={paginaAtual === 1}
+          className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+        >
+          <FiArrowLeft size={20} />
+        </button>
+
+        <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
+
+        <button
+          onClick={() => setPaginaAtual(paginaAtual + 1)}
+          isabled={paginaAtual === totalPaginas}
+          className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+        >
+          <FiArrowRight size={20} />
+        </button>
+      </div>
+        <Button
+          variant="contained"
+          color="success"
+          startIcon={<FaPlus />}
+          // style={{ marginTop: "20px" }}
+          onClick={abrirModal}
+        >
+          Adicionar Aluno
+        </Button>
+        {/* Botão só habilita se nomeProfessor estiver carregado */}
+        <Button
+          // variant="outlined"
+          // color="primary"
+          style={{ marginLeft: "10px" }}
+          onClick={imprimirChamada}
+          disabled={!nomeProfessor}
+          title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
+        >
+          <FaPrint size={30}/>
+        </Button>
 
       {/* Modal de adicionar */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
