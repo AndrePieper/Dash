@@ -370,7 +370,7 @@ img.onload = () => {
  
 
 
-    const presentesData = alunosPresentes
+    const presentesData = alunosOrdenados
       .filter((aluno) => aluno.status === 1)
       .map((aluno) => [aluno.id_aluno, aluno.aluno]);
 
