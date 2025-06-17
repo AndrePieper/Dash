@@ -124,9 +124,9 @@ const buscarChamada = () => {
   const horaInicio = formatarHora(dataHoraInicio);
   const horaFim = formatarHora(dataHoraFim);
 
-  console.log("📆 Data formatada:", dataFormatada);
-  console.log("⏰ Hora início:", horaInicio);
-  console.log("⏱️ Hora fim:", horaFim);
+  // console.log("📆 Data formatada:", dataFormatada);
+  // console.log("⏰ Hora início:", horaInicio);
+  // console.log("⏱️ Hora fim:", horaFim);
 
   setChamadaInfo({
     ...data,
