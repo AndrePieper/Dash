@@ -101,7 +101,7 @@ const buscarChamada = () => {
       return res.json();
     })
     .then((data) => {
-  console.log("📦 Dados da chamada recebidos:", data);
+  console.log(data);
 
   const dataHoraInicio = new Date(data.data_hora_inicio);
   const dataHoraFim = new Date(data.data_hora_final);
@@ -124,12 +124,10 @@ const buscarChamada = () => {
   const horaInicio = formatarHora(dataHoraInicio);
   const horaFim = formatarHora(dataHoraFim);
 
-  console.log("📆 Data formatada:", dataFormatada);
-  console.log("⏰ Hora início:", horaInicio);
-  console.log("⏱️ Hora fim:", horaFim);
 
   setChamadaInfo({
     ...data,
+    descricao_disciplina: data.descricao,
     dataFormatada,
     horaInicio,
     horaFim,
@@ -207,7 +205,7 @@ const buscarChamada = () => {
         return res.json();
       })
       .then((data) => {
-        const alunosOrdenados = [...data].sort((a, b) => a.nome.localeCompare(b.nome));
+        const alunosOrdenados = [...data].sort((a, b) => a.aluno.localeCompare(b.aluno));
         setAlunosFaltantes(alunosOrdenados);
         setAlunosSelecionados([]);
         setModalOpen(true);
@@ -257,7 +255,7 @@ const buscarChamada = () => {
         const novosFormatados = novos.map((a) => ({
           id_aluno: a.id_aluno,
           status: 1,
-          Aluno: { nome: a.nome },
+          Aluno: { aluno: a.aluno },
         }));
 
         setAlunosPresentes((prev) => {
@@ -306,32 +304,41 @@ const imprimirChamada = () => {
     ? dataHoraFim.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
     : "";
 
-  img.onload = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    const logoBase64 = canvas.toDataURL("image/png");
+img.onload = () => {
+  const canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+  const logoBase64 = canvas.toDataURL("image/png");
 
-    doc.addImage(logoBase64, "PNG", 10, 10, 60, 25);
+  const alturaTexto = 21; 
+  const posX = 10;
+  const posY = 20;
+  const proporcao = img.width / img.height;
+  const larguraLogo = alturaTexto * proporcao;
 
-    doc.setFontSize(16);
-    doc.text(`Relatório da Chamada nº ${chamadaInfo.id || ""}`, 80, 20);
+  doc.addImage(logoBase64, "PNG", posX, posY, larguraLogo, alturaTexto);
 
-    doc.setFontSize(12);
-    doc.text(`Professor: ${nomeProfessor || ""}`, 80, 30);
-    doc.text(`Data: ${dataFormatada}`, 80, 36);
-    doc.text(`Início: ${horaInicio}`, 80, 42);
-    doc.text(`Fim: ${horaFim}`, 80, 48);
+  doc.setFontSize(16);
+  doc.text(`Relatório da Chamada nº ${chamadaInfo.id || ""}`, 80, 20);
 
-    let startY = 60;
-    doc.setFontSize(14);
-    doc.text("Alunos Presentes", 14, startY);
+  doc.setFontSize(12);
+  doc.text(`Professor: ${nomeProfessor || ""}`, 80, 30);
+ doc.text(`Disciplina: ${chamadaInfo.descricao_disciplina || ""}`, 80, 36);
+  doc.text(`Data: ${dataFormatada}`, 80, 42);
+  doc.text(`Início: ${horaInicio}`, 80, 48);
+  doc.text(`Fim: ${horaFim}`, 80, 54);
+
+  let startY = 60;
+  doc.setFontSize(14);
+  doc.text("Alunos Presentes", 14, startY);
+ 
+
 
     const presentesData = alunosPresentes
       .filter((aluno) => aluno.status === 1)
-      .map((aluno) => [aluno.id_aluno, aluno.Aluno.nome]);
+      .map((aluno) => [aluno.id_aluno, aluno.aluno]);
 
     autoTable(doc, {
       startY: startY + 4,
@@ -373,7 +380,7 @@ const imprimirChamada = () => {
                 <Typography
                   style={{ width: '300px' }}
                 >
-                  {aluno.Aluno.nome}
+                  {aluno.aluno}
                 </Typography>
                 <Typography
                   style={{ width: 100, textAlign: "center" }}
@@ -459,7 +466,7 @@ const imprimirChamada = () => {
                   onChange={() => toggleAlunoSelecionado(aluno.id_aluno)}
                 />
               }
-              label={aluno.nome}
+              label={aluno.aluno}
             />
           ))}
           <Box mt={2} display="flex" justifyContent="space-between">
@@ -478,7 +485,7 @@ const imprimirChamada = () => {
         <Box sx={styleModal}>
           <Typography variant="h6">
             Deseja remover a presença do aluno{" "}
-            <strong>{alunoParaRemover?.Aluno?.nome}</strong>?
+            <strong>{alunoParaRemover?.Aluno?.aluno}</strong>?
           </Typography>
           <Box mt={2} display="flex" justifyContent="space-between">
             <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button>
