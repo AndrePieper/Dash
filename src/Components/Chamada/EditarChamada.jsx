@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { FaPlus, FaTrash, FaPrint } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
@@ -49,6 +49,8 @@ const EditarChamada = () => {
   const [nomeProfessor, setNomeProfessor] = useState(null);
 
   const [paginaAtual, setPaginaAtual] = useState(1);
+  const [ordemAscendente, setOrdemAscendente] = useState(true);
+  const [ordenarPor, setOrdenarPor] = useState(null);
 
   let registrosPorPagina; 
   if (screen.height >= 769 && screen.height <= 1079) {
@@ -61,11 +63,38 @@ const EditarChamada = () => {
     registrosPorPagina = 5
   }
 
-  const totalPaginas = Math.ceil(alunosPresentes.length / registrosPorPagina);
-  const alunosPaginados = alunosPresentes.slice(
-    (paginaAtual - 1) * registrosPorPagina,
-    paginaAtual * registrosPorPagina
-  );
+  
+  const alunosOrdenados = useMemo(() => {
+    
+    return [...alunosPresentes].sort((a, b) => {
+      let valA = a['aluno'];
+      let valB = b['aluno'];
+      
+      if (typeof valA === 'string') valA = valA.toLowerCase();
+      if (typeof valB === 'string') valB = valB.toLowerCase();
+      
+      if (valA > valB) return ordemAscendente ? 1 : -1;
+      if (valA < valB) return ordemAscendente ? -1 : 1;
+      return 0;
+    });
+    }, [alunosPresentes, ordemAscendente]);
+    
+    const totalPaginas = Math.ceil(alunosOrdenados.length / registrosPorPagina);
+    const alunosPaginados = alunosOrdenados.slice(
+      (paginaAtual - 1) * registrosPorPagina,
+      paginaAtual * registrosPorPagina
+    );
+    // Atualiza a ordenação
+    // const handleOrdenar = (campo) => {
+    //   if (ordenarPor === campo) {
+    //     setOrdemAscendente(!ordemAscendente);
+    //   } else {
+    //     setOrdenarPor(campo);
+    //     setOrdemAscendente(true);
+    //   }
+    // };
+
+
 
   const token = localStorage.getItem("token");
 
