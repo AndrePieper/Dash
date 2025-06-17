@@ -63,7 +63,7 @@ const Home = () => {
       const mes = data.toLocaleDateString("pt-BR", {
         month: "short",
       });
-      const materia = c.descricao || "—";
+      const materia = c.descricao_disciplina || "—";
 
       porDia[diaSemana] = (porDia[diaSemana] || 0) + 1;
       porMes[mes] = (porMes[mes] || 0) + 1;
@@ -97,6 +97,8 @@ const Home = () => {
   };
 
   const agrupado = agruparChamadas(info);
+
+  console.log(semestre)
 
   return (
     <Box className="home-container">
@@ -179,7 +181,7 @@ const Home = () => {
                   {chamada.nome || "—"}
                 </Box>
                 <Box className="coluna disciplina">
-                  {chamada.descricao || "—"}
+                  {chamada.descricao_disciplina || "—"}
                 </Box>
                 <Box className="coluna hora">
                   {new Date(
