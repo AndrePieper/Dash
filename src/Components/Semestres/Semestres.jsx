@@ -170,7 +170,7 @@ const Semestres = () => {
   return (
     <>
       <div className="header-usuarios">
-        <h2>Cadastro de Semestres</h2>
+        <h2>Semestres</h2>
       </div>
 
       {popup.show && (

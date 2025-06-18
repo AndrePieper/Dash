@@ -181,7 +181,7 @@ const Disciplinas = () => {
   return (
     <>
       <div className="header-usuarios">
-        <h2>Cadastro de Disciplinas</h2>
+        <h2>Disciplinas</h2>
 
         <div className="filtros-usuarios">
           <input

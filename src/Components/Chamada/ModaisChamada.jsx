@@ -74,7 +74,23 @@ const ModaisChamada = ({
       interval = setInterval(atualizarQRCode, 5000);
     }
 
+    // ---- VERIFICAR SE O NAVEGAR ESTÁ COM PERMISSÕES DE LOCALIZAÇÃO ----
+    // if (navigator.permissions) {
+    //   navigator.permissions.query({ name: "geolocation" }).then((result) => {
+    //     console.log("Estado da permissão:", result.state);
+  
+    //     if (result.state === "denied") {
+    //       alert("Permissão de localização negada. Vá nas configurações do navegador para permitir.");
+    //     }
+  
+    //     result.onchange = () => {
+    //       console.log("Nova permissão:", result.state);
+    //     };
+    //   });
+    // }
+
     return () => clearInterval(interval);
+
   }, [modalQRCodeAberto, qrCodeData, localizacao]);
 
   const confirmarMateriaSelecionada = () => {
@@ -120,17 +136,19 @@ const ModaisChamada = ({
             setModalQRCodeAberto(true);
           })
           .catch(() => {});
+          console.log("Precisão da localização:", position.coords.accuracy, "metros");
       },
       (error) => {
         alert("Erro ao obter localização: " + error.message);
-      }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // Na teoria isso aqui ajudaria a pegar uma loc mais precisa / Na prática não funciona
     );
   };
-
-
+  
+  
   const abrirConfirmarEncerramento = () => setAbrirModalConfirmarEncerramento(true);
   const cancelarEncerramento = () => setAbrirModalConfirmarEncerramento(false);
-
+  
   const confirmarEncerramento = () => {
     if (!idChamadaCriada) return cancelarEncerramento();
 
@@ -200,7 +218,8 @@ const ModaisChamada = ({
       },
       (error) => {
         console.log("Erro ao obter localização: " + error.message);
-      }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // Na teoria isso aqui ajudaria a pegar uma loc mais precisa / Na prática não funciona
     );
   };
 
