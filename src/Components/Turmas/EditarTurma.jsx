@@ -105,7 +105,7 @@ const EditarTurma = () => {
     })
       .then(res => res.json())
       .then(data => {
-        setSemestre(data.semestre_curso); // Agora o semestre será o valor direto
+        setSemestre(data.semestre_curso);
         setCurso(data.id_curso);
         setStatus(data.status.toString());
       })
@@ -275,14 +275,29 @@ const EditarTurma = () => {
   const abrirModalAdicionarDisciplina = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('https://projeto-iii-4.vercel.app/disciplinas', {
+      const res = await fetch(`https://projeto-iii-4.vercel.app/disciplinas/?id_curso=${curso}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      if (!res.ok) {
+        if (res.status === 404) {
+          console.log("Sem disciplinas deste curso")
+          setPopup({
+            show: true,
+            message: "Não existe disciplina cadastrada para este curso.",
+            type: "error",
+          });
+          setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+          
+          setTodasDisciplinas([])
+        }
+        throw new Error("Erro ao excluir aluno da turma")
+      };
       const data = await res.json();
-
+      console.log('teste')
       setTodasDisciplinas(data);
       setModalData({ tipo: 'adicionarDisciplina' });
     } catch (error) {
+      setTodasDisciplinas([])
       console.error("Erro ao buscar disciplinas disponíveis:", error);
     }
   };
@@ -345,7 +360,6 @@ const EditarTurma = () => {
   const handleProximaPaginaDisciplina = () => {
     if (paginaAtualDisciplina < totalPaginasDisciplina) setPaginaAtualDisciplina(paginaAtualDisciplina + 1);
   };
-
 
 
   return (
@@ -660,7 +674,12 @@ const EditarTurma = () => {
             />
             <div className="lista-disciplinas-disponiveis">
 
-              {todasDisciplinas
+            {todasDisciplinas.length === 0 ? (
+              <input>
+                Nenhuma disciplina encontrada.
+              </input>
+            ) : (
+              todasDisciplinas
                 .filter(d => d.descricao.toLowerCase().includes(filtroNome.toLowerCase()))
                 .map((disciplina) => (
                   <label key={disciplina.id} style={{ display: 'flex', padding: '5px' }}>
@@ -681,7 +700,8 @@ const EditarTurma = () => {
                     {disciplina.descricao}
                   </label>
                 ))
-              }
+            )}
+
             </div>
           </Modal>
         )}
