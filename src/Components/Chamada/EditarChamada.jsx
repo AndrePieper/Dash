@@ -230,10 +230,12 @@ const buscarChamada = () => {
     })
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao buscar alunos faltantes.");
+        console.log(res)
         return res.json();
       })
       .then((data) => {
-        const alunosOrdenados = [...data].sort((a, b) => a.aluno.localeCompare(b.aluno));
+        console.log('teste')
+        const alunosOrdenados = [...data].sort((a, b) => a.nome.localeCompare(b.nome));
         setAlunosFaltantes(alunosOrdenados);
         setAlunosSelecionados([]);
         setModalOpen(true);
@@ -283,7 +285,7 @@ const buscarChamada = () => {
         const novosFormatados = novos.map((a) => ({
           id_aluno: a.id_aluno,
           status: 1,
-          Aluno: { aluno: a.aluno },
+          Aluno: { nome: a.nome },
         }));
 
         setAlunosPresentes((prev) => {
@@ -366,7 +368,7 @@ img.onload = () => {
 
     const presentesData = alunosOrdenados
       .filter((aluno) => aluno.status === 1)
-      .map((aluno) => [aluno.id_aluno, aluno.aluno]);
+      .map((aluno) => [aluno.id_aluno, aluno.nome]);
 
     autoTable(doc, {
       startY: startY + 4,
@@ -408,7 +410,7 @@ img.onload = () => {
                 <Typography
                   style={{ width: '300px' }}
                 >
-                  {aluno.aluno}
+                  {aluno.nome}
                 </Typography>
                 <Typography
                   style={{ width: 100, textAlign: "center" }}
@@ -494,7 +496,7 @@ img.onload = () => {
                   onChange={() => toggleAlunoSelecionado(aluno.id_aluno)}
                 />
               }
-              label={aluno.aluno}
+              label={aluno.nome}
             />
           ))}
           <Box mt={2} display="flex" justifyContent="space-between">
@@ -513,7 +515,7 @@ img.onload = () => {
         <Box sx={styleModal}>
           <Typography variant="h6">
             Deseja remover a presença do aluno{" "}
-            <strong>{alunoParaRemover?.Aluno?.aluno}</strong>?
+            <strong>{alunoParaRemover?.Aluno?.nome}</strong>?
           </Typography>
           <Box mt={2} display="flex" justifyContent="space-between">
             <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button>
