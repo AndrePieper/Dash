@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { FaPlus, FaTrash, FaPrint } from "react-icons/fa";
+import { FaPlus, FaTrash, FaPrint, FaSearchLocation } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import {
   Typography,
@@ -417,6 +417,14 @@ return (
               >
                 {aluno.status === 1 ? "Presente" : "Removido"}
               </Typography>
+              <Typography style={{ width: '200px' }}>{aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}</Typography>
+              <div>
+                <IconButton
+                  edge="end"
+                  style={{ marginRight: '20px' }}
+                >
+                  <FaSearchLocation color="#1155ff"/>
+                </IconButton>
               {aluno.status === 1 && (
                 <IconButton
                   edge="end"
@@ -428,6 +436,7 @@ return (
                   <FaTrash />
                 </IconButton>
               )}
+              </div>
             </Box>
           </ListItem>
           <Divider />
