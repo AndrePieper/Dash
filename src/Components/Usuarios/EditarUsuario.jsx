@@ -176,6 +176,14 @@ const EditarUsuario = () => {
             required
           />
 
+          <label>Senha</label>
+          <input
+            type="password"
+            value={usuario.senha}
+            onChange={(e) => setUsuario({ ...usuario, senha: e.target.value })}
+            required
+          />
+
           <label>Tipo de Usuário</label>
           <select
             value={usuario.tipo}

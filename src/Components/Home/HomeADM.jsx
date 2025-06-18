@@ -44,7 +44,9 @@ const Home = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const idProfessor = localStorage.getItem("id_professor");
-
+    
+    buscarSemestre();
+    
     if (token && idProfessor) {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
@@ -70,7 +72,6 @@ const Home = () => {
       }
     }
 
-    buscarSemestre();
   }, []);
 
   const agruparChamadas = (chamadas) => {
