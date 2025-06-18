@@ -167,7 +167,7 @@ const buscarChamada = () => {
     .catch((err) => setMensagemErro(err.message));
 };
 
-
+{/* mexer aqui ========================================================= */}
 
   const buscarAlunosPresentes = () => {
     fetch(`https://projeto-iii-4.vercel.app/chamada/presencas/?id_chamada=${id}`, {
@@ -418,7 +418,8 @@ return (
                 {aluno.status === 1 ? "Presente" : "Removido"}
               </Typography>
               <Typography style={{ width: '200px' }}>{aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}</Typography>
-              <div>
+              {/* mexer aqui ========================================================= */}
+              <div> 
                 <IconButton
                   edge="end"
                   style={{ marginRight: '20px' }}
