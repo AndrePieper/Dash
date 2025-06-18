@@ -51,6 +51,8 @@ const EditarChamada = () => {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [ordemAscendente, setOrdemAscendente] = useState(true);
   const [ordenarPor, setOrdenarPor] = useState(null);
+  const [filtroNome, setFiltroNome] = useState('');
+
 
   let registrosPorPagina; 
   if (screen.height >= 769 && screen.height <= 1079) {
@@ -230,12 +232,11 @@ const buscarChamada = () => {
     })
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao buscar alunos faltantes.");
-        console.log(res)
         return res.json();
       })
       .then((data) => {
-        console.log('teste')
-        const alunosOrdenados = [...data].sort((a, b) => a.nome.localeCompare(b.nome));
+        const alunosOrdenados = [...data].sort((a, b) =>
+        (a.aluno || a.nome || "").localeCompare(b.aluno || b.nome || ""));
         setAlunosFaltantes(alunosOrdenados);
         setAlunosSelecionados([]);
         setModalOpen(true);
@@ -285,7 +286,7 @@ const buscarChamada = () => {
         const novosFormatados = novos.map((a) => ({
           id_aluno: a.id_aluno,
           status: 1,
-          Aluno: { nome: a.nome },
+          Aluno: { aluno: a.aluno },
         }));
 
         setAlunosPresentes((prev) => {
@@ -368,7 +369,7 @@ img.onload = () => {
 
     const presentesData = alunosOrdenados
       .filter((aluno) => aluno.status === 1)
-      .map((aluno) => [aluno.id_aluno, aluno.nome]);
+      .map((aluno) => [aluno.id_aluno, aluno.aluno]);
 
     autoTable(doc, {
       startY: startY + 4,
@@ -391,142 +392,160 @@ img.onload = () => {
     alert("Erro ao carregar a imagem da logo.");
   };
 };
+const alunosFiltrados = alunosFaltantes.filter(a =>
+  (a.nome || '').toLowerCase().includes(filtroNome.toLowerCase())
+);
 
-  return (
-    <div className="pagina-padrao">
-      <header className="header-verde">
-        <h2>Editar Chamada</h2>
-      </header>
+return (
+  <div className="pagina-padrao">
+    <header className="header-verde">
+      <h2>Editar Chamada</h2>
+    </header>
 
-      {mensagemErro && <p style={{ color: "red" }}>{mensagemErro}</p>}
+    {mensagemErro && <p style={{ color: "red" }}>{mensagemErro}</p>}
 
-      <Typography variant="h6">Alunos Presentes:</Typography>
-      <List>
-        {alunosPaginados.map((aluno) => (
-          <div key={aluno.id_aluno}>
-            <ListItem>
-              <Box display="flex" justifyContent="space-between" width="100%">
-                
-                <Typography
-                  style={{ width: '300px' }}
+    <Typography variant="h6">Alunos Presentes:</Typography>
+    <List>
+      {alunosPaginados.map((aluno) => (
+        <div key={aluno.id_aluno}>
+          <ListItem>
+            <Box display="flex" justifyContent="space-between" width="100%">
+              <Typography style={{ width: '300px' }}>{aluno.aluno}</Typography>
+              <Typography
+                style={{ width: 100, textAlign: "center" }}
+                color={aluno.status === 1 ? "green" : "gray"}
+              >
+                {aluno.status === 1 ? "Presente" : "Removido"}
+              </Typography>
+              {aluno.status === 1 && (
+                <IconButton
+                  edge="end"
+                  onClick={() => {
+                    setAlunoParaRemover(aluno);
+                    setModalRemocaoOpen(true);
+                  }}
                 >
-                  {aluno.nome}
-                </Typography>
-                <Typography
-                  style={{ width: 100, textAlign: "center" }}
-                  color={aluno.status === 1 ? "green" : "gray"}
-                >
-                  {aluno.status === 1 ? "Presente" : "Removido"}
-                </Typography>
+                  <FaTrash />
+                </IconButton>
+              )}
+            </Box>
+          </ListItem>
+          <Divider />
+        </div>
+      ))}
+    </List>
 
-                {aluno.status === 1 && (
-                  <IconButton
-                    edge="end"
-                    onClick={() => {
-                      setAlunoParaRemover(aluno);
-                      setModalRemocaoOpen(true);
-                    }}
-                  >
-                    <FaTrash />
-                  </IconButton>
-                )}
-              </Box>
-            </ListItem>
-            <Divider />
-          </div>
-        ))}
-      </List>
+    <div className="paginacao-container">
+      <button
+        onClick={() => setPaginaAtual(paginaAtual - 1)}
+        disabled={paginaAtual === 1}
+        className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+      >
+        <FiArrowLeft size={20} />
+      </button>
 
-      <div className="paginacao-container">
-      
-        
+      <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
 
-        <button
-          onClick={() => setPaginaAtual(paginaAtual - 1)}
-          disabled={paginaAtual === 1}
-          className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
-        >
-          <FiArrowLeft size={20} />
-        </button>
-
-        <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
-
-        <button
-          onClick={() => setPaginaAtual(paginaAtual + 1)}
-          isabled={paginaAtual === totalPaginas}
-          className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
-        >
-          <FiArrowRight size={20} />
-        </button>
-      </div>
-        <Button
-          variant="contained"
-          color="success"
-          startIcon={<FaPlus />}
-          // style={{ marginTop: "20px" }}
-          onClick={abrirModal}
-        >
-          Adicionar Aluno
-        </Button>
-        {/* Botão só habilita se nomeProfessor estiver carregado */}
-        <Button
-          // variant="outlined"
-          // color="primary"
-          style={{ marginLeft: "10px" }}
-          onClick={imprimirChamada}
-          disabled={!nomeProfessor}
-          title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
-        >
-          <FaPrint size={30}/>
-        </Button>
-
-      {/* Modal de adicionar */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <Box sx={styleModal}>
-          <Typography variant="h6">Selecione alunos para adicionar:</Typography>
-          {alunosFaltantes.length === 0 && (
-            <Typography>Nenhum aluno faltante encontrado.</Typography>
-          )}
-          {alunosFaltantes.map((aluno) => (
-            <FormControlLabel
-              key={aluno.id_aluno}
-              control={
-                <Checkbox
-                  checked={alunosSelecionados.includes(aluno.id_aluno)}
-                  onChange={() => toggleAlunoSelecionado(aluno.id_aluno)}
-                />
-              }
-              label={aluno.nome}
-            />
-          ))}
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button variant="outlined" onClick={() => setModalOpen(false)}>
-              Cancelar
-            </Button>
-            <Button variant="contained" onClick={adicionarAlunos}>
-              Adicionar
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
-
-      {/* Modal de remover */}
-      <Modal open={modalRemocaoOpen} onClose={() => setModalRemocaoOpen(false)}>
-        <Box sx={styleModal}>
-          <Typography variant="h6">
-            Deseja remover a presença do aluno{" "}
-            <strong>{alunoParaRemover?.Aluno?.nome}</strong>?
-          </Typography>
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button>
-            <Button color="error" variant="contained" onClick={confirmarRemocaoAluno}>
-              Remover
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      <button
+        onClick={() => setPaginaAtual(paginaAtual + 1)}
+        disabled={paginaAtual === totalPaginas}
+        className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+      >
+        <FiArrowRight size={20} />
+      </button>
     </div>
-  );
+
+    <Button
+      variant="contained"
+      color="success"
+      startIcon={<FaPlus />}
+      onClick={abrirModal}
+    >
+      Adicionar Aluno
+    </Button>
+
+    <Button
+      style={{ marginLeft: "10px" }}
+      onClick={imprimirChamada}
+      disabled={!nomeProfessor}
+      title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
+    >
+      <FaPrint size={30} />
+    </Button>
+
+    {/* Modal de adicionar */}
+    <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+      <Box sx={styleModal}>
+        <Typography variant="h6" gutterBottom>
+          Adicionar alunos à chamada
+        </Typography>
+
+        <input
+          type="text"
+          placeholder="Buscar por nome"
+          value={filtroNome}
+          onChange={(e) => setFiltroNome(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '8px',
+            marginBottom: '10px',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        />
+
+        <div className="lista-alunos-disponiveis" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+          {alunosFiltrados.length === 0 ? (
+            <p>Nenhum aluno faltante encontrado.</p>
+          ) : (
+            alunosFiltrados.map((aluno) => (
+              <label key={aluno.id_aluno} style={{ display: 'flex', padding: '5px' }}>
+                <input
+                  type="checkbox"
+                  checked={alunosSelecionados.includes(aluno.id_aluno)}
+                  onChange={(e) =>
+                    setAlunosSelecionados((prev) =>
+                      e.target.checked
+                        ? [...prev, aluno.id_aluno]
+                        : prev.filter((id) => id !== aluno.id_aluno)
+                    )
+                  }
+                  style={{ marginRight: '10px' }}
+                />
+                {aluno.nome}
+              </label>
+            ))
+          )}
+        </div>
+
+        <Box display="flex" justifyContent="flex-end" mt={2} gap={2}>
+          <Button onClick={() => setModalOpen(false)} variant="outlined">
+            Cancelar
+          </Button>
+          <Button onClick={adicionarAlunos} variant="contained">
+            Adicionar
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
+
+    {/* Modal de remover */}
+    <Modal open={modalRemocaoOpen} onClose={() => setModalRemocaoOpen(false)}>
+      <Box sx={styleModal}>
+        <Typography variant="h6">
+          Deseja remover a presença do aluno{" "}
+          <strong>{alunoParaRemover?.aluno}</strong>?
+        </Typography>
+        <Box mt={2} display="flex" justifyContent="space-between">
+          <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button>
+          <Button color="error" variant="contained" onClick={confirmarRemocaoAluno}>
+            Remover
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
+  </div>
+);
 };
 
 export default EditarChamada;
