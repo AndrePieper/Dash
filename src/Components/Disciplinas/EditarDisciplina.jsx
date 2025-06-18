@@ -38,7 +38,7 @@ const EditarDisciplina = () => {
       });
 
       // Buscar dados da disciplina
-      fetch(`https://projeto-iii-4.vercel.app/disciplinas/${id}`, {
+      fetch(`https://projeto-iii-4.vercel.app/disciplinas/curso/?id=${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.json())

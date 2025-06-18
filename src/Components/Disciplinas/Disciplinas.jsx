@@ -69,7 +69,7 @@ const Disciplinas = () => {
 
     try {
 
-      const resDel = await fetch(`https://projeto-iii-4.vercel.app/disciplinas/${id}`, {
+      const resDel = await fetch(`https://projeto-iii-4.vercel.app/disciplinas/?id=${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,

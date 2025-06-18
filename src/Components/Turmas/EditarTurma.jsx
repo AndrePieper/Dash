@@ -275,7 +275,7 @@ const EditarTurma = () => {
   const abrirModalAdicionarDisciplina = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`https://projeto-iii-4.vercel.app/disciplinas/?id_curso=${curso}`, {
+      const res = await fetch(`https://projeto-iii-4.vercel.app/disciplinas/curso/?id_curso=${curso}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) {
