@@ -173,7 +173,6 @@ const EditarUsuario = () => {
             type="email"
             value={usuario.email}
             onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
-            required
           />
 
           <label>Senha</label>
@@ -181,7 +180,6 @@ const EditarUsuario = () => {
             type="password"
             value={usuario.senha}
             onChange={(e) => setUsuario({ ...usuario, senha: e.target.value })}
-            required
           />
 
           <label>Tipo de Usuário</label>
