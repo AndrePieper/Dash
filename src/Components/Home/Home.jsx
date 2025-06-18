@@ -90,7 +90,6 @@ useEffect(() => {
       )
         .then((res) => res.json())
         .then((data) => {
-          console.log("data")
           setChamadas(data.slice(0, 10));
           setInfo(data.slice(0, 20000));
         })

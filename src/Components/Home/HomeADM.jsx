@@ -62,7 +62,6 @@ const Home = () => {
           .then((data) => {
             setChamadas(data.slice(0, 10));
             setInfo(data.slice(0, 10000));
-            setSemestre(data.map(d => d.descricao_semestre));
           })
           .catch((err) =>
             console.error("Erro ao buscar chamadas:", err)
@@ -121,7 +120,6 @@ const Home = () => {
   };
 
   const agrupado = agruparChamadas(info);
-
 
   return (
     <Box className="home-container">

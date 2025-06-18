@@ -68,7 +68,7 @@ const CadastroUsuario = () => {
       <div className="tela-usuarios">
         <div className="container-form">
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} autoComplete="off">
               <label>Tipo</label>
               <select 
               id="tipo"
@@ -113,6 +113,7 @@ const CadastroUsuario = () => {
                 placeholder="Senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
+                autoComplete="new-password"
               />
               <br/>
             <button type="submit">Cadastrar</button>
