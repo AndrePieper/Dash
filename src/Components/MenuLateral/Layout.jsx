@@ -29,7 +29,6 @@ const Layout = () => {
 
   const [collapsed, setCollapsed] = useState(false);
 
-  // Função para alternar o menu lateral
   const toggleDrawer = () => {
     setCollapsed((prev) => !prev);
   };
@@ -102,7 +101,7 @@ const Layout = () => {
               <ListItemIcon className="menu-icon">
                 <DashboardIcon />
               </ListItemIcon>
-              {!collapsed && <ListItemText primary="Início" />}
+              {!collapsed && <ListItemText primary="Home" />}
             </ListItemButton>
           )}
 
