@@ -210,17 +210,29 @@ const buscarChamada = () => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
+        if (res.status === 404) {
+          setPopup({
+            show: true,
+            message: "Não existe presenças nesta chamada.",
+            type: "error",
+          });
+          setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+          throw new Error("404");
+        } 
         if (!res.ok) throw new Error("Erro ao buscar alunos da chamada.");
         return res.json();
       })
       .then(setAlunosPresentes)
       .catch((err) => {
-        setPopup({
-          show: true,
-          message: err.message || "Erro inesperado!",
-          type: "error",
-        });
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+        if(err.message != "404") {
+          console.log(err)
+          setPopup({
+            show: true,
+            message: err.message || "Erro inesperado!",
+            type: "error",
+          });
+          setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+        }
       });
   };
 
@@ -530,17 +542,47 @@ return (
                 {aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}
               </Typography>
               <div>
-                <IconButton
-                  edge="end"
-                  style={{ marginRight: '20px' }}
-                  onClick={() => {
-                    setAlunosSelecionados(aluno);
-                    setModalLocalizacaoAberto(true);
-                    buscarEndereco(aluno.latitude, aluno.longitude);
-                  }}
-                >
-                  <FaLocationDot color={aluno.proximo === 1 ? "#1155ff" : (aluno.data_hora_presenca ? "#ffa400" : "#ff0000")} /> { /* 1 - Próximo */ }
-                </IconButton>
+              <Tooltip
+                title={
+                  aluno.data_hora_presenca
+                    ? (aluno.proximo === 1
+                        ? "Localização próxima"
+                        : "Localização distante"
+                      )
+                    : "Sem localização"
+                }
+                arrow
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      fontSize: '1rem',
+                      maxWidth: 300,
+                      whiteSpace: 'pre-line',
+                    },
+                  },
+                }}
+              >
+                <span>
+                  <IconButton
+                    edge="end"
+                    style={{ marginRight: '20px' }}
+                    disabled={!aluno.data_hora_presenca}
+                    onClick={() => {
+                      setAlunosSelecionados(aluno);
+                      setModalLocalizacaoAberto(true);
+                      buscarEndereco(aluno.latitude, aluno.longitude);
+                    }}
+                  >
+                    <FaLocationDot
+                      color={
+                        aluno.data_hora_presenca
+                          ? (aluno.proximo === 1 ? "#1155ff" : "#ffa400")
+                          : "#ff0000"
+                      }
+                    />
+                  </IconButton>
+                </span>
+              </Tooltip>
                 {aluno.status === 1 ? (
                   <IconButton
                     edge="end"
