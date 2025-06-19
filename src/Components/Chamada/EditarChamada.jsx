@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { FaPlus, FaTrash, FaPrint, FaSearchLocation } from "react-icons/fa";
+import { FaPlus, FaTrash, FaPrint, FaSearchLocation, FaComment } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import {
   Typography,
@@ -11,6 +11,7 @@ import {
   Divider,
   Modal,
   Box,
+  Tooltip,
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
@@ -44,6 +45,7 @@ const EditarChamada = () => {
   const [alunosFaltantes, setAlunosFaltantes] = useState([]);
   const [alunosSelecionados, setAlunosSelecionados] = useState([]);
   const [alunoParaRemover, setAlunoParaRemover] = useState(null);
+  const [observacao, setObservacao] = useState(null);
   const [modalRemocaoOpen, setModalRemocaoOpen] = useState(false);
 
   const [nomeProfessor, setNomeProfessor] = useState(null);
@@ -192,11 +194,16 @@ const buscarChamada = () => {
   const confirmarRemocaoAluno = () => {
     if (!alunoParaRemover) return;
 
+    console.log(JSON.stringify({ observacao }))
     fetch(
       `https://projeto-iii-4.vercel.app/chamada/alunos/remover?id_chamada=${id}&id_aluno=${alunoParaRemover.id_aluno}`,
       {
         method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json" 
+        },
+        body: JSON.stringify({ observacao })
       }
     )
       .then((res) => {
@@ -417,26 +424,58 @@ return (
               >
                 {aluno.status === 1 ? "Presente" : "Removido"}
               </Typography>
-              <Typography style={{ width: '200px' }}>{aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}</Typography>
+              <Typography style={{ width: '200px', display: 'flex', justifyContent: 'center' }}>{aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}</Typography>
               {/* mexer aqui ========================================================= */}
               <div> 
-                <IconButton
-                  edge="end"
-                  style={{ marginRight: '20px' }}
-                >
-                  <FaSearchLocation color="#1155ff"/>
-                </IconButton>
-              {aluno.status === 1 && (
-                <IconButton
-                  edge="end"
-                  onClick={() => {
-                    setAlunoParaRemover(aluno);
-                    setModalRemocaoOpen(true);
-                  }}
-                >
-                  <FaTrash />
-                </IconButton>
-              )}
+                {aluno.proximo === 1 ? (
+                  <IconButton
+                    edge="end"
+                    style={{ marginRight: '20px' }}
+                  >
+                    <FaSearchLocation color="#1155ff"/>
+                  </IconButton>
+
+                ) : ( // Aluno ta longe
+                  <IconButton
+                    edge="end"
+                    style={{ marginRight: '20px' }}
+                  >
+                    <FaSearchLocation color="#ffa400"/>
+                  </IconButton>
+                )}
+                {aluno.status === 1 ? (
+                  <IconButton
+                    edge="end"
+                    onClick={() => {
+                      setAlunoParaRemover(aluno);
+                      setModalRemocaoOpen(true);
+                      setObservacao(null);
+                    }}
+                  >
+                    <FaTrash />
+                  </IconButton>
+                ) : (
+                  <Tooltip title={aluno.observacao || "Sem observação"} arrow
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          fontSize: '1rem',
+                          maxWidth: 300,
+                          whiteSpace: 'pre-line',
+                        },
+                      },
+                    }}
+                  >
+                    <span>
+                      <IconButton
+                        edge="end"
+                        tabIndex={10}
+                      >
+                        <FaComment />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                )}
               </div>
             </Box>
           </ListItem>
@@ -546,6 +585,17 @@ return (
           Deseja remover a presença do aluno{" "}
           <strong>{alunoParaRemover?.aluno}</strong>?
         </Typography>
+        <Box mt={2}>
+          <label>Motivo da remoção</label>
+          <input 
+            type="text" 
+            value={observacao} 
+            minLength={10} required
+            placeholder="Descreva o motivo da remoção"
+            onChange={(e) => setObservacao(e.target.value)}
+            style={{ width: "100%", height: "40px", marginTop: "4px" }}
+            /> 
+        </Box>
         <Box mt={2} display="flex" justifyContent="space-between">
           <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button>
           <Button color="error" variant="contained" onClick={confirmarRemocaoAluno}>
