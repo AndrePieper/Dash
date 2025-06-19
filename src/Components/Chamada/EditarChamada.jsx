@@ -18,7 +18,9 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logo from "/src/assets/grupo-fasipe.png";
+import PopUpTopo from '../PopUp/PopUpTopo';
 import "./EditarChamada.css";
+
 
 const styleModal = {
   position: "absolute",
@@ -41,6 +43,7 @@ const EditarChamada = () => {
 
   const [alunosPresentes, setAlunosPresentes] = useState([]);
   const [mensagemErro, setMensagemErro] = useState("");
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
   const [modalOpen, setModalOpen] = useState(false);
   const [alunosFaltantes, setAlunosFaltantes] = useState([]);
   const [alunosSelecionados, setAlunosSelecionados] = useState([]);
@@ -134,39 +137,44 @@ const buscarChamada = () => {
       return res.json();
     })
     .then((data) => {
-  console.log(data);
 
-  const dataHoraInicio = new Date(data.data_hora_inicio);
-  const dataHoraFim = new Date(data.data_hora_final);
+      const dataHoraInicio = new Date(data.data_hora_inicio);
+      const dataHoraFim = new Date(data.data_hora_final);
 
-  const formatarData = (data) => {
-    const dia = String(data.getDate()).padStart(2, '0');
-    const mes = String(data.getMonth() + 1).padStart(2, '0');
-    const ano = data.getFullYear();
-    return `${dia}/${mes}/${ano}`;
-  };
+      const formatarData = (data) => {
+        const dia = String(data.getDate()).padStart(2, '0');
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const ano = data.getFullYear();
+        return `${dia}/${mes}/${ano}`;
+      };
 
-  const formatarHora = (data) => {
-    const hora = String(data.getHours()).padStart(2, '0');
-    const minuto = String(data.getMinutes()).padStart(2, '0');
-    const segundo = String(data.getSeconds()).padStart(2, '0');
-    return `${hora}:${minuto}:${segundo}`;
-  };
+      const formatarHora = (data) => {
+        const hora = String(data.getHours()).padStart(2, '0');
+        const minuto = String(data.getMinutes()).padStart(2, '0');
+        const segundo = String(data.getSeconds()).padStart(2, '0');
+        return `${hora}:${minuto}:${segundo}`;
+      };
 
-  const dataFormatada = formatarData(dataHoraInicio);
-  const horaInicio = formatarHora(dataHoraInicio);
-  const horaFim = formatarHora(dataHoraFim);
+      const dataFormatada = formatarData(dataHoraInicio);
+      const horaInicio = formatarHora(dataHoraInicio);
+      const horaFim = formatarHora(dataHoraFim);
 
-  setChamadaInfo({
-    ...data,
-    descricao_disciplina: data.descricao,
-    dataFormatada,
-    horaInicio,
-    horaFim,
-  });
-})
-
-    .catch((err) => setMensagemErro(err.message));
+      setChamadaInfo({
+        ...data,
+        descricao_disciplina: data.descricao,
+        dataFormatada,
+        horaInicio,
+        horaFim,
+      });
+    })
+    .catch((err) => {
+      setPopup({
+        show: true,
+        message: err.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+    });
 };
 
 {/* mexer aqui ========================================================= */}
@@ -180,12 +188,24 @@ const buscarChamada = () => {
         return res.json();
       })
       .then(setAlunosPresentes)
-      .catch((err) => setMensagemErro(err.message));
+      .catch((err) => {
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+      });
   };
 
   useEffect(() => {
     if (!id) {
-      setMensagemErro("ID da chamada não foi fornecido.");
+      setPopup({
+        show: true,
+        message: "Erro na chamada.",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
       return;
     }
     buscarAlunosPresentes();
@@ -223,14 +243,24 @@ const buscarChamada = () => {
         buscarAlunosPresentes();
       })
       .catch((err) => {
-        setMensagemErro(err.message);
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
         setModalRemocaoOpen(false);
       });
   };
 
   const abrirModal = () => {
     if (!id_disciplina) {
-      setMensagemErro("ID da disciplina (turma) não fornecido.");
+      setPopup({
+        show: true,
+        message: "Erro na disciplina.",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
       return;
     }
 
@@ -248,7 +278,14 @@ const buscarChamada = () => {
         setAlunosSelecionados([]);
         setModalOpen(true);
       })
-      .catch((err) => setMensagemErro(err.message));
+      .catch((err) => {
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+      });
   };
 
   const toggleAlunoSelecionado = (id_aluno) => {
@@ -308,7 +345,14 @@ const buscarChamada = () => {
         setModalOpen(false);
         buscarAlunosPresentes();
       })
-      .catch((err) => setMensagemErro(err.message));
+      .catch((err) => {
+        setPopup({
+          show: true,
+          message: err.message || "Erro inesperado!",
+          type: "error",
+        });
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+      });
   };
 
 const imprimirChamada = () => {
@@ -409,6 +453,9 @@ return (
       <h2>Editar Chamada</h2>
     </header>
 
+    {popup.show && (
+      <PopUpTopo message={popup.message} type={popup.type} />
+    )}
     {mensagemErro && <p style={{ color: "red" }}>{mensagemErro}</p>}
 
     <Typography variant="h6">Alunos Presentes:</Typography>
@@ -420,7 +467,7 @@ return (
               <Typography style={{ width: '300px' }}>{aluno.aluno}</Typography>
               <Typography
                 style={{ width: 100, textAlign: "center" }}
-                color={aluno.status === 1 ? "green" : "gray"}
+                color={aluno.status === 1 ? "green" : "#c40000"}
               >
                 {aluno.status === 1 ? "Presente" : "Removido"}
               </Typography>
@@ -590,7 +637,6 @@ return (
           <input 
             type="text" 
             value={observacao} 
-            minLength={10} required
             placeholder="Descreva o motivo da remoção"
             onChange={(e) => setObservacao(e.target.value)}
             style={{ width: "100%", height: "40px", marginTop: "4px" }}
@@ -598,7 +644,20 @@ return (
         </Box>
         <Box mt={2} display="flex" justifyContent="space-between">
           <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button>
-          <Button color="error" variant="contained" onClick={confirmarRemocaoAluno}>
+          <Button color="error" variant="contained" 
+            onClick={() => {
+              if (!observacao || observacao.length < 10) {
+                setPopup({
+                  show: true,
+                  message: "Por favor, insira uma observação com pelo menos 10 caracteres.",
+                  type: "error",
+                });
+                setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+                return;
+              }
+              confirmarRemocaoAluno
+            }
+          }>
             Remover
           </Button>
         </Box>
