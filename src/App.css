@@ -20,8 +20,8 @@
   --botao-adicionar-hover: #00B341;
   --botao-adicionar-shadow: #00000033;
 
-  --botao-salvar-cadastrar: purple; /*TODOS OS BOTÕES PARA SALVAR CADASTRO/ALTERAÇÕES*/
-  --botao-salvar-cadastrar-hover: #cf00cf;
+  --botao-salvar-cadastrar: rgb(209, 129, 8); /*TODOS OS BOTÕES PARA SALVAR CADASTRO/ALTERAÇÕES*/
+  --botao-salvar-cadastrar-hover: rgb(155, 95, 5);
 
   --botao-excluir-registro: #bb0000; /*TODOS OS BOTÕES DE EXCLUIR*/
   --botao-excluir-registro-hover: #8B0000;
