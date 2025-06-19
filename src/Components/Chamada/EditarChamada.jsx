@@ -3,6 +3,10 @@ import { useParams, useLocation } from "react-router-dom";
 import { FaPlus, FaTrash, FaPrint, FaSearchLocation, FaComment } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Typography,
   Button,
   List,
@@ -47,6 +51,7 @@ const EditarChamada = () => {
   const [alunoParaRemover, setAlunoParaRemover] = useState(null);
   const [observacao, setObservacao] = useState(null);
   const [modalRemocaoOpen, setModalRemocaoOpen] = useState(false);
+  const [modalLocalizacaoAberto, setModalLocalizacaoAberto] = useState(false);
 
   const [nomeProfessor, setNomeProfessor] = useState(null);
 
@@ -67,7 +72,8 @@ const EditarChamada = () => {
     registrosPorPagina = 5
   }
 
-  
+  const apiKey = "rPPHMWX4lFakI0O6HIqTzve6TVXjKma9";
+
   const alunosOrdenados = useMemo(() => {
     
     return [...alunosPresentes].sort((a, b) => {
@@ -124,6 +130,12 @@ const EditarChamada = () => {
   }
 }, [id, token]);
 
+const [enderecoAluno, setEnderecoAluno] = React.useState('Carregando endereço...');
+React.useEffect(() => {
+  if (modalLocalizacaoAberto && alunosSelecionados?.latitude && alunosSelecionados?.longitude) {
+    buscarEndereco(alunosSelecionados.latitude, alunosSelecionados.longitude).then(setEnderecoAluno);
+  }
+}, [modalLocalizacaoAberto, alunosSelecionados]);
 
 const buscarChamada = () => {
   fetch(`https://projeto-iii-4.vercel.app/chamadas/${id}`, {
@@ -168,8 +180,6 @@ const buscarChamada = () => {
 
     .catch((err) => setMensagemErro(err.message));
 };
-
-{/* mexer aqui ========================================================= */}
 
   const buscarAlunosPresentes = () => {
     fetch(`https://projeto-iii-4.vercel.app/chamada/presencas/?id_chamada=${id}`, {
@@ -251,7 +261,7 @@ const buscarChamada = () => {
       .catch((err) => setMensagemErro(err.message));
   };
 
-  const toggleAlunoSelecionado = (id_aluno) => {
+  const toggleAlunosSelecionados = (id_aluno) => {
     setAlunosSelecionados((prev) =>
       prev.includes(id_aluno)
         ? prev.filter((id) => id !== id_aluno)
@@ -310,6 +320,28 @@ const buscarChamada = () => {
       })
       .catch((err) => setMensagemErro(err.message));
   };
+const buscarEndereco = async (lat, lon) => {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+    );
+    const data = await res.json();
+
+    const address = data.address || {};
+
+    const rua = address.road || address.pedestrian || address.cycleway || address.footway || '';
+    const bairro = address.neighbourhood || address.suburb || '';
+    const cidade = address.city || address.town || address.village || '';
+    const estado = address.state || '';
+
+    const partes = [rua, bairro, cidade, estado].filter(Boolean);
+
+    return partes.join(', ') || 'Endereço não encontrado';
+  } catch {
+    return 'Erro ao buscar endereço';
+  }
+};
+
 
 const imprimirChamada = () => {
   if (!nomeProfessor) {
@@ -424,25 +456,22 @@ return (
               >
                 {aluno.status === 1 ? "Presente" : "Removido"}
               </Typography>
-              <Typography style={{ width: '200px', display: 'flex', justifyContent: 'center' }}>{aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}</Typography>
-              {/* mexer aqui ========================================================= */}
-              <div> 
-                {aluno.proximo === 1 ? (
-                  <IconButton
-                    edge="end"
-                    style={{ marginRight: '20px' }}
-                  >
-                    <FaSearchLocation color="#1155ff"/>
-                  </IconButton>
+              <Typography style={{ width: '200px', display: 'flex', justifyContent: 'center' }}>
+                {aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}
+              </Typography>
+              <div>
+                <IconButton
+  edge="end"
+  style={{ marginRight: '20px' }}
+  onClick={() => {
+    setAlunosSelecionados(aluno);
+    setModalLocalizacaoAberto(true);
+  }}
+  disabled={!aluno.data_hora_presenca} // desabilita se data_hora_presenca for falsy (ex: null)
+>
+  <FaSearchLocation color={aluno.proximo === 1 ? "#1155ff" : "#ffa400"} />
+</IconButton>
 
-                ) : ( // Aluno ta longe
-                  <IconButton
-                    edge="end"
-                    style={{ marginRight: '20px' }}
-                  >
-                    <FaSearchLocation color="#ffa400"/>
-                  </IconButton>
-                )}
                 {aluno.status === 1 ? (
                   <IconButton
                     edge="end"
@@ -455,7 +484,9 @@ return (
                     <FaTrash />
                   </IconButton>
                 ) : (
-                  <Tooltip title={aluno.observacao || "Sem observação"} arrow
+                  <Tooltip
+                    title={aluno.observacao || "Sem observação"}
+                    arrow
                     componentsProps={{
                       tooltip: {
                         sx: {
@@ -467,10 +498,7 @@ return (
                     }}
                   >
                     <span>
-                      <IconButton
-                        edge="end"
-                        tabIndex={10}
-                      >
+                      <IconButton edge="end" tabIndex={10}>
                         <FaComment />
                       </IconButton>
                     </span>
@@ -484,6 +512,35 @@ return (
       ))}
     </List>
 
+    {/* MODAL DE LOCALIZAÇÃO FORA DO MAP */}
+<Dialog
+  open={modalLocalizacaoAberto}
+  onClose={() => setModalLocalizacaoAberto(false)}
+  maxWidth="md"
+  fullWidth
+>
+  <DialogTitle>Localização do Aluno</DialogTitle>
+  <DialogContent>
+    <Typography><strong>Aluno:</strong> {alunosSelecionados?.aluno}</Typography>
+    <Typography><strong>Hora da Presença:</strong> {alunosSelecionados?.data_hora_presenca ? new Date(alunosSelecionados.data_hora_presenca).toLocaleString() : '-'}</Typography>
+    <Typography><strong>Endereço da Presença:</strong> {enderecoAluno}</Typography>
+
+    <div style={{ marginTop: 20, textAlign: 'center' }}>
+      <img
+  src={`https://www.mapquestapi.com/staticmap/v5/map?key=${apiKey}&center=${alunosSelecionados.latitude},${alunosSelecionados.longitude}&size=600,300&zoom=15&locations=${alunosSelecionados.latitude},${alunosSelecionados.longitude}|marker-red`}
+  alt="Mapa da localização"
+  style={{ width: '100%', maxWidth: 600, borderRadius: 8 }}
+/>
+
+    </div>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setModalLocalizacaoAberto(false)} color="primary">Fechar</Button>
+  </DialogActions>
+</Dialog>
+
+
+    {/* Paginação */}
     <div className="paginacao-container">
       <button
         onClick={() => setPaginaAtual(paginaAtual - 1)}
@@ -521,6 +578,7 @@ return (
     >
       <FaPrint size={30} />
     </Button>
+
 
     {/* Modal de adicionar */}
     <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
