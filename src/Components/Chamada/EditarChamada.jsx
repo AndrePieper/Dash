@@ -725,53 +725,48 @@ return (
     {/* Modal de adicionar */}
     <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
       <Box sx={styleModal}>
-        <Typography variant="h6" gutterBottom>
-          Adicionar alunos à chamada
-        </Typography>
-
+        <h3>Adicionar alunos à chamada</h3>
         <input
           type="text"
           placeholder="Buscar por nome"
           value={filtroNome}
-          onChange={(e) => setFiltroNome(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '8px',
-            marginBottom: '10px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
+          onChange={e => setFiltroNome(e.target.value)}
         />
-
-        <div className="lista-alunos-disponiveis" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+        <div className="lista-alunos-disponiveis">
           {alunosFiltrados.length === 0 ? (
-            <p>Nenhum aluno faltante encontrado.</p>
-          ) : (
-            alunosFiltrados.map((aluno) => (
-              <label key={aluno.id_aluno} style={{ display: 'flex', padding: '5px' }}>
-                <input
-                  type="checkbox"
-                  checked={alunosSelecionados.includes(aluno.id_aluno)}
-                  onChange={(e) =>
-                    setAlunosSelecionados((prev) =>
-                      e.target.checked
-                        ? [...prev, aluno.id_aluno]
-                        : prev.filter((id) => id !== aluno.id_aluno)
-                    )
-                  }
-                  style={{ marginRight: '10px' }}
-                />
-                {aluno.nome}
-              </label>
-            ))
-          )}
-        </div>
-
+              <p>Nenhum aluno faltante encontrado.</p>
+            ) : (
+              alunosFiltrados.map(aluno => (
+                <label key={aluno.id_aluno} style={{ display: 'flex', padding: '5px' }}>
+                  <input
+                    type="checkbox"
+                    checked={alunosSelecionados.includes(aluno.id_aluno)}
+                    onChange={(e) =>
+                      setAlunosSelecionados((prev) =>
+                        e.target.checked
+                          ? [...prev, aluno.id_aluno]
+                          : prev.filter((id) => id !== aluno.id_aluno)
+                      )
+                    }
+                    style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
+                  />
+                  {aluno.nome}
+                </label>
+              ))
+            )}
+          </div>
         <Box display="flex" justifyContent="flex-end" mt={2} gap={2}>
-          <Button onClick={() => setModalOpen(false)} variant="outlined">
+          <Button 
+            className="botao-excluir"
+            onClick={() => setModalOpen(false)} 
+          >
             Cancelar
           </Button>
-          <Button onClick={adicionarAlunos} variant="contained">
+          <Button 
+            className="botao-adicionar-vinculo"
+            onClick={adicionarAlunos} 
+            variant="contained"
+          >
             Adicionar
           </Button>
         </Box>
