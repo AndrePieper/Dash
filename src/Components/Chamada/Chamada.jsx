@@ -246,8 +246,8 @@ const Chamada = () => {
                   </td>
                   <td>
                     <button
-                      className="botao-editar"
-                      title="Editar Chamada"
+                      className="botao-detalhar"
+                      title="Verficar Presenças"
                       onClick={() =>
                         navigate(`/chamada/editarchamada/${chamada.id}`, {
                           state: { id_disciplina: chamada.id_disciplina },

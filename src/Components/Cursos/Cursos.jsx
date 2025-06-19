@@ -216,12 +216,12 @@ const Cursos = () => {
                   <td>{curso.status === 0 ? "Ativo" : "Inativo"}</td>
                   <td>
                     <button
-                    onClick={() => handleEditarCurso(curso.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }}
+                    onClick={() => handleEditarCurso(curso.id)} className="botao-editar"
                     >
                       <FaPen size={16} />
                     </button>
                     <button
-                    onClick={() => handleExcluirCurso(curso.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                    onClick={() => handleExcluirCurso(curso.id)} className="botao-excluir"
                     >
                       <FaTrash size={16} />
                     </button>

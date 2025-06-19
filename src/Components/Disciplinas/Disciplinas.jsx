@@ -242,12 +242,12 @@ const Disciplinas = () => {
                 <td>{d.status === 0 ? 'Ativo' : 'Inativo'}</td>
                 <td>
                   <button
-                  onClick={() => handleEditarDisciplina(d.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }}
+                  onClick={() => handleEditarDisciplina(d.id)} className="botao-editar"
                   >
                     <FaPen size={16} />
                   </button>
                   <button
-                  onClick={() => handleExcluirDisciplina(d.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                  onClick={() => handleExcluirDisciplina(d.id)} className="botao-excluir"
                   >
                     <FaTrash size={16} />
                   </button>

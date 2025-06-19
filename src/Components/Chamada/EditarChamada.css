@@ -1,3 +1,5 @@
+@import url(../../App.css);
+
 /* Container principal da tela, com espaçamento lateral para menu */
 .pagina-padrao {
   margin-left: 250px;
@@ -8,19 +10,6 @@
   overflow: hidden;
 }
 
-/* Header com gradiente verde */
-.pagina-padrao .header-verde {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(to right, #009c3b, #00c853);
-  color: white;
-  padding: 15px 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-sizing: border-box;
-}
 
 /* Estilo para lista de alunos dentro do container principal */
 .pagina-padrao .MuiList-root {
@@ -47,6 +36,44 @@
 
 .pagina-padrao .MuiButton-root:hover {
   background-color: #006c24;
+}
+
+/**/
+.rodape-principal {
+  position: relative;
+  display: flex; 
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 2em;
+}
+.rodape-principal .paginacao-container-vinculo {
+  text-align: center;
+  user-select: none;
+  
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex; 
+  align-items: center
+}
+
+.adicionar-principal {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}          
+.adicionar-principal button {
+  height: 36px;
+  color: var(--font-01);
+  cursor: pointer;
+}
+
+.adicionar-principal button.botao-download {
+  background-color: var(--botao-download);
+}
+.adicionar-principal button.botao-download:hover {
+  background-color: var(--botao-download-hover);
 }
 
 

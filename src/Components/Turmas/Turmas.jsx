@@ -197,10 +197,10 @@ const Turmas = () => {
                 <td>{t.Curso.descricao}</td>
                 <td>{t.status === 0 ? 'Cursando' : 'Concluído'}</td>
                 <td>
-                  <button onClick={() => handleEditarTurma(t.id)} className="botao-editar" style={{ backgroundColor: 'green', color: 'white' }}>
+                  <button onClick={() => handleEditarTurma(t.id)} className="botao-editar">
                     <FaPen size={20} />
                   </button>
-                  <button onClick={() => handleExcluirTurma(t.id)} className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}>
+                  <button onClick={() => handleExcluirTurma(t.id)} className="botao-excluir">
                     <FaTrash size={20} />
                   </button>
                 </td>

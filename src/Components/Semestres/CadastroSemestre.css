@@ -52,7 +52,7 @@
     border-color: #007bff;
   }
   button {
-    background-color: green;
+    /* background-color: green; */
     color: white;
     padding: 12px;
     font-size: 16px;

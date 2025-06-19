@@ -448,222 +448,233 @@ const alunosFiltrados = alunosFaltantes.filter(a =>
 );
 
 return (
-  <div className="pagina-padrao">
-    <header className="header-verde">
-      <h2>Editar Chamada</h2>
-    </header>
+  <>
+      <header className="header-usuarios">
+        <h2>Editar Chamada</h2>
+      </header>
 
-    {popup.show && (
-      <PopUpTopo message={popup.message} type={popup.type} />
-    )}
-    {mensagemErro && <p style={{ color: "red" }}>{mensagemErro}</p>}
+      {popup.show && (
+        <PopUpTopo message={popup.message} type={popup.type} />
+      )}
+      <div className="tela-usuarios">
 
-    <Typography variant="h6">Alunos Presentes:</Typography>
-    <List>
-      {alunosPaginados.map((aluno) => (
-        <div key={aluno.id_aluno}>
-          <ListItem>
-            <Box display="flex" justifyContent="space-between" width="100%">
-              <Typography style={{ width: '300px' }}>{aluno.aluno}</Typography>
-              <Typography
-                style={{ width: 100, textAlign: "center" }}
-                color={aluno.status === 1 ? "green" : "#c40000"}
-              >
-                {aluno.status === 1 ? "Presente" : "Removido"}
-              </Typography>
-              <Typography style={{ width: '200px', display: 'flex', justifyContent: 'center' }}>{aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}</Typography>
-              {/* mexer aqui ========================================================= */}
-              <div> 
-                {aluno.proximo === 1 ? (
-                  <IconButton
-                    edge="end"
-                    style={{ marginRight: '20px' }}
-                  >
-                    <FaSearchLocation color="#1155ff"/>
-                  </IconButton>
+      <Typography variant="h6">Alunos Presentes:</Typography>
+      <List>
+        {alunosPaginados.map((aluno) => (
+          <div key={aluno.id_aluno}>
+            <ListItem>
+              <Box display="flex" justifyContent="space-between" width="100%">
+                <Typography style={{ width: '300px' }}>{aluno.aluno}</Typography>
+                <Typography
+                  style={{ width: 100, textAlign: "center" }}
+                  color={aluno.status === 1 ? "green" : "#c40000"}
+                >
+                  {aluno.status === 1 ? "Presente" : "Removido"}
+                </Typography>
+                <Typography style={{ width: '200px', display: 'flex', justifyContent: 'center' }}>{aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}</Typography>
+                {/* mexer aqui ========================================================= */}
+                <div> 
+                  {aluno.proximo === 1 ? (
+                    <IconButton
+                      edge="end"
+                      style={{ marginRight: '20px' }}
+                    >
+                      <FaSearchLocation color="#1155ff"/>
+                    </IconButton>
 
-                ) : ( // Aluno ta longe
-                  <IconButton
-                    edge="end"
-                    style={{ marginRight: '20px' }}
-                  >
-                    <FaSearchLocation color="#ffa400"/>
-                  </IconButton>
-                )}
-                {aluno.status === 1 ? (
-                  <IconButton
-                    edge="end"
-                    onClick={() => {
-                      setAlunoParaRemover(aluno);
-                      setModalRemocaoOpen(true);
-                      setObservacao(null);
-                    }}
-                  >
-                    <FaTrash />
-                  </IconButton>
-                ) : (
-                  <Tooltip title={aluno.observacao || "Sem observação"} arrow
-                    componentsProps={{
-                      tooltip: {
-                        sx: {
-                          fontSize: '1rem',
-                          maxWidth: 300,
-                          whiteSpace: 'pre-line',
+                  ) : ( // Aluno ta longe
+                    <IconButton
+                      edge="end"
+                      style={{ marginRight: '20px' }}
+                    >
+                      <FaSearchLocation color="#ffa400"/>
+                    </IconButton>
+                  )}
+                  {aluno.status === 1 ? (
+                    <IconButton
+                      edge="end"
+                      onClick={() => {
+                        setAlunoParaRemover(aluno);
+                        setModalRemocaoOpen(true);
+                        setObservacao(null);
+                      }}
+                    >
+                      <FaTrash />
+                    </IconButton>
+                  ) : (
+                    <Tooltip title={aluno.observacao || "Sem observação"} arrow
+                      componentsProps={{
+                        tooltip: {
+                          sx: {
+                            fontSize: '1rem',
+                            maxWidth: 300,
+                            whiteSpace: 'pre-line',
+                          },
                         },
-                      },
-                    }}
-                  >
-                    <span>
-                      <IconButton
-                        edge="end"
-                        tabIndex={10}
-                      >
-                        <FaComment />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                )}
-              </div>
-            </Box>
-          </ListItem>
-          <Divider />
-        </div>
-      ))}
-    </List>
+                      }}
+                    >
+                      <span>
+                        <IconButton
+                          edge="end"
+                          tabIndex={10}
+                        >
+                          <FaComment />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                  )}
+                </div>
+              </Box>
+            </ListItem>
+            <Divider />
+          </div>
+        ))}
+      </List>
 
-    <div className="paginacao-container">
-      <button
-        onClick={() => setPaginaAtual(paginaAtual - 1)}
-        disabled={paginaAtual === 1}
-        className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
-      >
-        <FiArrowLeft size={20} />
-      </button>
+      <div className="rodape-principal">
+      <div className="paginacao-container-vinculo">
+        <button
+          onClick={() => setPaginaAtual(paginaAtual - 1)}
+          disabled={paginaAtual === 1}
+          className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+        >
+          <FiArrowLeft size={20} />
+        </button>
 
-      <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
+        <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
 
-      <button
-        onClick={() => setPaginaAtual(paginaAtual + 1)}
-        disabled={paginaAtual === totalPaginas}
-        className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
-      >
-        <FiArrowRight size={20} />
-      </button>
-    </div>
+        <button
+          onClick={() => setPaginaAtual(paginaAtual + 1)}
+          disabled={paginaAtual === totalPaginas}
+          className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+        >
+          <FiArrowRight size={20} />
+        </button>
+      </div>
 
-    <Button
-      variant="contained"
-      color="success"
-      startIcon={<FaPlus />}
-      onClick={abrirModal}
-    >
-      Adicionar Aluno
-    </Button>
+      <div className="adicionar-principal">
+        <Button
+          variant="contained"
+          color="success"
+          startIcon={<FaPlus />}
+          onClick={abrirModal}
+          className="botao-editar"
+        >
+          {/* Adicionar Aluno */}
+        </Button>
 
-    <Button
-      style={{ marginLeft: "10px" }}
-      onClick={imprimirChamada}
-      disabled={!nomeProfessor}
-      title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
-    >
-      <FaPrint size={30} />
-    </Button>
+        <Button
+          style={{ marginLeft: "10px" }}
+          onClick={imprimirChamada}
+          disabled={!nomeProfessor}
+          title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
+          className="botao-download"
+        >
+          <FaPrint size={30} />
+        </Button>
+      </div>
+      </div>
 
-    {/* Modal de adicionar */}
-    <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-      <Box sx={styleModal}>
-        <Typography variant="h6" gutterBottom>
-          Adicionar alunos à chamada
-        </Typography>
+      </div>
 
-        <input
-          type="text"
-          placeholder="Buscar por nome"
-          value={filtroNome}
-          onChange={(e) => setFiltroNome(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '8px',
-            marginBottom: '10px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        />
 
-        <div className="lista-alunos-disponiveis" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-          {alunosFiltrados.length === 0 ? (
-            <p>Nenhum aluno faltante encontrado.</p>
-          ) : (
-            alunosFiltrados.map((aluno) => (
-              <label key={aluno.id_aluno} style={{ display: 'flex', padding: '5px' }}>
-                <input
-                  type="checkbox"
-                  checked={alunosSelecionados.includes(aluno.id_aluno)}
-                  onChange={(e) =>
-                    setAlunosSelecionados((prev) =>
-                      e.target.checked
-                        ? [...prev, aluno.id_aluno]
-                        : prev.filter((id) => id !== aluno.id_aluno)
-                    )
-                  }
-                  style={{ marginRight: '10px' }}
-                />
-                {aluno.nome}
-              </label>
-            ))
-          )}
-        </div>
+      {/* <div className="pagina-padrao">    ESSA DIV ESTA COM O QUADRADO BRANCO*/}
+      {/* Modal de adicionar */}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box sx={styleModal}>
+          <Typography variant="h6" gutterBottom>
+            Adicionar alunos à chamada
+          </Typography>
 
-        <Box display="flex" justifyContent="flex-end" mt={2} gap={2}>
-          <Button onClick={() => setModalOpen(false)} variant="outlined">
-            Cancelar
-          </Button>
-          <Button onClick={adicionarAlunos} variant="contained">
-            Adicionar
-          </Button>
+          <input
+            type="text"
+            placeholder="Buscar por nome"
+            value={filtroNome}
+            onChange={(e) => setFiltroNome(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '8px',
+              marginBottom: '10px',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+            }}
+          />
+
+          <div className="lista-alunos-disponiveis" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {alunosFiltrados.length === 0 ? (
+              <p>Nenhum aluno faltante encontrado.</p>
+            ) : (
+              alunosFiltrados.map((aluno) => (
+                <label key={aluno.id_aluno} style={{ display: 'flex', padding: '5px' }}>
+                  <input
+                    type="checkbox"
+                    checked={alunosSelecionados.includes(aluno.id_aluno)}
+                    onChange={(e) =>
+                      setAlunosSelecionados((prev) =>
+                        e.target.checked
+                          ? [...prev, aluno.id_aluno]
+                          : prev.filter((id) => id !== aluno.id_aluno)
+                      )
+                    }
+                    style={{ marginRight: '10px' }}
+                  />
+                  {aluno.nome}
+                </label>
+              ))
+            )}
+          </div>
+
+          <Box display="flex" justifyContent="flex-end" mt={2} gap={2}>
+            <Button onClick={() => setModalOpen(false)} variant="outlined">
+              Cancelar
+            </Button>
+            <Button onClick={adicionarAlunos} variant="contained">
+              Adicionar
+            </Button>
+          </Box>
         </Box>
-      </Box>
-    </Modal>
+      </Modal>
 
-    {/* Modal de remover */}
-    <Modal open={modalRemocaoOpen} onClose={() => setModalRemocaoOpen(false)}>
-      <Box sx={styleModal}>
-        <Typography variant="h6">
-          Deseja remover a presença do aluno{" "}
-          <strong>{alunoParaRemover?.aluno}</strong>?
-        </Typography>
-        <Box mt={2}>
-          <label>Motivo da remoção</label>
-          <input 
-            type="text" 
-            value={observacao} 
-            placeholder="Descreva o motivo da remoção"
-            onChange={(e) => setObservacao(e.target.value)}
-            style={{ width: "100%", height: "40px", marginTop: "4px" }}
-            /> 
-        </Box>
-        <Box mt={2} display="flex" justifyContent="space-between">
-          <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button>
-          <Button color="error" variant="contained" 
-            onClick={() => {
-              if (!observacao || observacao.length < 10) {
-                setPopup({
-                  show: true,
-                  message: "Por favor, insira uma observação com pelo menos 10 caracteres.",
-                  type: "error",
-                });
-                setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
-                return;
+      {/* Modal de remover */}
+      <Modal open={modalRemocaoOpen} onClose={() => setModalRemocaoOpen(false)}>
+        <Box sx={styleModal}>
+          <Typography variant="h6">
+            Deseja remover a presença do aluno{" "}
+            <strong>{alunoParaRemover?.aluno}</strong>?
+          </Typography>
+          <Box mt={2}>
+            <label>Motivo da remoção</label>
+            <input 
+              type="text" 
+              value={observacao} 
+              placeholder="Descreva o motivo da remoção"
+              onChange={(e) => setObservacao(e.target.value)}
+              style={{ width: "100%", height: "40px", marginTop: "4px" }}
+              /> 
+          </Box>
+          <Box mt={2} display="flex" justifyContent="space-between">
+            <Button onClick={() => setModalRemocaoOpen(false)}>Cancelar</Button> {/* ADICIONAR CLASSES A ESSES BOTÕES*/}
+            <Button className="botao-excluir" variant="contained" 
+              onClick={() => {
+                if (!observacao || observacao.length < 10) {
+                  setPopup({
+                    show: true,
+                    message: "Por favor, insira uma observação com pelo menos 10 caracteres.",
+                    type: "error",
+                  });
+                  setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+                  return;
+                }
+                confirmarRemocaoAluno
               }
-              confirmarRemocaoAluno
-            }
-          }>
-            Remover
-          </Button>
+            }>
+              Remover
+            </Button>
+          </Box>
         </Box>
-      </Box>
-    </Modal>
-  </div>
+      </Modal>
+    {/* </div> */}
+  </>
 );
 };
 
