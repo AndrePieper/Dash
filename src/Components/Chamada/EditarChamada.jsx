@@ -24,6 +24,9 @@ import autoTable from "jspdf-autotable";
 import logo from "/src/assets/grupo-fasipe.png";
 import PopUpTopo from '../PopUp/PopUpTopo';
 import "./EditarChamada.css";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 
 const styleModal = {
@@ -54,6 +57,7 @@ const EditarChamada = () => {
   const [alunoParaRemover, setAlunoParaRemover] = useState(null);
   const [observacao, setObservacao] = useState(null);
   const [modalRemocaoOpen, setModalRemocaoOpen] = useState(false);
+
   const [modalLocalizacaoAberto, setModalLocalizacaoAberto] = useState(false);
 
   const [nomeProfessor, setNomeProfessor] = useState(null);
@@ -74,8 +78,6 @@ const EditarChamada = () => {
   } else if (screen.height < 769){
     registrosPorPagina = 5
   }
-
-  const apiKey = "rPPHMWX4lFakI0O6HIqTzve6TVXjKma9";
 
   const alunosOrdenados = useMemo(() => {
     
@@ -364,27 +366,27 @@ const buscarChamada = () => {
         setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
       });
   };
+
 const buscarEndereco = async (lat, lon) => {
   try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
-    );
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
     const data = await res.json();
 
-    const address = data.address || {};
+    const addr = data.address || {};
+    const enderecoFormatado = [
+      addr.road,
+      addr.house_number,
+      addr.neighbourhood,
+      addr.city || addr.town || addr.village,
+      addr.state,
+    ].filter(Boolean).join(", ");
 
-    const rua = address.road || address.pedestrian || address.cycleway || address.footway || '';
-    const bairro = address.neighbourhood || address.suburb || '';
-    const cidade = address.city || address.town || address.village || '';
-    const estado = address.state || '';
-
-    const partes = [rua, bairro, cidade, estado].filter(Boolean);
-
-    return partes.join(', ') || 'Endereço não encontrado';
-  } catch {
-    return 'Erro ao buscar endereço';
+    return enderecoFormatado || "Endereço não encontrado";
+  } catch (error) {
+    return "Erro ao buscar endereço";
   }
 };
+
 
 
 const imprimirChamada = () => {
@@ -479,6 +481,13 @@ const alunosFiltrados = alunosFaltantes.filter(a =>
   (a.nome || '').toLowerCase().includes(filtroNome.toLowerCase())
 );
 
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
 return (
   <div className="pagina-padrao">
     <header className="header-verde">
@@ -507,17 +516,20 @@ return (
                 {aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}
               </Typography>
               <div>
-                <IconButton
+<IconButton
   edge="end"
   style={{ marginRight: '20px' }}
   onClick={() => {
     setAlunosSelecionados(aluno);
     setModalLocalizacaoAberto(true);
+    buscarEndereco(aluno.latitude, aluno.longitude);
   }}
-  disabled={!aluno.data_hora_presenca} // desabilita se data_hora_presenca for falsy (ex: null)
+  disabled={!aluno.data_hora_presenca}
 >
   <FaSearchLocation color={aluno.proximo === 1 ? "#1155ff" : "#ffa400"} />
 </IconButton>
+
+
 
                 {aluno.status === 1 ? (
                   <IconButton
@@ -569,22 +581,58 @@ return (
   <DialogTitle>Localização do Aluno</DialogTitle>
   <DialogContent>
     <Typography><strong>Aluno:</strong> {alunosSelecionados?.aluno}</Typography>
-    <Typography><strong>Hora da Presença:</strong> {alunosSelecionados?.data_hora_presenca ? new Date(alunosSelecionados.data_hora_presenca).toLocaleString() : '-'}</Typography>
+    <Typography>
+      <strong>Hora da Presença:</strong>{" "}
+      {alunosSelecionados?.data_hora_presenca
+        ? new Date(alunosSelecionados.data_hora_presenca).toLocaleString()
+        : "-"}
+    </Typography>
     <Typography><strong>Endereço da Presença:</strong> {enderecoAluno}</Typography>
 
-    <div style={{ marginTop: 20, textAlign: 'center' }}>
-      <img
-  src={`https://www.mapquestapi.com/staticmap/v5/map?key=${apiKey}&center=${alunosSelecionados.latitude},${alunosSelecionados.longitude}&size=600,300&zoom=15&locations=${alunosSelecionados.latitude},${alunosSelecionados.longitude}|marker-red`}
-  alt="Mapa da localização"
-  style={{ width: '100%', maxWidth: 600, borderRadius: 8 }}
-/>
+    {(alunosSelecionados?.latitude && alunosSelecionados?.longitude) ? (
+      <div style={{ marginTop: 20 }}>
+       {alunosSelecionados?.latitude && alunosSelecionados?.longitude && (
+  <MapContainer
+    key={`${alunosSelecionados.latitude}-${alunosSelecionados.longitude}`} // força recriação
+    center={[alunosSelecionados.latitude, alunosSelecionados.longitude]}
+    zoom={16}
+    scrollWheelZoom={false}
+    style={{ height: "400px", width: "100%", borderRadius: 8 }}
+  >
+    <TileLayer
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      attribution="© OpenStreetMap contributors"
+    />
+    <Marker position={[alunosSelecionados.latitude, alunosSelecionados.longitude]}>
+      <Popup>{alunosSelecionados.aluno}</Popup>
+    </Marker>
+  </MapContainer>
+)}
 
-    </div>
+      </div>
+    ) : (
+      <Typography color="error" style={{ marginTop: 20 }}>
+        Localização não disponível.
+      </Typography>
+    )}
   </DialogContent>
   <DialogActions>
-    <Button onClick={() => setModalLocalizacaoAberto(false)} color="primary">Fechar</Button>
+  <Button
+  onClick={() => setModalLocalizacaoAberto(false)}
+  sx={{
+    backgroundColor: 'red',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#cc0000',
+    },
+  }}
+>
+  Fechar
+</Button>
+
   </DialogActions>
 </Dialog>
+
 
 
     {/* Paginação */}
