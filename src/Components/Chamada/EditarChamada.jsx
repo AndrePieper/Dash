@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { FaPlus, FaTrash, FaPrint, FaSearchLocation, FaComment } from "react-icons/fa";
+import { FaPlus, FaTrash, FaPrint, FaComment } from "react-icons/fa";
+import { FaLocationDot } from "react-icons/fa6";
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import {
   Dialog,
@@ -137,8 +138,21 @@ const EditarChamada = () => {
 
 const [enderecoAluno, setEnderecoAluno] = React.useState('Carregando endereço...');
 React.useEffect(() => {
-  if (modalLocalizacaoAberto && alunosSelecionados?.latitude && alunosSelecionados?.longitude) {
-    buscarEndereco(alunosSelecionados.latitude, alunosSelecionados.longitude).then(setEnderecoAluno);
+  const lat = alunosSelecionados?.latitude;
+  const lon = alunosSelecionados?.longitude;
+
+  const coordenadasValidas =
+    typeof lat === 'number' &&
+    typeof lon === 'number' &&
+    lat !== 0 &&
+    lon !== 0;
+
+  if (modalLocalizacaoAberto) {
+    if (coordenadasValidas) {
+      buscarEndereco(lat, lon).then(setEnderecoAluno);
+    } else {
+      setEnderecoAluno('Endereço não disponível');
+    }
   }
 }, [modalLocalizacaoAberto, alunosSelecionados]);
 
@@ -226,7 +240,6 @@ const buscarChamada = () => {
   const confirmarRemocaoAluno = () => {
     if (!alunoParaRemover) return;
 
-    console.log(JSON.stringify({ observacao }))
     fetch(
       `https://projeto-iii-4.vercel.app/chamada/alunos/remover?id_chamada=${id}&id_aluno=${alunoParaRemover.id_aluno}`,
       {
@@ -526,7 +539,7 @@ return (
                     buscarEndereco(aluno.latitude, aluno.longitude);
                   }}
                 >
-                  <FaSearchLocation color={aluno.proximo === 1 ? "#1155ff" : "#ffa400"} />
+                  <FaLocationDot color={aluno.proximo === 1 ? "#1155ff" : (aluno.data_hora_presenca ? "#ffa400" : "#ff0000")} /> { /* 1 - Próximo */ }
                 </IconButton>
                 {aluno.status === 1 ? (
                   <IconButton
@@ -596,6 +609,7 @@ return (
             variant="contained"
             className="botao-adicionar-vinculo"
             onClick={abrirModal}
+            title="Adicionar Presença"
           >
           <FaPlus size={'30px'}/>
           </Button>
@@ -604,7 +618,7 @@ return (
             onClick={imprimirChamada}
             className="botao-download"
             disabled={!nomeProfessor}
-            title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
+            title={"Imprimir Lista de Presença"}
           >
             <FaPrint size={30} />
           </Button>
@@ -753,7 +767,7 @@ return (
                 setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
                 return;
               }
-              confirmarRemocaoAluno
+              confirmarRemocaoAluno()
             }
           }>
             Remover
