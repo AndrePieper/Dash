@@ -76,5 +76,20 @@
   background-color: var(--botao-download-hover);
 }
 
+/* BOTÃO COMPONENTE */
+.MuiButton-root.botao-excluir {
+  background-color: var(--botao-excluir-registro);
+  color: var(--font-01);
+}
+.MuiButton-root.botao-excluir:hover {
+  background-color: var(--botao-excluir-registro-hover);
+}
 
+.MuiButton-root.botao-adicionar-vinculo {
+  background-color: var(--botao-adicionar);
+  color: var(--font-01);
+}
+.MuiButton-root.botao-adicionar-vinculo:hover {
+  background-color: var(--botao-adicionar-hover);
+}
 
