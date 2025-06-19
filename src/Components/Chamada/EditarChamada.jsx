@@ -443,8 +443,7 @@ const imprimirChamada = () => {
     doc.text(`Professor: ${nomeProfessor || ""}`, 80, 30);
     doc.text(`Disciplina: ${chamadaInfo.descricao_disciplina || ""}`, 80, 36);
     doc.text(`Data: ${dataFormatada}`, 80, 42);
-    doc.text(`Início: ${horaInicio}`, 80, 48);
-    doc.text(`Fim: ${horaFim}`, 80, 54);
+    doc.text(`Horario: ${horaInicio} - ${horaFim}`, 80, 48);
 
     let startY = 60;
     doc.setFontSize(14);
