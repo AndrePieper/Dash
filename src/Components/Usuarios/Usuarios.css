@@ -127,6 +127,15 @@ h1, h2, h3, div, p, input, option, label {
   /* margin-right: 5px; */
 }
 
+.botao-adicionar-vinculo {
+  background-color: var(--botao-adicionar);
+  color: var(--font-01);
+}
+.botao-adicionar-vinculo:hover {
+  background-color: var(--botao-adicionar-hover);
+}
+
+
 .botao-editar {
   background-color: var(--botao-salvar-cadastrar);
 }

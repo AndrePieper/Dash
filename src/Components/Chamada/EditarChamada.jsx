@@ -29,6 +29,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 
+
 const styleModal = {
   position: "absolute",
   top: "50%",
@@ -49,7 +50,6 @@ const EditarChamada = () => {
   const { id_disciplina } = location.state || {};
 
   const [alunosPresentes, setAlunosPresentes] = useState([]);
-  const [mensagemErro, setMensagemErro] = useState("");
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
   const [modalOpen, setModalOpen] = useState(false);
   const [alunosFaltantes, setAlunosFaltantes] = useState([]);
@@ -420,84 +420,85 @@ const imprimirChamada = () => {
     ? dataHoraFim.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
     : "";
 
-img.onload = () => {
-  const canvas = document.createElement("canvas");
-  canvas.width = img.width;
-  canvas.height = img.height;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0);
-  const logoBase64 = canvas.toDataURL("image/png");
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    const logoBase64 = canvas.toDataURL("image/png");
 
-  const alturaTexto = 21; 
-  const posX = 10;
-  const posY = 20;
-  const proporcao = img.width / img.height;
-  const larguraLogo = alturaTexto * proporcao;
+    const alturaTexto = 21; 
+    const posX = 10;
+    const posY = 20;
+    const proporcao = img.width / img.height;
+    const larguraLogo = alturaTexto * proporcao;
 
-  doc.addImage(logoBase64, "PNG", posX, posY, larguraLogo, alturaTexto);
+    doc.addImage(logoBase64, "PNG", posX, posY, larguraLogo, alturaTexto);
 
-  doc.setFontSize(16);
-  doc.text(`Relatório da Chamada nº ${chamadaInfo.id || ""}`, 80, 20);
+    doc.setFontSize(16);
+    doc.text(`Relatório da Chamada nº ${chamadaInfo.id || ""}`, 80, 20);
 
-  doc.setFontSize(12);
-  doc.text(`Professor: ${nomeProfessor || ""}`, 80, 30);
- doc.text(`Disciplina: ${chamadaInfo.descricao_disciplina || ""}`, 80, 36);
-  doc.text(`Data: ${dataFormatada}`, 80, 42);
-  doc.text(`Início: ${horaInicio}`, 80, 48);
-  doc.text(`Fim: ${horaFim}`, 80, 54);
+    doc.setFontSize(12);
+    doc.text(`Professor: ${nomeProfessor || ""}`, 80, 30);
+    doc.text(`Disciplina: ${chamadaInfo.descricao_disciplina || ""}`, 80, 36);
+    doc.text(`Data: ${dataFormatada}`, 80, 42);
+    doc.text(`Início: ${horaInicio}`, 80, 48);
+    doc.text(`Fim: ${horaFim}`, 80, 54);
 
-  let startY = 60;
-  doc.setFontSize(14);
-  doc.text("Alunos Presentes", 14, startY);
- 
+    let startY = 60;
+    doc.setFontSize(14);
+    doc.text("Alunos Presentes", 14, startY);
+  
 
 
-    const presentesData = alunosOrdenados
-      .filter((aluno) => aluno.status === 1)
-      .map((aluno) => [aluno.id_aluno, aluno.aluno]);
+      const presentesData = alunosOrdenados
+        .filter((aluno) => aluno.status === 1)
+        .map((aluno) => [aluno.id_aluno, aluno.aluno]);
 
-    autoTable(doc, {
-      startY: startY + 4,
-      head: [["ID", "Nome"]],
-      body: presentesData,
-      styles: { fontSize: 11, halign: "center", valign: "middle" },
-      headStyles: {
-        fillColor: [46, 125, 50],
-        textColor: 255,
-        fontStyle: "bold",
-        halign: "center",
-        valign: "middle",
-      },
-    });
+      autoTable(doc, {
+        startY: startY + 4,
+        head: [["ID", "Nome"]],
+        body: presentesData,
+        styles: { fontSize: 11, halign: "center", valign: "middle" },
+        headStyles: {
+          fillColor: [46, 125, 50],
+          textColor: 255,
+          fontStyle: "bold",
+          halign: "center",
+          valign: "middle",
+        },
+      });
 
-    doc.save(`chamada_${chamadaInfo.id}.pdf`);
+      doc.save(`chamada_${chamadaInfo.id}.pdf`);
+    };
+
+    img.onerror = () => {
+      alert("Erro ao carregar a imagem da logo.");
+    };
   };
+  const alunosFiltrados = alunosFaltantes.filter(a =>
+    (a.nome || '').toLowerCase().includes(filtroNome.toLowerCase())
+  );
 
-  img.onerror = () => {
-    alert("Erro ao carregar a imagem da logo.");
-  };
-};
-const alunosFiltrados = alunosFaltantes.filter(a =>
-  (a.nome || '').toLowerCase().includes(filtroNome.toLowerCase())
-);
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+    iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  });
 
 return (
-  <div className="pagina-padrao">
-    <header className="header-verde">
+  <> 
+    <header className="header-usuarios">
       <h2>Editar Chamada</h2>
     </header>
 
     {popup.show && (
       <PopUpTopo message={popup.message} type={popup.type} />
-    )}
-    {mensagemErro && <p style={{ color: "red" }}>{mensagemErro}</p>}
+    )}  
+
+    <div className="tela-usuarios">
 
     <Typography variant="h6">Alunos Presentes:</Typography>
     <List>
@@ -516,21 +517,17 @@ return (
                 {aluno.data_hora_presenca ? new Date(aluno.data_hora_presenca).toLocaleTimeString() : 'Presença Manual'}
               </Typography>
               <div>
-<IconButton
-  edge="end"
-  style={{ marginRight: '20px' }}
-  onClick={() => {
-    setAlunosSelecionados(aluno);
-    setModalLocalizacaoAberto(true);
-    buscarEndereco(aluno.latitude, aluno.longitude);
-  }}
-  disabled={!aluno.data_hora_presenca}
->
-  <FaSearchLocation color={aluno.proximo === 1 ? "#1155ff" : "#ffa400"} />
-</IconButton>
-
-
-
+                <IconButton
+                  edge="end"
+                  style={{ marginRight: '20px' }}
+                  onClick={() => {
+                    setAlunosSelecionados(aluno);
+                    setModalLocalizacaoAberto(true);
+                    buscarEndereco(aluno.latitude, aluno.longitude);
+                  }}
+                >
+                  <FaSearchLocation color={aluno.proximo === 1 ? "#1155ff" : "#ffa400"} />
+                </IconButton>
                 {aluno.status === 1 ? (
                   <IconButton
                     edge="end"
@@ -571,109 +568,104 @@ return (
       ))}
     </List>
 
-    {/* MODAL DE LOCALIZAÇÃO FORA DO MAP */}
-<Dialog
-  open={modalLocalizacaoAberto}
-  onClose={() => setModalLocalizacaoAberto(false)}
-  maxWidth="md"
-  fullWidth
->
-  <DialogTitle>Localização do Aluno</DialogTitle>
-  <DialogContent>
-    <Typography><strong>Aluno:</strong> {alunosSelecionados?.aluno}</Typography>
-    <Typography>
-      <strong>Hora da Presença:</strong>{" "}
-      {alunosSelecionados?.data_hora_presenca
-        ? new Date(alunosSelecionados.data_hora_presenca).toLocaleString()
-        : "-"}
-    </Typography>
-    <Typography><strong>Endereço da Presença:</strong> {enderecoAluno}</Typography>
 
-    {(alunosSelecionados?.latitude && alunosSelecionados?.longitude) ? (
-      <div style={{ marginTop: 20 }}>
-       {alunosSelecionados?.latitude && alunosSelecionados?.longitude && (
-  <MapContainer
-    key={`${alunosSelecionados.latitude}-${alunosSelecionados.longitude}`} // força recriação
-    center={[alunosSelecionados.latitude, alunosSelecionados.longitude]}
-    zoom={16}
-    scrollWheelZoom={false}
-    style={{ height: "400px", width: "100%", borderRadius: 8 }}
-  >
-    <TileLayer
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      attribution="© OpenStreetMap contributors"
-    />
-    <Marker position={[alunosSelecionados.latitude, alunosSelecionados.longitude]}>
-      <Popup>{alunosSelecionados.aluno}</Popup>
-    </Marker>
-  </MapContainer>
-)}
-
-      </div>
-    ) : (
-      <Typography color="error" style={{ marginTop: 20 }}>
-        Localização não disponível.
-      </Typography>
-    )}
-  </DialogContent>
-  <DialogActions>
-  <Button
-  onClick={() => setModalLocalizacaoAberto(false)}
-  sx={{
-    backgroundColor: 'red',
-    color: 'white',
-    '&:hover': {
-      backgroundColor: '#cc0000',
-    },
-  }}
->
-  Fechar
-</Button>
-
-  </DialogActions>
-</Dialog>
-
-
-
-    {/* Paginação */}
-    <div className="paginacao-container">
-      <button
-        onClick={() => setPaginaAtual(paginaAtual - 1)}
-        disabled={paginaAtual === 1}
-        className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
-      >
-        <FiArrowLeft size={20} />
-      </button>
-
-      <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
-
-      <button
-        onClick={() => setPaginaAtual(paginaAtual + 1)}
-        disabled={paginaAtual === totalPaginas}
-        className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
-      >
-        <FiArrowRight size={20} />
-      </button>
     </div>
+      <div className="rodape-principal"> 
+        <div className="paginacao-container-vinculo">
+          <button
+            onClick={() => setPaginaAtual(paginaAtual - 1)}
+            disabled={paginaAtual === 1}
+            className={`botao-paginacao ${paginaAtual === 1 ? 'desabilitado' : ''}`}
+          >
+            <FiArrowLeft size={20} />
+          </button>
+    
+          <span className="paginacao-texto">Página {paginaAtual} de {totalPaginas}</span>
+    
+          <button
+            onClick={() => setPaginaAtual(paginaAtual + 1)}
+            disabled={paginaAtual === totalPaginas}
+            className={`botao-paginacao ${paginaAtual === totalPaginas ? 'desabilitado' : ''}`}
+          >
+            <FiArrowRight size={20} />
+          </button>
+        </div>
 
-    <Button
-      variant="contained"
-      color="success"
-      startIcon={<FaPlus />}
-      onClick={abrirModal}
+        <div className="adicionar-principal">
+          <Button
+            variant="contained"
+            className="botao-adicionar-vinculo"
+            onClick={abrirModal}
+          >
+          <FaPlus size={'30px'}/>
+          </Button>
+          <Button
+            style={{ marginLeft: "10px" }}
+            onClick={imprimirChamada}
+            className="botao-download"
+            disabled={!nomeProfessor}
+            title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
+          >
+            <FaPrint size={30} />
+          </Button>
+        </div>
+      </div>
+
+    {/* MODAL DE LOCALIZAÇÃO FORA DO MAP */}
+    <Dialog
+      open={modalLocalizacaoAberto}
+      onClose={() => setModalLocalizacaoAberto(false)}
+      maxWidth="md"
+      fullWidth
     >
-      Adicionar Aluno
+      <DialogTitle>Localização do Aluno</DialogTitle>
+      <DialogContent>
+        <Typography><strong>Aluno:</strong> {alunosSelecionados?.aluno}</Typography>
+        <Typography>
+          <strong>Hora da Presença:</strong>{" "}
+          {alunosSelecionados?.data_hora_presenca
+            ? new Date(alunosSelecionados.data_hora_presenca).toLocaleString()
+            : "Presença Manual"}
+        </Typography>
+        <Typography><strong>Endereço da Presença:</strong> {enderecoAluno}</Typography>
+
+        {(alunosSelecionados?.latitude && alunosSelecionados?.longitude) ? (
+          <div style={{ marginTop: 20 }}>
+          {alunosSelecionados?.latitude && alunosSelecionados?.longitude && (
+      <MapContainer
+        key={`${alunosSelecionados.latitude}-${alunosSelecionados.longitude}`} // força recriação
+        center={[alunosSelecionados.latitude, alunosSelecionados.longitude]}
+        zoom={16}
+        scrollWheelZoom={false}
+        style={{ height: "400px", width: "100%", borderRadius: 8 }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="© OpenStreetMap contributors"
+        />
+        <Marker position={[alunosSelecionados.latitude, alunosSelecionados.longitude]}>
+          <Popup>{alunosSelecionados.aluno}</Popup>
+        </Marker>
+      </MapContainer>
+    )}
+
+          </div>
+        ) : (
+          <Typography color="error" style={{ marginTop: 20 }}>
+            Localização não disponível.
+          </Typography>
+        )}
+      </DialogContent>
+      <DialogActions>
+      <Button
+      className="botao-excluir"
+      onClick={() => setModalLocalizacaoAberto(false)}
+    >
+      Fechar
     </Button>
 
-    <Button
-      style={{ marginLeft: "10px" }}
-      onClick={imprimirChamada}
-      disabled={!nomeProfessor}
-      title={!nomeProfessor ? "Aguardando nome do professor carregar" : ""}
-    >
-      <FaPrint size={30} />
-    </Button>
-
+      </DialogActions>
+    </Dialog>
 
     {/* Modal de adicionar */}
     <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
@@ -769,7 +761,7 @@ return (
         </Box>
       </Box>
     </Modal>
-  </div>
+  </>
 );
 };
 
