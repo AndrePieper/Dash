@@ -86,7 +86,7 @@ const Semestres = () => {
         setPaginaAtual(paginaAtual - 1);
       }  
 
-      setTimeout(() => navigate("/usuarios"), 1500)
+      // setTimeout(() => navigate("/semestres"), 1500)
 
 
     } catch (error) {

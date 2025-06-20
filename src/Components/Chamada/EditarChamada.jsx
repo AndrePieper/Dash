@@ -300,8 +300,7 @@ const buscarChamada = () => {
       setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
       return;
     }
-
-    fetch(`https://projeto-iii-4.vercel.app/chamada/falta?id_disciplina=${id_disciplina}`, {
+    fetch(`https://projeto-iii-4.vercel.app/chamada/falta/?id_disciplina=${id_disciplina}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
