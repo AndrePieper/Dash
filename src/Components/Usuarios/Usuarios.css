@@ -135,6 +135,13 @@ h1, h2, h3, div, p, input, option, label {
   background-color: var(--botao-adicionar-hover);
 }
 
+form .botao-adicionar-vinculo {
+  background-color: var(--botao-adicionar);
+}
+form button:hover {
+  background-color: var(--botao-adicionar-hover);
+}
+
 
 .botao-editar {
   background-color: var(--botao-salvar-cadastrar);
@@ -213,6 +220,7 @@ h1, h2, h3, div, p, input, option, label {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
 
 /* Conteúdo do modal com fundo branco, padding e borda arredondada */
@@ -222,6 +230,30 @@ h1, h2, h3, div, p, input, option, label {
   border-radius: 10px;
   text-align: center;
 }
+
+/* .modal-exclusao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #00000060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+}
+.modal-conteudo {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 500px;
+} */
+
+
+
+
 
 .paginacao-container {
   margin-top: 10px;

@@ -300,7 +300,7 @@ const EditarSemestre = () => {
                 <option value={1}>Não</option>
               </select>
             </div>
-            <button type="submit">Salvar Alterações</button>
+            <button className='botao-adicionar-vinculo' type="submit">Salvar Alterações</button>
           </form>
 
           {/* CARD 2: GESTÃO DE VÍNCULOS */}

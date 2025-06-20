@@ -236,8 +236,8 @@ const Turmas = () => {
         <div className="modal">
           <div className="modal-conteudo">
             <h3>Tem certeza que deseja excluir esta turma?</h3>
-            <button onClick={() => confirmarExclusaoTurma(confirmarExclusao)}>Confirmar</button>
-            <button onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
+            <button className='botao-excluir' onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
+            <button className='botao-adicionar-vinculo' onClick={() => confirmarExclusaoTurma(confirmarExclusao)}>Confirmar</button>
           </div>
         </div>
       )}

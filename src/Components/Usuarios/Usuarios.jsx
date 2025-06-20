@@ -40,6 +40,7 @@ const Usuarios = () => {
   };
 
   const handleExcluirUsuario = (id) => {
+    console.log("teste")
     setConfirmarExclusao(id);
   };
 
@@ -280,22 +281,17 @@ const Usuarios = () => {
         </button>
 
         {confirmarExclusao !== null && (
-          <div className="modal-exclusao">
+          <div className="modal">
             <div className="modal-conteudo">
               <h3>Confirmar Exclusão</h3>
               <p>Deseja realmente excluir o usuário?</p>
               <div className="botoes-modal">
+                <button className="botao-excluir" onClick={cancelarExclusao} > Cancelar  </button>
                 <button
-                  className="botao-confirmar"
+                  className='botao-adicionar-vinculo'
                   onClick={() => confirmarExclusaoUsuario(confirmarExclusao)}
                 >
                   Confirmar
-                </button>
-                <button
-                  className="botao-cancelar"
-                  onClick={cancelarExclusao}
-                >
-                  Cancelar
                 </button>
               </div>
             </div>

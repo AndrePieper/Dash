@@ -414,7 +414,7 @@ const EditarTurma = () => {
                 <option value="1">Concluído</option>
               </select>
             </div>
-            <button type="submit">Salvar Alterações</button>
+            <button className='botao-adicionar-vinculo' type="submit">Salvar Alterações</button>
           </form>
 
           {/* CARD 2: GESTÃO DE VÍNCULOS */}

@@ -195,7 +195,7 @@ const EditarUsuario = () => {
           </select>
 
           <br/>
-          <button type="submit">Salvar Alterações</button>
+          <button className='botao-adicionar-vinculo' type="submit">Salvar Alterações</button>
         </form>
       </div>
     </div>
