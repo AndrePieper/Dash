@@ -287,33 +287,71 @@ const ModaisChamada = ({
         fullWidth
         disableEscapeKeyDown
       >
-        <DialogTitle>QR Code da Chamada</DialogTitle>
-        <DialogContent dividers>
-          <div className="qr-modal-content">
-            <div className="qr-instructions">
-              <Typography variant="body1">① Acesse o seu aplicativo.</Typography>
-              <Typography variant="body1">② Realize login com seu e-mail e senha cadastrados.</Typography>
-              <Typography variant="body1">③ Selecione a opção “Registrar”.</Typography>
-              <Typography variant="body1">④ Centralize o QR Code na sua tela até registrar a presença.</Typography>
-            </div>
-            <div className="qr-code">
-              {qrCodeAtualizado && (
-                <QRCodeCanvas
-                  value={JSON.stringify(qrCodeAtualizado)}
-                  size={256}
-                  level="H"
-                  includeMargin={true}
-                />
-              )}
-            </div>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={abrirConfirmarEncerramento} className="btn-verde" variant="contained">
-            Encerrar Chamada
-          </Button>
-        </DialogActions>
-      </Dialog>
+<DialogTitle>QR Code da Chamada</DialogTitle>
+<DialogContent dividers>
+  <div className="qr-modal-content" style={{ display: 'flex', gap: 24 }}>
+    <div className="qr-instructions" style={{ flex: 1 }}>
+      {[
+        "Acesse o seu aplicativo.",
+        "Realize login com seu e-mail e senha cadastrados.",
+        "Selecione a opção “Registrar”.",
+        "Centralize o QR Code na sua tela até registrar a presença.",
+      ].map((text, index) => (
+        <Typography
+          key={index}
+          variant="body1"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            marginBottom: 8,
+            gap: 8, // espaço entre bolinha e texto
+          }}
+        >
+          <span
+            style={{
+              display: 'inline-flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#28B657',
+              color: 'white',
+              borderRadius: '50%',
+              width: 24,
+              height: 24,
+              fontWeight: 'bold',
+              fontSize: 14,
+              flexShrink: 0,
+            }}
+          >
+            {index + 1}
+          </span>
+          {text}
+        </Typography>
+      ))}
+    </div>
+    <div className="qr-code">
+      {qrCodeAtualizado && (
+        <QRCodeCanvas
+          value={JSON.stringify(qrCodeAtualizado)}
+          size={256}
+          level="H"
+          includeMargin={true}
+        />
+      )}
+    </div>
+  </div>
+</DialogContent>
+<DialogActions>
+  <Button
+    onClick={abrirConfirmarEncerramento}
+    className="btn-verde"
+    variant="contained"
+  >
+    Encerrar Chamada
+  </Button>
+</DialogActions>
+</Dialog>
+
+
 
       <Dialog open={abrirModalConfirmarEncerramento} onClose={cancelarEncerramento}>
         <DialogTitle>Confirmar Encerramento</DialogTitle>

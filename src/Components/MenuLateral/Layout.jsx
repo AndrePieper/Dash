@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"; // IMPORTADO ícone de flecha
 import {
   Drawer,
   List,
@@ -27,26 +26,28 @@ const Layout = () => {
   const { pathname } = useLocation();
   const tipoUsuario = localStorage.getItem("tipo");
 
-  const [collapsed, setCollapsed] = useState(false);
-
-  const toggleDrawer = () => {
-    setCollapsed((prev) => !prev);
-  };
+  // Estado para identificar se é mobile
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setCollapsed(true);
-      } else {
-        setCollapsed(false);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+
+      if (mobile) {
+        // Navega para /materias se não estiver já lá
+        if (!pathname.startsWith("/materias")) {
+          navigate("/materias");
+        }
       }
     };
 
-    handleResize(); 
+    handleResize(); // chama ao montar
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [navigate, pathname]);
 
+  // Se estiver na tela raiz ou login, só renderiza o Outlet (sem layout)
   if (pathname === "/" || pathname === "/login") {
     return <Outlet />;
   }
@@ -65,78 +66,76 @@ const Layout = () => {
     { text: "Semestres", icon: <CalendarIcon />, route: "/semestres" },
   ];
 
-  const menuItems =
-    tipoUsuario === "1"
-      ? menuItemsProfessor
-      : tipoUsuario === "2"
-      ? menuItemsAdm
-      : [];
+  // Se for mobile, mostra só Matérias no menu
+  const menuItems = isMobile
+    ? [{ text: "Matérias", icon: <MenuBookIcon />, route: "/materias" }]
+    : tipoUsuario === "1"
+    ? menuItemsProfessor
+    : tipoUsuario === "2"
+    ? menuItemsAdm
+    : [];
 
   return (
     <div className="dashboard-container">
-      <Drawer
-        variant="permanent"
-        anchor="left"
-        PaperProps={{
-          className: `drawer-custom ${collapsed ? "collapsed" : ""}`,
-          style: {
-            width: collapsed ? 72 : 240,
-          },
-        }}
-      >
-        <div className="menu-logo" onClick={toggleDrawer} style={{ cursor: "pointer" }}>
-          {collapsed ? (
-            <ArrowForwardIosIcon className="menu-toggle-icon" />
-          ) : (
+      {!isMobile && (
+        <Drawer
+          variant="permanent"
+          anchor="left"
+          PaperProps={{
+            className: `drawer-custom`,
+            style: { width: 240 },
+          }}
+        >
+          <div className="menu-logo" style={{ cursor: "default" }}>
             <img src={logo} alt="Grupo Fasipe" />
-          )}
-        </div>
+          </div>
 
-        <List>
-          {tipoUsuario === "1" && (
+          <List>
+            {tipoUsuario === "1" && (
+              <ListItemButton
+                onClick={() => navigate("/home")}
+                className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
+              >
+                <ListItemIcon className="menu-icon">
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="Home" />
+              </ListItemButton>
+            )}
+
+            {menuItems.map((item) => {
+              const isSelected = pathname.startsWith(item.route);
+              return (
+                <ListItemButton
+                  key={item.text}
+                  onClick={() => navigate(item.route)}
+                  className={`menu-item ${isSelected ? "selected" : ""}`}
+                >
+                  <ListItemIcon className="menu-icon">{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              );
+            })}
+          </List>
+
+          <div style={{ marginTop: "auto" }}>
             <ListItemButton
-              onClick={() => navigate("/home")}
-              className={`menu-item ${pathname === "/home" ? "selected" : ""}`}
+              onClick={() => {
+                localStorage.clear();
+                navigate("/login");
+              }}
+              className="menu-item"
             >
               <ListItemIcon className="menu-icon">
-                <DashboardIcon />
+                <LogoutIcon />
               </ListItemIcon>
-              {!collapsed && <ListItemText primary="Home" />}
+              <ListItemText primary="Sair" />
             </ListItemButton>
-          )}
+          </div>
+        </Drawer>
+      )}
 
-          {menuItems.map((item) => {
-            const isSelected = pathname.startsWith(item.route);
-            return (
-              <ListItemButton
-                key={item.text}
-                onClick={() => navigate(item.route)}
-                className={`menu-item ${isSelected ? "selected" : ""}`}
-              >
-                <ListItemIcon className="menu-icon">{item.icon}</ListItemIcon>
-                {!collapsed && <ListItemText primary={item.text} />}
-              </ListItemButton>
-            );
-          })}
-        </List>
-
-        <div style={{ marginTop: "auto" }}>
-          <ListItemButton
-            onClick={() => {
-              localStorage.clear();
-              navigate("/login");
-            }}
-            className="menu-item"
-          >
-            <ListItemIcon className="menu-icon">
-              <LogoutIcon />
-            </ListItemIcon>
-            {!collapsed && <ListItemText primary="Sair" />}
-          </ListItemButton>
-        </div>
-      </Drawer>
-
-      <main className="conteudo-principal">
+      <main className={`conteudo-principal ${isMobile ? "mobile" : ""}`}>
         <Outlet />
       </main>
     </div>
