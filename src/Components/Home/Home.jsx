@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import ModaisChamada from "../Chamada/ModaisChamada"; 
 import "./Home.css";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Home = () => {
   const [nome, setNome] = useState("");
@@ -25,6 +26,28 @@ const Home = () => {
   const [abrirModalSelecionarMateria, setAbrirModalSelecionarMateria] = useState(false);
   const [materias, setMaterias] = useState([]);
   const [carregandoMaterias, setCarregandoMaterias] = useState(false);
+
+    const [isMobile, setIsMobile] = useState(false);
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
+    
+    useEffect(() => {
+      const handleResize = () => {
+        const mobile = window.innerWidth < 768;
+        setIsMobile(mobile);
+  
+        if (mobile) {
+          // Navega para /materias se não estiver já lá
+          if (!pathname.startsWith("/materiasmobile")) {
+            navigate("/materiasmobile");
+          }
+        }
+      };
+  
+      handleResize(); // chama ao montar
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, [navigate, pathname]);
 
   const abrirModalMatérias = () => {
     setAbrirModalSelecionarMateria(true);
