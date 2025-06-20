@@ -33,7 +33,7 @@ const Home = () => {
     
     useEffect(() => {
       const handleResize = () => {
-        const mobile = window.innerWidth < 768;
+        const mobile = window.innerWidth < 500;
         setIsMobile(mobile);
   
         if (mobile) {
