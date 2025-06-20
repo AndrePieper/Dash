@@ -10,6 +10,7 @@ import Chamada from './Components/Chamada/Chamada';
 import EditarChamada from './Components/Chamada/EditarChamada';
 
 import Materias from './Components/Materias/Materias';
+import MateriasMobile from './Components/Materias/MateriasMobile';
 
 import Usuarios from './Components/Usuarios/Usuarios';
 import CadastroUsuario from './Components/Usuarios/CadastroUsuario'
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/chamada/editarchamada/:id" element={<EditarChamada />} />
 
           <Route path="/materias" element={<Materias />} />
+          <Route path="/materiasmobile" element={<MateriasMobile />} />
 
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/usuarios/cadastrousuario" element={<CadastroUsuario />} />

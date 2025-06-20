@@ -36,8 +36,8 @@ const Layout = () => {
 
       if (mobile) {
         // Navega para /materias se não estiver já lá
-        if (!pathname.startsWith("/materias")) {
-          navigate("/materias");
+        if (!pathname.startsWith("/materiasmobile")) {
+          navigate("/materiasmobile");
         }
       }
     };
@@ -68,7 +68,7 @@ const Layout = () => {
 
   // Se for mobile, mostra só Matérias no menu
   const menuItems = isMobile
-    ? [{ text: "Matérias", icon: <MenuBookIcon />, route: "/materias" }]
+    ? [{ text: "Matérias", icon: <MenuBookIcon />, route: "/materiasmobile" }]
     : tipoUsuario === "1"
     ? menuItemsProfessor
     : tipoUsuario === "2"
