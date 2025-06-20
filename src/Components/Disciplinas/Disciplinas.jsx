@@ -285,8 +285,8 @@ const Disciplinas = () => {
         <div className="modal">
           <div className="modal-conteudo">
             <h3>Deseja realmente excluir essa disciplina?</h3>
-            <button onClick={() => confirmarExclusaoDisciplina(confirmarExclusao)}>Confirmar</button>
-            <button onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
+            <button className="botao-excluir" onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
+            <button className="botao-adicionar-vinculo" onClick={() => confirmarExclusaoDisciplina(confirmarExclusao)}>Confirmar</button>
           </div>
         </div>
       )}

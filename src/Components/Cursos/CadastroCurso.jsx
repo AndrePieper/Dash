@@ -86,7 +86,7 @@ const CadastroCurso = () => {
                   <option value={1}>Inativo</option>
                 </select>
               </div>
-              <button type="submit">Cadastrar</button>
+              <button className="botao-adicionar-vinculo" type="submit">Cadastrar</button>
             </form>
           </div>
         </div>

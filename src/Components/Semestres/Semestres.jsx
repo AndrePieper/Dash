@@ -242,8 +242,8 @@ const Semestres = () => {
         <div className="modal">
           <div className="modal-conteudo">
             <h3>Deseja realmente excluir esse semestre?</h3>
-            <button onClick={() => confirmarExclusaoSemestre(confirmarExclusao)}>Confirmar</button>
-            <button onClick={cancelarExclusao}>Cancelar</button>
+            <button className="botao-excluir" onClick={cancelarExclusao}>Cancelar</button>
+            <button className="botao-adicionar-vinculo" onClick={() => confirmarExclusaoSemestre(confirmarExclusao)}>Confirmar</button>
           </div>
         </div>
       )}

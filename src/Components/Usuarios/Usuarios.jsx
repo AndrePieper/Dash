@@ -288,7 +288,7 @@ const Usuarios = () => {
               <div className="botoes-modal">
                 <button className="botao-excluir" onClick={cancelarExclusao} > Cancelar  </button>
                 <button
-                  className='botao-adicionar-vinculo'
+                  className="botao-adicionar-vinculo"
                   onClick={() => confirmarExclusaoUsuario(confirmarExclusao)}
                 >
                   Confirmar

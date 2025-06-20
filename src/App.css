@@ -20,21 +20,21 @@
   --botao-adicionar-hover: #00B341;
   --botao-adicionar-shadow: #00000033;
 
-  --botao-salvar-cadastrar: rgb(209, 129, 8); /*TODOS OS BOTÕES PARA SALVAR CADASTRO/ALTERAÇÕES*/
-  --botao-salvar-cadastrar-hover: rgb(155, 95, 5);
+  --botao-salvar-cadastrar: #0a4afa; /*TODOS OS BOTÕES PARA SALVAR CADASTRO/ALTERAÇÕES*/
+  --botao-salvar-cadastrar-hover: #2080ff;
 
-  --botao-excluir-registro: #bb0000; /*TODOS OS BOTÕES DE EXCLUIR*/
-  --botao-excluir-registro-hover: #8B0000;
+  --botao-excluir-registro: #c70000; /*TODOS OS BOTÕES DE EXCLUIR*/
+  --botao-excluir-registro-hover: #f03636;
 
   --botao-detalhar: #0a4afa; /*TODOS OS BOTÕES DE PESQUISA/DETALHAR*/
   --botao-detalhar-hover: #2080ff;
 
-  --botao-paginacao: #4CAF50; /*TODOS OS BOTÕES DE PAGINAÇÃO*/
-  --botao-paginacao-hover: #45A049;
+  --botao-paginacao: #45A049; /*TODOS OS BOTÕES DE PAGINAÇÃO*/
+  --botao-paginacao-hover: #4CAF50;
   --botao-paginacao-desabilitado: #a5d6a7;
 
-  --botao-download: #0ac2fa; /*TODOS OS BOTÕES DE DOWNLOAD/IMPRESSÃO*/
-  --botao-download-hover: #0990b9;
+  --botao-download: #01b8f0; /*TODOS OS BOTÕES DE DOWNLOAD/IMPRESSÃO*/
+  --botao-download-hover: #2bcdff;
 
   --aba-desativo: #4e4e4e;
   --aba-ativo: #009232;

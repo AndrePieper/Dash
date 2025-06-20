@@ -1,3 +1,4 @@
+@import url(../../App.css);
 .container-importar {
   margin-left: 250px;
   padding: 30px;
@@ -37,7 +38,7 @@ input[type="file"] {
 }
 
 .baixar-modelo{
-  background-color: #0ac2fa;
+  background-color: var(--botao-download);
   color: white;
   padding: 8px 12px;
   border-radius: 4px;
@@ -46,6 +47,10 @@ input[type="file"] {
   display: flex;
   align-items: center;
 }
+.baixar-modelo:hover { 
+  background-color: var(--botao-download-hover);  
+}
+
 
 .importar-excel {
   border: 2px dashed #aaa;
@@ -58,6 +63,9 @@ input[type="file"] {
   height: 40px;
   display: flex;
   align-items: center;
+}
+.importar-excel:hover {
+  background-color: #ffffff;
 }
 /* 
 .tela-cadastro-turma {
