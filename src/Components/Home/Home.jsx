@@ -21,33 +21,10 @@ const Home = () => {
   const [semestre, setSemestre] = useState([]);
   const [chamadas, setChamadas] = useState([]);
   const [info, setInfo] = useState([]);
-
-  // Estados e funções para modal e matérias
   const [abrirModalSelecionarMateria, setAbrirModalSelecionarMateria] = useState(false);
   const [materias, setMaterias] = useState([]);
-  const [carregandoMaterias, setCarregandoMaterias] = useState(false);
+const [carregandoMaterias, setCarregandoMaterias] = useState(false);
 
-    const [isMobile, setIsMobile] = useState(false);
-    const navigate = useNavigate();
-    const { pathname } = useLocation();
-    
-    useEffect(() => {
-      const handleResize = () => {
-        const mobile = window.innerWidth < 500;
-        setIsMobile(mobile);
-  
-        if (mobile) {
-          // Navega para /materias se não estiver já lá
-          if (!pathname.startsWith("/materiasmobile")) {
-            navigate("/materiasmobile");
-          }
-        }
-      };
-  
-      handleResize(); // chama ao montar
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, [navigate, pathname]);
 
   const abrirModalMatérias = () => {
     setAbrirModalSelecionarMateria(true);
