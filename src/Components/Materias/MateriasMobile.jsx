@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ModaisChamada from "../Chamada/ModaisChamada";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { decodeJwt } from "jose";
 
 const MateriasMobile = () => {
   const [materias, setMaterias] = useState([]);
-  const [semestre, setSemestre] = useState({});
+  const [semestre, setSemestre] = useState(null);
 
   const [modalAberto, setModalAberto] = useState(false);
   const [materiaSelecionada, setMateriaSelecionada] = useState(null);
@@ -14,6 +14,11 @@ const MateriasMobile = () => {
   const [qrCodeData, setQRCodeData] = useState(null);
   const [idChamadaCriada, setIdChamadaCriada] = useState(null);
 
+  const [erroMaterias, setErroMaterias] = useState(null);
+  const [erroSemestre, setErroSemestre] = useState(null);
+  const [loadingMaterias, setLoadingMaterias] = useState(true);
+  const [loadingSemestre, setLoadingSemestre] = useState(true);
+
   const token = localStorage.getItem("token");
   const idProfessor = localStorage.getItem("id_professor");
 
@@ -21,28 +26,35 @@ const MateriasMobile = () => {
   console.log("ID Professor:", idProfessor);
 
   const buscarSemestre = () => {
-    try {
-      fetch(`https://projeto-iii-4.vercel.app/semestres/padrao/`, {
-        headers: { Authorization: `Bearer ${token}` },
+    setLoadingSemestre(true);
+    setErroSemestre(null);
+    fetch(`https://projeto-iii-4.vercel.app/semestres/padrao/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Erro na resposta do semestre");
+        return res.json();
       })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Semestre recebido:", data);
-          setSemestre(data);
-        })
-        .catch((err) => {
-          console.error("Erro ao buscar semestre: ", err);
-        });
-    } catch (err) {
-      console.error("Erro ao decodificar o token.");
-    }
+      .then((data) => {
+        console.log("Semestre recebido:", data);
+        setSemestre(data);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar semestre: ", err);
+        setErroSemestre(err.message || "Erro desconhecido ao buscar semestre");
+      })
+      .finally(() => setLoadingSemestre(false));
   };
 
   useEffect(() => {
     if (!idProfessor) {
-      console.error("ID do professor não encontrado no localStorage.");
+      setErroMaterias("ID do professor não encontrado no localStorage.");
+      setLoadingMaterias(false);
       return;
     }
+
+    setLoadingMaterias(true);
+    setErroMaterias(null);
 
     fetch(
       `https://projeto-iii-4.vercel.app/semestre/professor/?id_professor=${idProfessor}`,
@@ -50,16 +62,24 @@ const MateriasMobile = () => {
         headers: { Authorization: `Bearer ${token}` },
       }
     )
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Erro na resposta das matérias");
+        return res.json();
+      })
       .then((data) => {
         console.log("Matérias recebidas:", data);
         if (Array.isArray(data)) {
           setMaterias(data);
         } else {
-          console.error("Resposta inesperada da API:", data);
+          throw new Error("Resposta inesperada da API");
         }
       })
-      .catch((err) => console.error("Erro ao buscar matérias:", err));
+      .catch((err) => {
+        console.error("Erro ao buscar matérias:", err);
+        setErroMaterias(err.message || "Erro desconhecido ao buscar matérias");
+        setMaterias([]);
+      })
+      .finally(() => setLoadingMaterias(false));
 
     buscarSemestre();
   }, [idProfessor, token]);
@@ -76,7 +96,7 @@ const MateriasMobile = () => {
     setMateriaSelecionada(null);
   };
 
-  // Estilos ajustados para mobile
+  // Estilos para mobile
   const headerStyle = {
     padding: "12px",
     backgroundColor: "#28B657",
@@ -144,7 +164,11 @@ const MateriasMobile = () => {
   return (
     <>
       <Box style={headerStyle}>
-        Matérias - {semestre.descricao || "Carregando..."}
+        {loadingSemestre
+          ? "Carregando semestre..."
+          : erroSemestre
+          ? `Erro ao carregar semestre: ${erroSemestre}`
+          : `Matérias - ${semestre?.descricao || "Sem descrição"}`}
       </Box>
 
       <ModaisChamada
@@ -165,14 +189,22 @@ const MateriasMobile = () => {
       <Box style={homeContainerStyle}>
         <Box style={homeContentStyle}>
           <Box style={cardsContainerStyle}>
-            {materias.length === 0 ? (
-              <p style={{ textAlign: "center", marginTop: "20px" }}>
+            {loadingMaterias ? (
+              <Typography align="center" sx={{ mt: 2 }}>
+                Carregando matérias...
+              </Typography>
+            ) : erroMaterias ? (
+              <Typography align="center" color="error" sx={{ mt: 2 }}>
+                {`Erro ao carregar matérias: ${erroMaterias}`}
+              </Typography>
+            ) : materias.length === 0 ? (
+              <Typography align="center" sx={{ mt: 2 }}>
                 Nenhuma matéria encontrada.
-              </p>
+              </Typography>
             ) : (
               materias.map((m, idx) => (
                 <Box
-                  key={`${m.id_disciplina}-card-${idx}`}
+                  key={`${m.id_disciplina ?? idx}-card-${idx}`}
                   style={cardStyle}
                   onClick={() => abrirModalComMateria(m)}
                 >
