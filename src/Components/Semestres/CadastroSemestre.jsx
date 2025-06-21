@@ -51,7 +51,7 @@ const CadastroSemestre = () => {
         message: data.message || "Semestre cadastrado com sucesso!",
         type: "success",
       });
-      setTimeout(() => navigate("/semestres"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/semestres"), 2000)
 
 
     } catch (error) {
@@ -61,7 +61,7 @@ const CadastroSemestre = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 

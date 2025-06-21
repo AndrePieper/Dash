@@ -34,7 +34,7 @@ const EditarDisciplina = () => {
           type: "error",
         });
 
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
       });
 
       // Buscar dados da disciplina
@@ -56,7 +56,7 @@ const EditarDisciplina = () => {
             type: "error",
           });
   
-          setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+          setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
         });
   }, [id]);
 
@@ -94,7 +94,7 @@ const EditarDisciplina = () => {
       type: "success",
     });
 
-    setTimeout(() => navigate("/disciplinas"), 1500)
+    setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/disciplinas"), 2000)
 
     } catch (error) {
       console.log(error.message)
@@ -104,7 +104,7 @@ const EditarDisciplina = () => {
         type: "error",
       });
 
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 

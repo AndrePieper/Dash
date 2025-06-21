@@ -42,7 +42,7 @@ const CadastroUsuario = () => {
         message: data.message || "Usuário cadastrado com sucesso!",
         type: "success",
       });
-      setTimeout(() => navigate("/usuarios"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/usuarios"), 2000)
   
     } catch (error) {
       console.log(error.message)
@@ -51,7 +51,7 @@ const CadastroUsuario = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   }
 

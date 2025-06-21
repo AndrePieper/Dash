@@ -55,17 +55,15 @@
   text-align: left;
 }
 
-.container-form input,
+/* .container-form input,
 .container-form select {
   padding: 8px 10px;
   font-size: 15px;
   border: 1px solid #ccc;
   border-radius: 6px;
   outline: none;
-  /* box-sizing: border-box; */
-  /* grid-column: span 2; */
   margin-bottom: 3px;
-}
+} */
 
 .container-form button[type="submit"] {
   width: 100%;

@@ -96,7 +96,7 @@ const EditarTurma = () => {
           type: "error",
         });
 
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
       });
 
     // Buscar dados da turma
@@ -117,7 +117,7 @@ const EditarTurma = () => {
           type: "error",
         });
 
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
       });
 
     // Buscar alunos vinculados a turma
@@ -194,7 +194,7 @@ const EditarTurma = () => {
         type: "success",
       });
 
-      setTimeout(() => navigate("/turmas"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/turmas"), 2000)
 
     } catch (error) {
       console.log(error.message)
@@ -204,7 +204,7 @@ const EditarTurma = () => {
         type: "error",
       });
 
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 
@@ -324,7 +324,7 @@ const EditarTurma = () => {
           setPopup({
             show: true,
             message: "Não existe disciplina cadastrada para este curso.",
-            type: "error",
+            type: "alert",
           });
           setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
           
@@ -530,8 +530,8 @@ const EditarTurma = () => {
                     </tbody>
                   </table>
                 )}
-                <div className="rodape-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                  <div className="paginacao-container-vinculos">
+                <div className="rodape-card" >
+                  <div className="paginacao-container">
                     <button
                       onClick={handlePaginaAnteriorAluno}
                       className={`botao-paginacao ${paginaAtualAluno === 1 ? 'desabilitado' : ''}`}

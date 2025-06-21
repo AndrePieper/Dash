@@ -65,7 +65,7 @@ const CadastroTurma = () => {
         message: data.message || "Turma cadastrado com sucesso!",
         type: "success",
       });
-      setTimeout(() => navigate("/turmas"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/turmas"), 2000)
 
     }  catch (error) {
       console.log(error.message)
@@ -74,7 +74,7 @@ const CadastroTurma = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 

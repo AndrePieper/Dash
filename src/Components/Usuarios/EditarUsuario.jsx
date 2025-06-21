@@ -59,7 +59,7 @@ const EditarUsuario = () => {
           type: "error",
         });
 
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/usuarios"), 2000);
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/usuarios"), 3000);
       });
   }, [id]);
 
@@ -98,7 +98,7 @@ const EditarUsuario = () => {
         type: "success",
       });
   
-      setTimeout(() => navigate("/usuarios"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/usuarios"), 2000)
   
     } catch (error) {
       console.log(error.message)
@@ -108,7 +108,7 @@ const EditarUsuario = () => {
         type: "error",
       });
 
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   }
  

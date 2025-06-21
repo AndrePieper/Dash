@@ -214,7 +214,7 @@ const buscarChamada = () => {
           setPopup({
             show: true,
             message: "Não existe presenças nesta chamada.",
-            type: "error",
+            type: "alert",
           });
           setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
           throw new Error("404");

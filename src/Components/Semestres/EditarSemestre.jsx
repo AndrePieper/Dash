@@ -88,7 +88,7 @@ const EditarSemestre = () => {
           type: "error",
         });
 
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/semestres"), 2000);
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/semestres"), 3000);
       });
 
     // Buscar disciplinas vinculados a turma
@@ -147,7 +147,7 @@ const EditarSemestre = () => {
         type: "success",
       });
   
-      setTimeout(() => navigate("/semestres"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000)
 
     } catch (error) {
       console.log(error.message)
@@ -157,7 +157,7 @@ const EditarSemestre = () => {
         type: "error",
       });
 
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 

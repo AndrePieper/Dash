@@ -59,7 +59,7 @@ const CadastroDisciplina = () => {
         message: data.message || "Disciplina cadastrado com sucesso!",
         type: "success",
       });
-      setTimeout(() => navigate("/disciplinas"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/disciplinas"), 2000)
 
     } catch (error) {
       console.log(error.message)
@@ -68,7 +68,7 @@ const CadastroDisciplina = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 

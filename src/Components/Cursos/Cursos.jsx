@@ -84,7 +84,7 @@ const Cursos = () => {
         setPaginaAtual(paginaAtual - 1);
       }
 
-      setTimeout(() => navigate("/cursos"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/cursos"), 2000)
 
     } catch (error) {
       console.log(error.message)
@@ -93,7 +93,7 @@ const Cursos = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 

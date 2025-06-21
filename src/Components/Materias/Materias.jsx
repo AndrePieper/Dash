@@ -4,6 +4,8 @@ import { Box } from "@mui/material";
 // import {jwt_decode} from "jwt-decode";
 import { decodeJwt } from "jose";
 
+import PopUpTopo from '../PopUp/PopUpTopo';
+
 const Materias = () => {
   const [materias, setMaterias] = useState([]);
   const [semestre, setSemestre] = useState([]);
@@ -14,6 +16,9 @@ const Materias = () => {
   const [modalQRCodeAberto, setModalQRCodeAberto] = useState(false);
   const [qrCodeData, setQRCodeData] = useState(null);
   const [idChamadaCriada, setIdChamadaCriada] = useState(null);
+
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+  
 
   const token = localStorage.getItem("token");
   const idProfessor = localStorage.getItem("id_professor");
@@ -57,7 +62,7 @@ const Materias = () => {
           console.error("Resposta inesperada da API:", data);
         }
       })
-      .catch(err => console.error('Erro ao buscar semestres:', err));
+      .catch(err => console.error('Erro ao buscar chamadas do professor:', err));
 
       buscarSemestre();
   }, [idProfessor, token]);
