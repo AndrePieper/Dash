@@ -33,8 +33,8 @@ const Modal = ({ title, children, onClose, onConfirm }) => {
         <h3>{title}</h3>
         <div className="modal-content" ref={modalRef}>{children}
           <div className="modal-actions">
-            <button onClick={onClose} className="modal-cancel" style={{ backgroundColor: 'red' }}>Cancelar</button>
-            {onConfirm && <button onClick={onConfirm} className="modal-confirm" style={{ backgroundColor: 'green' }}>Confirmar</button>}
+            <button onClick={onClose} className="botao-excluir" style={{ backgroundColor: 'red' }}>Cancelar</button>
+            {onConfirm && <button onClick={onConfirm} className="botao-adicionar-vinculo" style={{ backgroundColor: 'green' }}>Confirmar</button>}
           </div>
         </div>
       </div>
@@ -215,8 +215,8 @@ const EditarTurma = () => {
 
   const confirmarExclusao = async () => {
     const token = localStorage.getItem('token');
-    const { idVinculo, tipoVinculo, tipo } = modalData;
-
+    const { idVinculo, tipoVinculo } = modalData;
+  
     let url = '';
     if (tipoVinculo === 'aluno') {
       url = `https://projeto-iii-4.vercel.app/turma/alunos/?id_vinculo=${idVinculo}`;
@@ -226,60 +226,54 @@ const EditarTurma = () => {
       console.error('Tipo de vínculo não reconhecido');
       return;
     }
-
+  
     try {
-    const res = await fetch(url, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const data = await res.json()
-
-    if (!res.ok) throw new Error("Erro ao excluir vínculo");
-
-    setPopup({
-      show: true,
-      message: data.message || "Vinculo deletado com sucesso!",
-      type: "success",
-    });
-    
-    // Atualizar o estado correto
-    if (tipo === 'aluno') {
-      setAlunos((prev) => prev.filter(a => a.id !== idVinculo));
-    } else if (tipo === 'disciplina') {
-      setDisciplinas((prev) => prev.filter(d => d.id !== idVinculo));
+      const res = await fetch(url, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Erro ao excluir vínculo");
+  
+      setPopup({
+        show: true,
+        message: data.message || "Vínculo deletado com sucesso!",
+        type: "success",
+      });
+  
+      // Atualiza lista com base no tipoVinculo
+      if (tipoVinculo === 'aluno') {
+        setAlunos(prev => {
+          const novaLista = prev.filter(a => a.id !== idVinculo);
+          if (novaLista.length <= (paginaAtualAluno - 1) * registrosPorPagina && paginaAtualAluno > 1) {
+            setPaginaAtualAluno(paginaAtualAluno - 1);
+          }
+          return novaLista;
+        });
+      } else if (tipoVinculo === 'disciplina') {
+        setDisciplinas(prev => {
+          const novaLista = prev.filter(d => d.id !== idVinculo);
+          if (novaLista.length <= (paginaAtualDisciplina - 1) * registrosPorPagina && paginaAtualDisciplina > 1) {
+            setPaginaAtualDisciplina(paginaAtualDisciplina - 1);
+          }
+          return novaLista;
+        });
+      }
+  
+      setModalData(null);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+  
+    } catch (error) {
+      console.error(error);
+      setPopup({
+        show: true,
+        message: error.message || "Erro inesperado!",
+        type: "error",
+      });
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
-    
-    setModalData(null);
-    setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
-
-    // Ajustar página se excluir último item da página
-    // const lista = tipo === 'aluno' ? alunos : disciplinas;
-    // const setPagina = tipo === 'aluno' ? setPaginaAtualAluno : setPaginaAtualDisciplina;
-
-    // if ((lista.length - 1) <= (paginaAtualAluno - 1) * 9 && paginaAtualAluno > 1) {
-    //   setPagina(paginaAtualAluno - 1);
-    // }
-    const novaLista = tipo === 'aluno'
-      ? alunos.filter(a => a.id !== idVinculo)
-      : disciplinas.filter(d => d.id !== idVinculo);
-
-    if ((novaLista.length) <= (paginaAtualAluno - 1) * registrosPorPagina && paginaAtualAluno > 1) {
-      const setPagina = tipo === 'aluno' ? setPaginaAtualAluno : setPaginaAtualDisciplina;
-      setPagina(paginaAtualAluno - 1);
-    }
-
-  } catch (error) {
-    console.error(error);
-    setPopup({
-      show: true,
-      message: error.message || "Erro inesperado!",
-      type: "error",
-    });
-
-    setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
-  }
-};
+  };
 
   // Modal controle Alunos
   const abrirModalAdicionar = async () => {
@@ -339,7 +333,6 @@ const EditarTurma = () => {
         throw new Error("Erro ao excluir aluno da turma")
       };
       const data = await res.json();
-      console.log('teste')
       setTodasDisciplinas(data);
       setModalData({ tipo: 'adicionarDisciplina' });
     } catch (error) {
@@ -377,9 +370,6 @@ const EditarTurma = () => {
 
   const semestresDisponiveis = [...new Set(disciplinas.map((d) => d.Semestre?.descricao))];
 
-  // const disciplinasFiltradas = filtroSemestre
-  //   ? disciplinas.filter((d) => d.Semestre?.descricao === filtroSemestre)
-  //   : disciplinas;
   const disciplinasFiltradas = useMemo(() => {
     return filtroSemestre
       ? disciplinas.filter((d) => d.Semestre?.descricao === filtroSemestre)
@@ -389,16 +379,13 @@ const EditarTurma = () => {
 
   // Pagina os usuários ordenados
   const registrosPorPagina = 3;
+
   const totalPaginasAluno = Math.ceil(alunos.length / registrosPorPagina);
-  const indiceInicialAluno = (paginaAtualAluno - 1) * registrosPorPagina;
-  const indiceFinalAluno = indiceInicialAluno + registrosPorPagina;
-  // const alunosPaginados = alunos.slice(indiceInicialAluno, indiceFinalAluno);
   const alunosPaginados = useMemo(() => {
     const inicio = (paginaAtualAluno - 1) * registrosPorPagina;
     const fim = inicio + registrosPorPagina;
     return alunos.slice(inicio, fim);
   }, [alunos, paginaAtualAluno]);
-
 
   // Navegação das páginas Alunos
   const handlePaginaAnteriorAluno = () => {
@@ -409,16 +396,11 @@ const EditarTurma = () => {
   };
 
   const totalPaginasDisciplina = Math.ceil(disciplinasFiltradas.length / registrosPorPagina);
-  const indiceInicialDisciplina = (paginaAtualDisciplina - 1) * registrosPorPagina;
-  const indiceFinalDisciplina = indiceInicialDisciplina + registrosPorPagina;
-  // const disciplinasPaginadas = disciplinasFiltradas.slice(indiceInicialDisciplina, indiceFinalDisciplina);
   const disciplinasPaginadas = useMemo(() => {
     const inicio = (paginaAtualDisciplina - 1) * registrosPorPagina;
     const fim = inicio + registrosPorPagina;
     return disciplinasFiltradas.slice(inicio, fim);
   }, [disciplinasFiltradas, paginaAtualDisciplina]);
-
-
 
   // Navegação das páginas Disciplina
   const handlePaginaAnteriorDisciplina = () => {
@@ -427,7 +409,6 @@ const EditarTurma = () => {
   const handleProximaPaginaDisciplina = () => {
     if (paginaAtualDisciplina < totalPaginasDisciplina) setPaginaAtualDisciplina(paginaAtualDisciplina + 1);
   };
-
 
   return (
     <>
@@ -481,7 +462,7 @@ const EditarTurma = () => {
                 <option value="1">Concluído</option>
               </select>
             </div>
-            <button className='botao-adicionar-vinculo' type="submit">Salvar Alterações</button>
+            <button className='botao-gravar' type="submit">Salvar Alterações</button>
           </form>
 
           {/* CARD 2: GESTÃO DE VÍNCULOS */}
@@ -536,10 +517,10 @@ const EditarTurma = () => {
                       {alunosPaginados.map((aluno) => (
                         <tr key={aluno.id}>
                           <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }} className="dado-vinculo">{aluno.Usuario?.nome}</td>
-                          <td className="button-remover">
+                          <td style={{ justifyContent: 'center', display: 'flex', borderBottom: '1px solid #D0D0D0' }}>
                             <button
                               onClick={() => abrirModalExclusao({ idVinculo: aluno.id, tipoVinculo: 'aluno' })}
-                              className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                              className="botao-excluir"
                             >
                               <FaTrash size={20} />
                             </button>
@@ -569,7 +550,7 @@ const EditarTurma = () => {
                   </div>
 
                   <div className="adicionar-vinculo" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <button onClick={abrirModalAdicionar} className="botao-editar" title="Adicionar aluno">
+                    <button onClick={abrirModalAdicionar} className="botao-adicionar-vinculo" title="Adicionar aluno">
                       <FaPlus size={28} />
                     </button>
 
@@ -642,7 +623,7 @@ const EditarTurma = () => {
                             <td style={{ justifyContent: 'center', display: 'flex', borderBottom: '1px solid #D0D0D0' }}>
                               <button
                                 onClick={() => abrirModalExclusao({ idVinculo: item.id, tipoVinculo: 'disciplina' })}
-                                className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                                className="botao-excluir"
                               >
                                 <FaTrash size={20} />
                               </button>
@@ -675,7 +656,7 @@ const EditarTurma = () => {
 
                   </div>
                   <div className="adicionar-vinculo">
-                    <button onClick={abrirModalAdicionarDisciplina} className="botao-editar" >
+                    <button onClick={abrirModalAdicionarDisciplina} className="botao-adicionar-vinculo" >
                       <FaPlus size={28} />
                     </button>
                   </div>
@@ -690,8 +671,8 @@ const EditarTurma = () => {
             onClose={() => setModalData(null)}
             onConfirm={confirmarExclusao}
           >
-            <p>Você realmente deseja remover este aluno desta turma?</p>
-          </Modal>
+           <strong><p>Você realmente deseja remover este vinculo desta turma?</p></strong> 
+          </Modal> 
         )}
 
         {modalData && modalData.tipo === 'adicionar' && (
@@ -741,35 +722,33 @@ const EditarTurma = () => {
               onChange={e => setFiltroNome(e.target.value)}
             />
             <div className="lista-disciplinas-disponiveis">
-
-            {todasDisciplinas.length === 0 ? (
-              <input>
-                Nenhuma disciplina encontrada.
-              </input>
-            ) : (
-              todasDisciplinas
-                .filter(d => d.descricao.toLowerCase().includes(filtroNome.toLowerCase()))
-                .map((disciplina) => (
-                  <label key={disciplina.id} style={{ display: 'flex', padding: '5px' }}>
-                    <input
-                      type="checkbox"
-                      checked={disciplinasSelecionadas.includes(disciplina.id)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setDisciplinasSelecionadas((prev) => [...prev, disciplina.id]);
-                        } else {
-                          setDisciplinasSelecionadas((prev) =>
-                            prev.filter((id) => id !== disciplina.id)
-                          );
-                        }
-                      }}
-                      style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
-                    />
-                    {disciplina.descricao}
-                  </label>
-                ))
-            )}
-
+              {todasDisciplinas.length === 0 ? (
+                <input>
+                  Nenhuma disciplina encontrada.
+                </input>
+              ) : (
+                todasDisciplinas
+                  .filter(d => d.descricao.toLowerCase().includes(filtroNome.toLowerCase()))
+                  .map((disciplina) => (
+                    <label key={disciplina.id} style={{ display: 'flex', padding: '5px' }}>
+                      <input
+                        type="checkbox"
+                        checked={disciplinasSelecionadas.includes(disciplina.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setDisciplinasSelecionadas((prev) => [...prev, disciplina.id]);
+                          } else {
+                            setDisciplinasSelecionadas((prev) =>
+                              prev.filter((id) => id !== disciplina.id)
+                            );
+                          }
+                        }}
+                        style={{ width: 'auto', display: 'flex', marginRight: '10px' }}
+                      />
+                      {disciplina.descricao}
+                    </label>
+                  ))
+              )}
             </div>
           </Modal>
         )}

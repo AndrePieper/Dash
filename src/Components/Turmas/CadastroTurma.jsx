@@ -128,7 +128,7 @@ const CadastroTurma = () => {
               {/* <option value="1">Concluído</option> */}
             </select>
           </div>
-          <button className="botao-adicionar-vinculo" type="submit">Cadastrar</button>
+          <button className="botao-gravar" type="submit">Cadastrar</button>
         </form>
       </div>
     </div>

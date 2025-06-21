@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef  } from 'react';
+import React, { useState, useEffect, useRef, useMemo  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
@@ -176,7 +176,13 @@ const EditarSemestre = () => {
       });
       if (!res.ok) throw new Error("Erro ao excluir disciplina do professor.");
 
-      setProfessorDisciplinas((prev) => prev.filter(a => a.id !== idVinculo)); // Remover o registro do aluno no front
+      setProfessorDisciplinas(prev => {
+        const novaLista = prev.filter(a => a.id !== idVinculo);
+        if (novaLista.length <= (paginaAtual - 1) * registrosPorPagina && paginaAtual > 1) {
+          setPaginaAtual(paginaAtual - 1);
+        }
+        return novaLista;
+      });
       setModalData(null);
     } catch (error) {
       console.error(error);
@@ -221,20 +227,34 @@ const EditarSemestre = () => {
   
       if (!res.ok) throw new Error("Erro ao adicionar vínculo.");
   
+      const resAtualizado = await fetch(`https://projeto-iii-4.vercel.app/semestre/${id}/disciplinas`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      const novasDisciplinas = await resAtualizado.json();
+      setProfessorDisciplinas(Array.isArray(novasDisciplinas) ? novasDisciplinas : []);
+  
       setModalData(null);
       setProfessorSelecionado(null);
       setDisciplinaSelecionada(null);
-      window.location.reload();
+  
+      // const novoTotalPaginas = Math.ceil((novasDisciplinas.length) / registrosPorPagina);
+      // setPaginaAtual(novoTotalPaginas);
+  
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const registrosPorPagina = 3;
   const totalPaginas = Math.ceil(professorDisciplinas.length / registrosPorPagina);
-  const indiceInicial = (paginaAtual - 1) * registrosPorPagina;
-  const indiceFinal = indiceInicial + registrosPorPagina;
-  const vinculosPaginados = professorDisciplinas.slice(indiceInicial, indiceFinal);
+  const vinculosPaginados = useMemo(() => {
+    const inicio = (paginaAtual - 1) * registrosPorPagina;
+    const fim = inicio + registrosPorPagina;
+    return professorDisciplinas.slice(inicio, fim);
+  }, [professorDisciplinas, paginaAtual]);
+
     // Navegação das páginas Disciplina
     const handlePaginaAnterior = () => {
       if (paginaAtual > 1) setPaginaAtual(paginaAtual - 1);
@@ -300,7 +320,7 @@ const EditarSemestre = () => {
                 <option value={1}>Não</option>
               </select>
             </div>
-            <button className='botao-adicionar-vinculo' type="submit">Salvar Alterações</button>
+            <button className='botao-gravar' type="submit">Salvar Alterações</button>
           </form>
 
           {/* CARD 2: GESTÃO DE VÍNCULOS */}
@@ -327,7 +347,7 @@ const EditarSemestre = () => {
                         <td style={{ justifyContent: 'center', display: 'flex' }}>
                           <button 
                             onClick={() => abrirModalExclusao(professorDisciplina.id)} 
-                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                            className="botao-excluir"
                           >
                             <FaTrash size={20}/>
                           </button>
@@ -359,8 +379,8 @@ const EditarSemestre = () => {
 
                 </div>
                 <div className="adicionar-vinculo">
-                  <button onClick={abrirModalAdicionar} className="botao-editar" >
-                    <FaPlus size={28} />
+                  <button onClick={abrirModalAdicionar} className="botao-adicionar-vinculo" >
+                    <FaPlus size={20} />
                   </button>
                 </div>
               </div>

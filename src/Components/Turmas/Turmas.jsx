@@ -238,7 +238,7 @@ const Turmas = () => {
             <h3>Tem certeza que deseja excluir esta turma?</h3>
             <button className='botao-excluir' onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
             <button className='botao-adicionar-vinculo' onClick={() => confirmarExclusaoTurma(confirmarExclusao)}>Confirmar</button>
-          </div>
+          </div> 
         </div>
       )}
     </>

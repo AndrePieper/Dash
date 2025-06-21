@@ -112,7 +112,7 @@ const CadastroSemestre = () => {
                 <option value={0}>Sim</option>
                 <option value={1}>Não</option>
               </select>
-            <button className="botao-adicionar-vinculo" type="submit">Cadastrar</button>
+            <button className="botao-gravar" type="submit">Cadastrar</button>
           </form>
         </div>
       </div>

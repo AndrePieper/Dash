@@ -116,7 +116,7 @@ const CadastroUsuario = () => {
                 autoComplete="new-password"
               />
               <br/>
-            <button className="botao-adicionar-vinculo" type="submit">Cadastrar</button>
+            <button className="botao-gravar" type="submit">Cadastrar</button>
           </form>
         </div>
       </div>

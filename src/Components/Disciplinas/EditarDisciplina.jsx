@@ -162,7 +162,7 @@ const EditarDisciplina = () => {
               <option value={1}>Inativa</option>
             </select>
             <br/>
-            <button className='botao-adicionar-vinculo' type="submit" >Salvar Alterações</button>
+            <button className='botao-gravar' type="submit" >Salvar Alterações</button>
           </form>
         </div>
       </div>

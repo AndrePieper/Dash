@@ -121,7 +121,7 @@ const EditarCurso = () => {
                 <option value={1}>Inativo</option>
               </select>
               <br/>
-              <button className='botao-adicionar-vinculo' type="submit">Salvar Alterações</button>
+              <button className='botao-gravar' type="submit">Salvar Alterações</button>
             </form>
           </div>
       </div>
