@@ -23,7 +23,7 @@ const Home = () => {
   const [info, setInfo] = useState([]);
   const [abrirModalSelecionarMateria, setAbrirModalSelecionarMateria] = useState(false);
   const [materias, setMaterias] = useState([]);
-const [carregandoMaterias, setCarregandoMaterias] = useState(false);
+  const [carregandoMaterias, setCarregandoMaterias] = useState(false);
 
 
   const abrirModalMatérias = () => {

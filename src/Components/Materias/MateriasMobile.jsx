@@ -17,6 +17,9 @@ const MateriasMobile = () => {
   const token = localStorage.getItem("token");
   const idProfessor = localStorage.getItem("id_professor");
 
+  console.log("Token:", token);
+  console.log("ID Professor:", idProfessor);
+
   const buscarSemestre = () => {
     try {
       fetch(`https://projeto-iii-4.vercel.app/semestres/padrao/`, {
@@ -24,6 +27,7 @@ const MateriasMobile = () => {
       })
         .then((res) => res.json())
         .then((data) => {
+          console.log("Semestre recebido:", data);
           setSemestre(data);
         })
         .catch((err) => {
@@ -48,13 +52,14 @@ const MateriasMobile = () => {
     )
       .then((res) => res.json())
       .then((data) => {
+        console.log("Matérias recebidas:", data);
         if (Array.isArray(data)) {
           setMaterias(data);
         } else {
           console.error("Resposta inesperada da API:", data);
         }
       })
-      .catch((err) => console.error("Erro ao buscar semestres:", err));
+      .catch((err) => console.error("Erro ao buscar matérias:", err));
 
     buscarSemestre();
   }, [idProfessor, token]);
@@ -71,75 +76,76 @@ const MateriasMobile = () => {
     setMateriaSelecionada(null);
   };
 
-const headerStyle = {
-  padding: "16px",
-  backgroundColor: "#28B657",
-  color: "white",
-  fontWeight: "bold",
-  fontSize: "20px",
-  textAlign: "center",
-  borderRadius: "12px",
-  maxWidth: "400px",     // mesmo valor do card
-  width: "100%",
-  margin: "16px auto",   // centraliza
-  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-  boxSizing: "border-box",
-};
+  // Estilos ajustados para mobile
+  const headerStyle = {
+    padding: "12px",
+    backgroundColor: "#28B657",
+    color: "white",
+    fontWeight: "bold",
+    fontSize: "18px",
+    textAlign: "center",
+    borderRadius: "12px",
+    maxWidth: "320px",
+    width: "100%",
+    margin: "12px auto",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+    boxSizing: "border-box",
+  };
 
-
-const homeContainerStyle = {
-  display: "flex",
-  flexDirection: "column",
-  height: "100vh",
-  width: "100%", // NÃO "100vw", pois 100vw ignora o padding
-  backgroundColor: "#e2e2e2",
-  padding: "8px",
-  boxSizing: "border-box",
-  overflowX: "hidden", // impede rolagem horizontal
-};
+  const homeContainerStyle = {
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
+    width: "100%",
+    backgroundColor: "#e2e2e2",
+    padding: "8px 4px",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+  };
 
   const homeContentStyle = {
     flexGrow: 1,
     overflowY: "auto",
   };
 
- const cardsContainerStyle = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "12px",
-  alignItems: "center",
-  width: "100%", // garante que não ultrapasse
-  boxSizing: "border-box",
-};
+  const cardsContainerStyle = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    alignItems: "center",
+    width: "100%",
+    boxSizing: "border-box",
+  };
 
- const cardStyle = {
-  backgroundColor: "white",
-  borderRadius: "8px",
-  padding: "16px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-  cursor: "pointer",
-  maxWidth: "400px",
-  width: "100%",
-  boxSizing: "border-box",
-  margin: "0 auto",
-  minHeight: "160px",
-};
-
+  const cardStyle = {
+    backgroundColor: "white",
+    borderRadius: "8px",
+    padding: "12px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    cursor: "pointer",
+    maxWidth: "320px",
+    width: "100%",
+    boxSizing: "border-box",
+    margin: "0 auto",
+    minHeight: "140px",
+  };
 
   const cardTitleStyle = {
-    margin: "0 0 8px 0",
-    fontSize: "18px",
+    margin: "0 0 6px 0",
+    fontSize: "16px",
     fontWeight: "bold",
   };
 
   const cardTextStyle = {
-    margin: "4px 0",
-    fontSize: "14px",
+    margin: "3px 0",
+    fontSize: "13px",
   };
 
   return (
     <>
-      <Box style={headerStyle}>Matérias - {semestre.descricao}</Box>
+      <Box style={headerStyle}>
+        Matérias - {semestre.descricao || "Carregando..."}
+      </Box>
 
       <ModaisChamada
         abrirModalSelecionarMateria={modalAberto}
@@ -159,21 +165,27 @@ const homeContainerStyle = {
       <Box style={homeContainerStyle}>
         <Box style={homeContentStyle}>
           <Box style={cardsContainerStyle}>
-            {materias.map((m, idx) => (
-              <Box
-                key={`${m.id_disciplina}-card-${idx}`}
-                style={cardStyle}
-                onClick={() => abrirModalComMateria(m)}
-              >
-                <h2 style={cardTitleStyle}>{m.descricao_disciplina}</h2>
-                <p style={cardTextStyle}>
-                  <strong>Carga Horária:</strong> {m.carga_horaria}
-                </p>
-                <p style={cardTextStyle}>
-                  <strong>Semestre:</strong> {m.descricao_semestre}
-                </p>
-              </Box>
-            ))}
+            {materias.length === 0 ? (
+              <p style={{ textAlign: "center", marginTop: "20px" }}>
+                Nenhuma matéria encontrada.
+              </p>
+            ) : (
+              materias.map((m, idx) => (
+                <Box
+                  key={`${m.id_disciplina}-card-${idx}`}
+                  style={cardStyle}
+                  onClick={() => abrirModalComMateria(m)}
+                >
+                  <h2 style={cardTitleStyle}>{m.descricao_disciplina}</h2>
+                  <p style={cardTextStyle}>
+                    <strong>Carga Horária:</strong> {m.carga_horaria}
+                  </p>
+                  <p style={cardTextStyle}>
+                    <strong>Semestre:</strong> {m.descricao_semestre}
+                  </p>
+                </Box>
+              ))
+            )}
           </Box>
         </Box>
       </Box>
