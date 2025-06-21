@@ -91,12 +91,14 @@ const CadastroUsuario = () => {
               <label>CPF</label>
               <input
                 type="text"
+                placeholder="CPF"
                 value={cpf}
                 onChange={(e) => setCPF(e.target.value )}
               />
               <label>RA</label>
               <input
                 type="text"
+                placeholder="RA"
                 value={ra}
                 onChange={(e) => setRA(e.target.value )}
               />

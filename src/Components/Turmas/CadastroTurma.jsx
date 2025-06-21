@@ -97,9 +97,9 @@ const CadastroTurma = () => {
               type="number"
               id="semestre"
               value={semestre}
+              placeholder="Digite o semestre"
               onChange={(e) => setSemestre(e.target.value)}
               required
-              placeholder="Digite o semestre"
             />
           </div>
           <div>

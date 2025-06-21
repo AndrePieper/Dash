@@ -82,6 +82,7 @@ const CadastroSemestre = () => {
               <input
                 type="text"
                 id="descricao"
+                placeholder="Ex: 2025/01"
                 value={descricao}
                 onChange={(e) => setDescricao(e.target.value)}
                 required

@@ -73,11 +73,11 @@ const CadastroCurso = () => {
             <form onSubmit={handleSubmit}>
               <div>
                 <label>Nome do Curso:</label>
-                <input value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
+                <input value={descricao} placeholder="Nome" onChange={(e) => setDescricao(e.target.value)} required />
               </div>
               <div>
                 <label>Quantidade de Semestres:</label>
-                <input type="number" value={qtdSemestres} onChange={(e) => setQtdSemestres(e.target.value)} required />
+                <input type="number" placeholder="Quantos semestres de duração" value={qtdSemestres} onChange={(e) => setQtdSemestres(e.target.value)} required />
               </div>
               <div>
                 <label>Status:</label>
