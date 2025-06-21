@@ -327,7 +327,7 @@ const EditarSemestre = () => {
           <div style={{ flex: 1, background: '#f9f9f9', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
             {/* CONTEÚDO DAS ABAS */}
             <div>
-              <h3>Disciplinas Professores</h3>
+              <h3 style={{ marginTop: '0px' }}>Disciplinas Professores</h3>
               {professorDisciplinas.length === 0 ? (
                 <p>Nenhuma disciplina vinculada a professores.</p>
               ) : (
@@ -336,7 +336,8 @@ const EditarSemestre = () => {
                     <tr>
                     <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Professor</th>
                       <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Disciplina</th>
-                      <th style={{ width: '15%' }}>Remover</th>
+                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Curso</th>
+                      <th className='th-acao'>Remover</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -344,6 +345,7 @@ const EditarSemestre = () => {
                       <tr key={disciplinas.id}>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.nome_professor}</td>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.descricao_disciplina}</td>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.descricao_curso}</td>
                         <td style={{ justifyContent: 'center', display: 'flex' }}>
                           <button 
                             onClick={() => abrirModalExclusao(professorDisciplina.id)} 

@@ -326,9 +326,12 @@ h1, h2, h3, div, p, input, option, label {
   margin: 0 10px;
 }
 
+.th-acao {
+  width: 70px;
+}
 .th-acoes {
   width: 100px;
 }
 .th-codigo {
-  width: 70px;
+  width: 80px;
 }

@@ -510,7 +510,7 @@ const EditarTurma = () => {
                     <thead>
                       <tr>
                         <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Nome</th>
-                        <th style={{ width: '15%' }}>Remover</th>
+                        <th className='th-acao'>Remover</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -612,7 +612,7 @@ const EditarTurma = () => {
                         <tr>
                           <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Disciplina</th>
                           <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem', width: '20%' }}>Semestre</th>
-                          <th style={{ width: '15%' }}>Remover</th>
+                          <th className='th-acao'>Remover</th>
                         </tr>
                       </thead>
                       <tbody>
