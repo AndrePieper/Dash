@@ -26,9 +26,8 @@ const Layout = () => {
   const { pathname } = useLocation();
   const tipoUsuario = localStorage.getItem("tipo");
 
-  // Se estiver na tela raiz ou login, só renderiza o Outlet (sem layout)
-  if (pathname === "/" || pathname === "/login") {
-    return <Outlet />;
+if (pathname === "/" || pathname === "/login" || pathname === "/materiasmobile") {
+  return <Outlet />;
   }
 
   const menuItemsProfessor = [
