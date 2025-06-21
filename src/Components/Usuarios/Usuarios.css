@@ -285,7 +285,7 @@ h1, h2, h3, div, p, input, option, label {
   align-items: center;
   justify-content: center;
 }          
-.adicionar-vinculo button { /* ----- ESTE CÓDIGO ESTÁ FAZENDO ALGUNS BOTÕES FICAREM VERDES ----- */
+.adicionar-vinculo button {
   /* padding: 6px 16px; */
   height: 36px;
   margin: 0 10px;

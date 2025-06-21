@@ -244,7 +244,7 @@ const Chamada = () => {
                         })
                       : ""}
                   </td>
-                  <td>
+                  <td style={{ justifyContent: 'center', display: 'flex'}}>
                     <button
                       className="botao-detalhar"
                       title="Verficar Presenças"
