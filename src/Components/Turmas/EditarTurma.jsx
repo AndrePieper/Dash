@@ -589,7 +589,12 @@ const EditarTurma = () => {
                         if (file && file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
                           ImportarExcel(file);
                         } else {
-                          alert('Por favor, envie um arquivo Excel (.xlsx)');
+                          setPopup({
+                            show: true,
+                            message: "Por favor, envie um arquivo Excel (.xlsx)",
+                            type: "alert",
+                          });
+                          setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
                         }
                       }}
                       onDragOver={(e) => e.preventDefault()}

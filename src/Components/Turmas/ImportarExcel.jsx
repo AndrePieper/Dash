@@ -6,9 +6,11 @@ import './CadastroTurma.css';
 export const processarExcel = async (file) => {
   const id_turma = localStorage.getItem("id_turma");
   const token = localStorage.getItem("token");
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" })
 
   if (!id_turma) {
-    alert("ID da turma não encontrado.");
+    console.log("ID da turma não encontrado.")
+    // alert("ID da turma não encontrado.");
     return;
   }
 
@@ -22,7 +24,14 @@ export const processarExcel = async (file) => {
       const raw = XLSX.utils.sheet_to_json(workbook.Sheets[primeiraAba], { header: 1 });
 
       if (raw.length < 2) {
-        alert("Arquivo Excel está vazio ou mal formatado.");
+        setPopup({
+          show: true,
+          message: "Arquivo Excel está vazio ou mal formatado.",
+          type: "error",
+        });
+
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+        // alert("Arquivo Excel está vazio ou mal formatado.");
         return;
       }
 
@@ -34,6 +43,7 @@ export const processarExcel = async (file) => {
         });
         return obj;
       });
+
 
       for (const linha of dados) {
         const { nome, cpf, ra } = linha;
@@ -48,7 +58,7 @@ export const processarExcel = async (file) => {
           cpf: String(cpf),
           ra: String(ra),
           tipo: 0
-        };
+        }; 
 
         try {
           const res = await fetch("https://projeto-iii-4.vercel.app/usuarios", {
@@ -84,8 +94,15 @@ export const processarExcel = async (file) => {
         }
       }
 
-      alert("Importação e vinculação finalizadas.");
-      window.location.reload();
+      setPopup({
+        show: true,
+        message: "Importação e vinculação finalizadas.",
+        type: "success",
+      });
+
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      // alert("Importação e vinculação finalizadas.");
+      // window.location.reload();
     } catch (err) {
       console.error("Erro ao processar Excel:", err);
     }
@@ -120,6 +137,9 @@ const ImportarExcel = () => {
       <h1 style={{ marginBottom: '1rem' }}>Painel de Importação de Alunos</h1>
 
       <h2>Importar dados via Excel</h2>
+      {popup.show && (
+        <PopUpTopo message={popup.message} type={popup.type} />
+      )}
 
       <a href="/modelo.xlsx" download>
         <button className="botao-download-modelo">📥 Baixar Modelo Excel</button>
