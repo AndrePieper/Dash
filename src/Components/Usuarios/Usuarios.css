@@ -26,8 +26,7 @@ h1, h2, h3, div, p, input, option, label {
   background: linear-gradient(to right, var(--header-01), var(--header-02));
   color: var(--font-01);
   padding: 15px 20px;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
+  border-radius: 12px;
   box-sizing: border-box;
   flex-wrap: wrap;
   gap: 15px;
