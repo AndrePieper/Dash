@@ -73,7 +73,7 @@ const Usuarios = () => {
         setPaginaAtual(paginaAtual - 1);
       }
 
-      setTimeout(() => navigate("/usuarios"), 2000)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
 
     } catch (error) {
       setPopup({
