@@ -8,7 +8,37 @@ import './CadastroTurma.css';
 
 import PopUpTopo from '../PopUp/PopUpTopo';
 
+const ImportarExcel = async (file) => {
+  const token = localStorage.getItem("token");
+  const id_turma = localStorage.getItem("id_turma");
+  //atualzia os alunos
+  try {
+    await processarExcel(file, token);
 
+    const response = await fetch(`https://projeto-iii-4.vercel.app/turma/alunos/${id_turma}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        setAlunos([]);
+      } else {
+        throw new Error("Erro ao buscar alunos após importação.");
+      }
+    } else {
+      const data = await response.json();
+      setAlunos(Array.isArray(data) ? data : []);
+    }
+  } catch (err) {
+    console.error("Erro no ImportarExcel:", err);
+    setPopup({
+      show: true,
+      message: err.message || "Erro ao importar alunos.",
+      type: "error"
+    });
+    setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
+  }
+};
 
 
 const Modal = ({ title, children, onClose, onConfirm }) => {
@@ -45,46 +75,6 @@ const EditarTurma = () => {
   const navigate = useNavigate();
 
   const [semestre, setSemestre] = useState('');
-  const ImportarExcel = async (file) => {
-    const token = localStorage.getItem("token");
-    const id_turma = localStorage.getItem("id_turma");
-
-    try {
-      await processarExcel(file, token);
-
-      const response = await fetch(`https://projeto-iii-4.vercel.app/turma/alunos/${id_turma}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          setAlunos([]);
-        } else {
-          throw new Error("Erro ao buscar alunos após importação.");
-        }
-      } else {
-        const data = await response.json();
-        setAlunos(Array.isArray(data) ? data : []);
-      }
-
-      setPopup({
-        show: true,
-        message: "Alunos importados com sucesso!",
-        type: "success"
-      });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
-
-    } catch (err) {
-      console.error("Erro no ImportarExcel:", err);
-      setPopup({
-        show: true,
-        message: err.message || "Erro ao importar alunos.",
-        type: "error"
-      });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
-    }
-  };
-
   const [curso, setCurso] = useState('');
   const [status, setStatus] = useState('');
   const [cursos, setCursos] = useState([]);

@@ -185,7 +185,6 @@ const ModaisChamada = ({
     if (!tokenDecodificado || !chamadaSelecionada) return;
 
     if (!navigator.geolocation) {
-      alert("Geolocalização não suportada pelo navegador.");
       return;
     }
 
