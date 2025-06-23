@@ -45,7 +45,7 @@ const CadastroCurso = () => {
         message: data.message || "Curso cadastrado com sucesso!",
         type: "success",
       });
-      setTimeout(() => navigate("/cursos"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/cursos"), 2000)
 
     } catch (error) {
       console.log(error.message)
@@ -54,7 +54,7 @@ const CadastroCurso = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 
@@ -73,11 +73,11 @@ const CadastroCurso = () => {
             <form onSubmit={handleSubmit}>
               <div>
                 <label>Nome do Curso:</label>
-                <input value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
+                <input value={descricao} placeholder="Nome" onChange={(e) => setDescricao(e.target.value)} required />
               </div>
               <div>
                 <label>Quantidade de Semestres:</label>
-                <input type="number" value={qtdSemestres} onChange={(e) => setQtdSemestres(e.target.value)} required />
+                <input type="number" placeholder="Quantos semestres de duração" value={qtdSemestres} onChange={(e) => setQtdSemestres(e.target.value)} required />
               </div>
               <div>
                 <label>Status:</label>
@@ -86,7 +86,7 @@ const CadastroCurso = () => {
                   <option value={1}>Inativo</option>
                 </select>
               </div>
-              <button className="botao-adicionar-vinculo" type="submit">Cadastrar</button>
+              <button className="botao-gravar" type="submit">Cadastrar</button>
             </form>
           </div>
         </div>

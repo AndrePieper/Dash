@@ -86,7 +86,7 @@ const Semestres = () => {
         setPaginaAtual(paginaAtual - 1);
       }  
 
-      // setTimeout(() => navigate("/semestres"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000)
 
 
     } catch (error) {
@@ -96,7 +96,7 @@ const Semestres = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 

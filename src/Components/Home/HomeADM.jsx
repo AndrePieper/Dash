@@ -170,7 +170,7 @@ const Home = () => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={agrupado.porMateria}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis dataKey="name" tickFormatter={(_, index) => index + 1} />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
                 <Bar dataKey="total" fill="#2e7d32" />

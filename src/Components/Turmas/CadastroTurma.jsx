@@ -65,7 +65,7 @@ const CadastroTurma = () => {
         message: data.message || "Turma cadastrado com sucesso!",
         type: "success",
       });
-      setTimeout(() => navigate("/turmas"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/turmas"), 2000)
 
     }  catch (error) {
       console.log(error.message)
@@ -74,7 +74,7 @@ const CadastroTurma = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 
@@ -97,9 +97,9 @@ const CadastroTurma = () => {
               type="number"
               id="semestre"
               value={semestre}
+              placeholder="Digite o semestre"
               onChange={(e) => setSemestre(e.target.value)}
               required
-              placeholder="Digite o semestre"
             />
           </div>
           <div>
@@ -128,7 +128,7 @@ const CadastroTurma = () => {
               {/* <option value="1">Concluído</option> */}
             </select>
           </div>
-          <button className="botao-adicionar-vinculo" type="submit">Cadastrar</button>
+          <button className="botao-gravar" type="submit">Cadastrar</button>
         </form>
       </div>
     </div>

@@ -135,7 +135,7 @@ const Turmas = () => {
         setPaginaAtual(paginaAtual - 1);
       }
 
-      setTimeout(() => navigate("/turmas"), 1500);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/turmas"), 2000);
 
     } catch (error) {
       setPopup({
@@ -143,7 +143,7 @@ const Turmas = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 
@@ -238,7 +238,7 @@ const Turmas = () => {
             <h3>Tem certeza que deseja excluir esta turma?</h3>
             <button className='botao-excluir' onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
             <button className='botao-adicionar-vinculo' onClick={() => confirmarExclusaoTurma(confirmarExclusao)}>Confirmar</button>
-          </div>
+          </div> 
         </div>
       )}
     </>

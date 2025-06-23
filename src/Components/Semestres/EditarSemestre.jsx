@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef  } from 'react';
+import React, { useState, useEffect, useRef, useMemo  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
@@ -88,7 +88,7 @@ const EditarSemestre = () => {
           type: "error",
         });
 
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/semestres"), 2000);
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/semestres"), 3000);
       });
 
     // Buscar disciplinas vinculados a turma
@@ -147,7 +147,7 @@ const EditarSemestre = () => {
         type: "success",
       });
   
-      setTimeout(() => navigate("/semestres"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000)
 
     } catch (error) {
       console.log(error.message)
@@ -157,7 +157,7 @@ const EditarSemestre = () => {
         type: "error",
       });
 
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 
@@ -176,7 +176,13 @@ const EditarSemestre = () => {
       });
       if (!res.ok) throw new Error("Erro ao excluir disciplina do professor.");
 
-      setProfessorDisciplinas((prev) => prev.filter(a => a.id !== idVinculo)); // Remover o registro do aluno no front
+      setProfessorDisciplinas(prev => {
+        const novaLista = prev.filter(a => a.id !== idVinculo);
+        if (novaLista.length <= (paginaAtual - 1) * registrosPorPagina && paginaAtual > 1) {
+          setPaginaAtual(paginaAtual - 1);
+        }
+        return novaLista;
+      });
       setModalData(null);
     } catch (error) {
       console.error(error);
@@ -221,20 +227,34 @@ const EditarSemestre = () => {
   
       if (!res.ok) throw new Error("Erro ao adicionar vínculo.");
   
+      const resAtualizado = await fetch(`https://projeto-iii-4.vercel.app/semestre/${id}/disciplinas`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      const novasDisciplinas = await resAtualizado.json();
+      setProfessorDisciplinas(Array.isArray(novasDisciplinas) ? novasDisciplinas : []);
+  
       setModalData(null);
       setProfessorSelecionado(null);
       setDisciplinaSelecionada(null);
-      window.location.reload();
+  
+      // const novoTotalPaginas = Math.ceil((novasDisciplinas.length) / registrosPorPagina);
+      // setPaginaAtual(novoTotalPaginas);
+  
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const registrosPorPagina = 3;
   const totalPaginas = Math.ceil(professorDisciplinas.length / registrosPorPagina);
-  const indiceInicial = (paginaAtual - 1) * registrosPorPagina;
-  const indiceFinal = indiceInicial + registrosPorPagina;
-  const vinculosPaginados = professorDisciplinas.slice(indiceInicial, indiceFinal);
+  const vinculosPaginados = useMemo(() => {
+    const inicio = (paginaAtual - 1) * registrosPorPagina;
+    const fim = inicio + registrosPorPagina;
+    return professorDisciplinas.slice(inicio, fim);
+  }, [professorDisciplinas, paginaAtual]);
+
     // Navegação das páginas Disciplina
     const handlePaginaAnterior = () => {
       if (paginaAtual > 1) setPaginaAtual(paginaAtual - 1);
@@ -300,14 +320,14 @@ const EditarSemestre = () => {
                 <option value={1}>Não</option>
               </select>
             </div>
-            <button className='botao-adicionar-vinculo' type="submit">Salvar Alterações</button>
+            <button className='botao-gravar' type="submit">Salvar Alterações</button>
           </form>
 
           {/* CARD 2: GESTÃO DE VÍNCULOS */}
           <div style={{ flex: 1, background: '#f9f9f9', padding: '1rem', borderRadius: '8px', boxShadow: '0 0 5px rgba(0,0,0,0.1)' }}>
             {/* CONTEÚDO DAS ABAS */}
             <div>
-              <h3>Disciplinas Professores</h3>
+              <h3 style={{ marginTop: '0px' }}>Disciplinas Professores</h3>
               {professorDisciplinas.length === 0 ? (
                 <p>Nenhuma disciplina vinculada a professores.</p>
               ) : (
@@ -316,7 +336,8 @@ const EditarSemestre = () => {
                     <tr>
                     <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Professor</th>
                       <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Disciplina</th>
-                      <th style={{ width: '15%' }}>Remover</th>
+                      <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Curso</th>
+                      <th className='th-acao'>Remover</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -324,10 +345,11 @@ const EditarSemestre = () => {
                       <tr key={disciplinas.id}>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.nome_professor}</td>
                         <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.descricao_disciplina}</td>
+                        <td style={{ padding: '0.5rem', borderBottom: '1px solid #D0D0D0' }}>{professorDisciplina.descricao_curso}</td>
                         <td style={{ justifyContent: 'center', display: 'flex' }}>
                           <button 
                             onClick={() => abrirModalExclusao(professorDisciplina.id)} 
-                            className="botao-excluir" style={{ backgroundColor: 'red', color: 'white', marginLeft: '5px' }}
+                            className="botao-excluir"
                           >
                             <FaTrash size={20}/>
                           </button>
@@ -359,8 +381,8 @@ const EditarSemestre = () => {
 
                 </div>
                 <div className="adicionar-vinculo">
-                  <button onClick={abrirModalAdicionar} className="botao-editar" >
-                    <FaPlus size={28} />
+                  <button onClick={abrirModalAdicionar} className="botao-adicionar-vinculo" >
+                    <FaPlus size={20} />
                   </button>
                 </div>
               </div>

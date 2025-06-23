@@ -38,6 +38,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login />} />
          <Route path="/login" element={<Login />} />
+          <Route path="/materiasmobile" element={<MateriasMobile />} />
+
         <Route element={<Layout />}>
   
           <Route path="/home" element={<Home />} />
@@ -47,7 +49,6 @@ const App = () => {
           <Route path="/chamada/editarchamada/:id" element={<EditarChamada />} />
 
           <Route path="/materias" element={<Materias />} />
-          <Route path="/materiasmobile" element={<MateriasMobile />} />
 
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/usuarios/cadastrousuario" element={<CadastroUsuario />} />

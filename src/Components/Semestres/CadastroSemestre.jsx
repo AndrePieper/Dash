@@ -51,7 +51,7 @@ const CadastroSemestre = () => {
         message: data.message || "Semestre cadastrado com sucesso!",
         type: "success",
       });
-      setTimeout(() => navigate("/semestres"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/semestres"), 2000)
 
 
     } catch (error) {
@@ -61,7 +61,7 @@ const CadastroSemestre = () => {
         message: error.message || "Erro inesperado!",
         type: "error",
       });
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 
@@ -82,6 +82,7 @@ const CadastroSemestre = () => {
               <input
                 type="text"
                 id="descricao"
+                placeholder="Ex: 2025/01"
                 value={descricao}
                 onChange={(e) => setDescricao(e.target.value)}
                 required
@@ -112,7 +113,7 @@ const CadastroSemestre = () => {
                 <option value={0}>Sim</option>
                 <option value={1}>Não</option>
               </select>
-            <button className="botao-adicionar-vinculo" type="submit">Cadastrar</button>
+            <button className="botao-gravar" type="submit">Cadastrar</button>
           </form>
         </div>
       </div>

@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
 }
-
+/* 
 .header-usuarios {
   margin-top: 20px;
   margin-left: 0;
@@ -23,7 +23,7 @@
   box-sizing: border-box;
   flex-wrap: wrap;
   gap: 15px;
-}
+} */
 
 .filtros-header {
   display: flex;
@@ -64,7 +64,7 @@
   color: #2e7d32;
 } 
 
-.botao-adicionar {
+/* .botao-adicionar {
   position: fixed;
   bottom: 30px;
   right: 30px;
@@ -81,7 +81,7 @@
 
 .botao-adicionar:hover {
   background-color: #006c24;
-}
+} */
 
 .mensagem-erro {
   margin-bottom: 15px;

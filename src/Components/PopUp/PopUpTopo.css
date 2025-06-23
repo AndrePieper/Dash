@@ -11,11 +11,15 @@
   }
   
   .popup-topo.success {
-    background-color: #4caf50; /* Verde */
+    background-color: #4caf50;
   }
   
   .popup-topo.error {
-    background-color: #f44336; /* Vermelho */
+    background-color: #f44336;
+  }
+  
+  .popup-topo.alert {
+    background-color: #f8a11e;
   }
   
   @keyframes slideDown {

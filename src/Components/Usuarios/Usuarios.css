@@ -116,61 +116,57 @@ h1, h2, h3, div, p, input, option, label {
 /* Botões editar e excluir com estilo, cor e transição */
 .botao-editar,
 .botao-excluir,
-.botao-detalhar {
+.botao-detalhar,
+.botao-adicionar-vinculo 
+{
   padding: 5px 10px;
   font-size: 14px;
   color: var(--font-01);
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
-
-  /* margin-right: 5px; */
 }
 
 .botao-adicionar-vinculo {
   background-color: var(--botao-adicionar);
   color: var(--font-01);
-}
-.botao-adicionar-vinculo:hover {
+} .botao-adicionar-vinculo:hover {
   background-color: var(--botao-adicionar-hover);
-}
-
-form .botao-adicionar-vinculo {
+} form .botao-adicionar-vinculo {
   background-color: var(--botao-adicionar);
-}
-form button:hover {
+} form button:hover {
   background-color: var(--botao-adicionar-hover);
 }
 
 
 .botao-editar {
   background-color: var(--botao-salvar-cadastrar);
-}
-.botao-editar:hover {
+} .botao-editar:hover {
   background-color: var(--botao-salvar-cadastrar-hover);
 }
 
+
 .botao-detalhar {
   background-color: var(--botao-detalhar);
-}
-.botao-detalhar:hover {
+} .botao-detalhar:hover {
   background-color: var(--botao-detalhar-hover);
 }
+
 
 .botao-excluir {
   background-color: var(--botao-excluir-registro);
   margin-left: 5px;
-}
-.botao-excluir:hover {
+} .botao-excluir:hover {
   background-color: var(--botao-excluir-registro-hover);
 }
 
+
 .botao-download {
   background-color: var(--botao-download);
-}
-.botao-download:hover {
+} .botao-download:hover {
   background-color: var(--botao-download-hover);
 }
+
 
 /* Botão de adicionar fixo no canto inferior direito, círculo verde */
 .botao-adicionar {
@@ -184,17 +180,27 @@ form button:hover {
   padding: 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-
   width: 60px;
   height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0 4px 8px #00000033;
-}
-.botao-adicionar:hover {
+} .botao-adicionar:hover {
   background-color: var(--botao-adicionar-hover);
 }
+
+
+
+.botao-gravar {
+  background-color: var(--botao-adicionar);
+  color: var(--font-01);
+  font-weight: bold;
+}
+.botao-gravar:hover {
+  background-color: var(--botao-adicionar-hover);
+}
+
 
 /* .rodape-principal .botao-imprimir {
   height: 36px;
@@ -220,6 +226,7 @@ form button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   z-index: 9999;
 }
 
@@ -230,6 +237,7 @@ form button:hover {
   border-radius: 10px;
   text-align: center;
 }
+
 
 /* .modal-exclusao {
   position: fixed;
@@ -277,7 +285,7 @@ form button:hover {
   align-items: center;
   justify-content: center;
 }          
-.adicionar-vinculo button { /* ----- ESTE CÓDIGO ESTÁ FAZENDO ALGUNS BOTÕES FICAREM VERDES ----- */
+.adicionar-vinculo button {
   /* padding: 6px 16px; */
   height: 36px;
   margin: 0 10px;
@@ -318,9 +326,12 @@ form button:hover {
   margin: 0 10px;
 }
 
+.th-acao {
+  width: 70px;
+}
 .th-acoes {
   width: 100px;
 }
 .th-codigo {
-  width: 70px;
+  width: 80px;
 }

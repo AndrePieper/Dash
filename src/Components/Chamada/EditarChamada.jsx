@@ -28,6 +28,7 @@ import "./EditarChamada.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { color } from "chart.js/helpers";
 
 
 
@@ -70,15 +71,15 @@ const EditarChamada = () => {
 
 
   let registrosPorPagina; 
-  if (screen.height >= 769 && screen.height <= 1079) {
+  if (screen.height < 700) {
+    registrosPorPagina = 5
+  } else if (screen.height >= 700 && screen.height <= 1079) {
     registrosPorPagina = 7
   } else if (screen.height >= 1079 && screen.height <= 1200) {
     registrosPorPagina = 9
   } else if (screen.height > 1200) {
     registrosPorPagina = 10
-  } else if (screen.height < 769){
-    registrosPorPagina = 5
-  }
+  } 
 
   const alunosOrdenados = useMemo(() => {
     
@@ -100,15 +101,6 @@ const EditarChamada = () => {
       (paginaAtual - 1) * registrosPorPagina,
       paginaAtual * registrosPorPagina
     );
-    // Atualiza a ordenação
-    // const handleOrdenar = (campo) => {
-    //   if (ordenarPor === campo) {
-    //     setOrdemAscendente(!ordemAscendente);
-    //   } else {
-    //     setOrdenarPor(campo);
-    //     setOrdemAscendente(true);
-    //   }
-    // };
 
 
 
@@ -214,7 +206,7 @@ const buscarChamada = () => {
           setPopup({
             show: true,
             message: "Não existe presenças nesta chamada.",
-            type: "error",
+            type: "alert",
           });
           setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
           throw new Error("404");

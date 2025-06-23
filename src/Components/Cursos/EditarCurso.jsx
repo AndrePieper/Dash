@@ -44,7 +44,7 @@ const EditarCurso = () => {
           type: "error",
         });
 
-        setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/cursos"), 2000);
+        setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
       });
   }, [id]);
 
@@ -83,7 +83,7 @@ const EditarCurso = () => {
         type: "success",
       });
   
-      setTimeout(() => navigate("/cursos"), 1500)
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), navigate("/cursos"), 2000)
   
     } catch (error) {
       console.log(error.message)
@@ -93,7 +93,7 @@ const EditarCurso = () => {
         type: "error",
       });
 
-      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
+      setTimeout(() => setPopup({ show: false, message: "", type: "" }), 3000);
     }
   };
 
@@ -121,7 +121,7 @@ const EditarCurso = () => {
                 <option value={1}>Inativo</option>
               </select>
               <br/>
-              <button className='botao-adicionar-vinculo' type="submit">Salvar Alterações</button>
+              <button className='botao-gravar' type="submit">Salvar Alterações</button>
             </form>
           </div>
       </div>
